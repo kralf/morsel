@@ -1,0 +1,20 @@
+from math import pi
+
+type = "Differential"
+
+arguments = dict(
+  mesh                   = "robots/robox.bam",
+  maxSpeed               = 1.6, 
+  maxRotationalVelocity  = 1.6, 
+  
+  propulsionForce        = 2,
+  vehicleMass            = 70,
+  massOffset             = [0, 0, 0],
+  wheelMass              = 0.5,
+  wheelDistance          = 0.54,
+  wheelRadius            = 0.09,
+  pivot                  = [0, 0, 0.08],
+
+  maxAcceleration        = 30 / 3.6, 
+  maxDeceleration        = 300 / 3.6, 
+)

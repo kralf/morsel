@@ -1,0 +1,18 @@
+* FIX: In Variable copy constructor solve ownership problem (copy by value?)
+* FIX: Hapy 0.0.7 has some memory leaks, upgrade to v. 0.0.8
+* FIX: Lots of memory leaks in ModuleRunner and module framework.
+* FIX: Improve const correctness in Structure operator[]
+* FIX: Use multicast for discovery
+* FIX: Cleanup BasicTypes.
+* FIX: What to do with variable size arrays in substructures
+* FIX: Binding to local loop when no network is available in BroadcastRegistry.
+* FIX: Keep copy of owner pointers in Arrays just as done in String.
+* FIX: Verify where String.size is used.
+
+* CHECK: destroy attribute in pthreads.
+
+* ADD: Implement file reading for types and messages. <- URGENT
+* ADD: Translators.
+* FIX: Option parser should ignore additional newlines at the end.
+
+

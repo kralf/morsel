@@ -1,0 +1,2 @@
+remake_add_directories(morsel)
+remake_python_distribute(PACKAGES morsel)
