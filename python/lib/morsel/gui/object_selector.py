@@ -1,7 +1,7 @@
 from morsel.core.framework        import *
 from panda3d.direct.gui.DirectGui  import DirectOptionMenu
 from panda3d.direct.showbase       import DirectObject
-from panda3d.pandac.Modules   import Mat4
+from panda3d.pandac   import Mat4
 
 class ObjectSelector( DirectObject.DirectObject ):
   def __init__( self ):

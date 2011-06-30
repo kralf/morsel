@@ -1,9 +1,9 @@
-from panda3d.pandac.Modules import GeomNode
-from panda3d.pandac.Modules import GeomVertexFormat
-from panda3d.pandac.Modules import GeomVertexData
-from panda3d.pandac.Modules import GeomVertexWriter
-from panda3d.pandac.Modules import GeomTriangles
-from panda3d.pandac.Modules import Geom
+from panda3d.pandac import GeomNode
+from panda3d.pandac import GeomVertexFormat
+from panda3d.pandac import GeomVertexData
+from panda3d.pandac import GeomVertexWriter
+from panda3d.pandac import GeomTriangles
+from panda3d.pandac import Geom
 
 class Canvas3D( GeomNode ):
   def __init__( self, name ):

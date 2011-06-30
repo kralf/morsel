@@ -4,7 +4,9 @@ from math import *
 EPSILON = 1E-6
 
 class Ackermann( panda.NodePath ):
-  def __init__( self, name, maxSpeed, maxAcceleration, maxDeceleration, maxSteeringAngle, maxSteeringRate, axesDistance, mesh, **kargs ):
+  def __init__( self, name, maxSpeed, maxAcceleration,
+                maxDeceleration, maxSteeringAngle, maxSteeringRate,
+                axesDistance, mesh, **kargs ):
     object.__init__( self )
     panda.NodePath.__init__( self, name )
     self.reparentTo( render )

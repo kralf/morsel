@@ -1,3 +1,4 @@
+from morsel.config  import *
 from morsel.core    import *
 from morsel.gui     import *
 from morsel.console import interactiveConsole as Console
@@ -16,8 +17,8 @@ console.toggle()
 
 paths = {}
 
-addMorselPath( "cfg", "cfg" )
-addMorselPath( "bam", "data/models" )
-addMorselPath( "egg", "data/models" )
-addMorselPath( "trk", "data/tracks")
+addMorselPath( "cfg", MORSEL_CONFIGURATION_PATH )
+addMorselPath( "bam", "models" )
+addMorselPath( "egg", "models" )
+addMorselPath( "trk", "tracks")
 addMorselPath( "pfm", "platforms")

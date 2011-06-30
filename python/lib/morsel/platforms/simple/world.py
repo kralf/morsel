@@ -1,5 +1,5 @@
 from morsel.core import *
-import platforms.functions as functions
+import morsel.platforms.functions as functions
 
 #-------------------------------------------------------------------------------
 

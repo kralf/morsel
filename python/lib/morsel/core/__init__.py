@@ -6,7 +6,7 @@ from _globals      import *
 from framework     import *
 from util          import *
 import __builtin__
-from panda3d.pandac.Modules import NodePath
+from panda3d.pandac import NodePath
 
 
 if not __builtin__.__dict__.has_key( "scheduler" ):

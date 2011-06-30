@@ -1,15 +1,15 @@
 from morsel.core.framework import *
 
-from panda3d.pandac.Modules import BitMask32
-from panda3d.pandac.Modules import NodePath
-from panda3d.pandac.Modules import PandaNode
+from panda3d.pandac import BitMask32
+from panda3d.pandac import NodePath
+from panda3d.pandac import PandaNode
 
-from panda3d.pandac.Modules import Geom
-from panda3d.pandac.Modules import GeomLines
-from panda3d.pandac.Modules import GeomVertexFormat
-from panda3d.pandac.Modules import GeomVertexData
-from panda3d.pandac.Modules import GeomVertexWriter
-from panda3d.pandac.Modules import GeomNode
+from panda3d.pandac import Geom
+from panda3d.pandac import GeomLines
+from panda3d.pandac import GeomVertexFormat
+from panda3d.pandac import GeomVertexData
+from panda3d.pandac import GeomVertexWriter
+from panda3d.pandac import GeomNode
 
 
 class LaserViewer( NodePath ):

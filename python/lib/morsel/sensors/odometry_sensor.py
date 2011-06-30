@@ -2,7 +2,7 @@ from morsel.core.framework import *
 
 from drives.differential import *
 
-from panda3d.pandac.Modules import NodePath
+from panda3d.pandac import NodePath
 
 from math import *
 

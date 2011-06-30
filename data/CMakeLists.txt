@@ -1,1 +1,1 @@
-remake_add_files(* RECURSE)
+remake_add_files(*.jpg *.png *.bam *.pfm *.trk RECURSE)

@@ -1,5 +1,5 @@
 from morsel.core import *
-import morsel.morselc
+from morsel.morselc import RangeSensor as CRangeSensor
 import morsel.sensors
 
 #-------------------------------------------------------------------------------
@@ -9,7 +9,8 @@ def LaserScanner(  name, parent, position = [0, 0, 0], orientation = [0, 0, 0],
                       rayRange = [1, 10], period = None, createTask = True, cameraFOV = 60,
                       colorInfo = False ):
   '''Adds a single plane laser scanner to the parent object.'''
-  result = morselc.RangeSensor( name, hFov, vFov, hRayCount, vRayCount, rayRange[0], rayRange[1], cameraFOV, colorInfo )
+  result = CRangeSensor( name, hFov, vFov, hRayCount, vRayCount,
+    rayRange[0], rayRange[1], cameraFOV, colorInfo )
   if createTask:
     scheduler.addTask( name + "Task", result.update, period, priority = 5  )
   result.reparentTo( parent )

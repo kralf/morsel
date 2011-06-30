@@ -3,7 +3,7 @@ if __builtin__.__dict__.has_key( "scheduler" ):
   raise Exception( "Circular reference to scheduling module" )
 import panda3d.direct.directbase.DirectStart
 from panda3d.direct.task import Task
-from panda3d.pandac.Modules import NodePath
+from panda3d.pandac import NodePath
 
 class Scheduler:
   '''Simulation scheduler.

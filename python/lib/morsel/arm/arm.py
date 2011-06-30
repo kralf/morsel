@@ -1,6 +1,6 @@
 from morsel.core import *
 from math import pi
-from panda3d.pandac.Modules import NodePath
+from panda3d.pandac import NodePath
 
 class Arm( NodePath ):
   def __init__( self, name, joint_info, debug = False ):

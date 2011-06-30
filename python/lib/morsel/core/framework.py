@@ -3,8 +3,9 @@ This package contains framework specific functions that are primarily intended
 to be used by programmers.
 '''
 
-import panda3d.pandac.Modules as panda
+import panda3d.pandac as panda
 from panda3d.direct.actor import Actor as pandaActor
+from morsel.config import *
 import math
 import os.path
 import os
@@ -90,7 +91,7 @@ def morselSystem():
   try:
     return os.environ["MORSEL_HOME"]
   except KeyError:
-    return "/usr/share/morsel"
+    return MORSEL_FILE_PATH
 
 #-------------------------------------------------------------------------------
 

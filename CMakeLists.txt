@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 2.6)
 
 include(ReMake)
+include(Panda3D)
 
 remake_project(
   Morsel
@@ -24,7 +25,11 @@ remake_doc(
 )
 
 remake_pack_deb(
-  panda3d-python
+  panda3d
+)
+remake_pack_deb(
+  COMPONENT python
+  morsel panda3d-python
 )
 remake_pack_deb(
   ARCH all

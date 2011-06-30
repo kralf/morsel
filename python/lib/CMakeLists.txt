@@ -1,2 +1,3 @@
-remake_add_directories(morsel)
-remake_python_distribute(PACKAGES morsel)
+remake_add_directories(config morsel)
+remake_python_distribute(PACKAGES morsel morsel.config)
+remake_add_directories(morselc)

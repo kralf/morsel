@@ -1,9 +1,9 @@
 from sensors.range_camera import RangeCamera as PythonRangeCamera
 from morsel.core.framework import *
 
-from panda3d.pandac.Modules import BitMask32
-from panda3d.pandac.Modules import NodePath
-from panda3d.pandac.Modules import VBase3
+from panda3d.pandac import BitMask32
+from panda3d.pandac import NodePath
+from panda3d.pandac import VBase3
 
 from math import *
 

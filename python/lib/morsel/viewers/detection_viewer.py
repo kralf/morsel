@@ -1,7 +1,7 @@
 from canvas3d import *
 from morsel.core.framework import *
-from panda3d.pandac.Modules import PandaNode
-from panda3d.pandac.Modules import BitMask32
+from panda3d.pandac import PandaNode
+from panda3d.pandac import BitMask32
 
 class DetectionViewer:
   def __init__( self, detector ):

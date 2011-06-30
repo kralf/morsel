@@ -1,5 +1,5 @@
 from morsel.core.framework import *
-from panda3d.pandac.Modules import VBase3
+from panda3d.pandac import VBase3
 from math import *
 
 class FileAXTOut( object ):

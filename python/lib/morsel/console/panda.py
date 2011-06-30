@@ -19,7 +19,7 @@ import textwrap, re, string, sys, os
 
 from panda3d.direct.gui.DirectGui import DirectFrame, DirectEntry, DirectLabel, DGG
 from panda3d.direct.showbase import DirectObject
-from panda3d.pandac.Modules import TextNode, Vec3, VBase4
+from panda3d.pandac import TextNode, Vec3, VBase4
 from panda3d.direct.gui.OnscreenText import OnscreenText
 
 from clipboard import clipboard

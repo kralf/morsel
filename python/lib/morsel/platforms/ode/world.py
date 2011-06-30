@@ -1,6 +1,6 @@
 from globals import *
 from shared  import *
-from platforms.functions import *
+from morsel.platforms.functions import *
 from morsel.core import *
 
 #-------------------------------------------------------------------------------

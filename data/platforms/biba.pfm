@@ -1,14 +1,20 @@
 from math import pi
 
-mesh  = "robots/biba.bam"  
-drive = dict(
-  type             = "Differential",
-  maxSpeed         = 10 / 3.6, 
-  maxAcceleration  = 10 / 3.6, 
-  maxDeceleration  = 100 / 3.6, 
-  maxSteeringAngle = 180, 
-  maxSteeringRate  = 5, 
-  wheelDiameter	= 0.178,
-  axesDistance	= 0.398
-)
+type = "Differential"
 
+arguments = dict(
+  mesh                   = "robots/biba.bam",
+  maxSpeed               = 10 / 3.6,
+  maxRotationalVelocity  = 1.6,
+
+  propulsionForce        = 1,
+  vehicleMass            = 15,
+  massOffset             = [0, 0, 0],
+  wheelMass              = 1.0,
+  wheelDistance          = 0.5,
+  wheelRadius            = 0.178 / 2,
+  pivot                  = [0, 0, 0.08],
+
+  maxAcceleration        = 10 / 3.6,
+  maxDeceleration        = 100 / 3.6, 
+)

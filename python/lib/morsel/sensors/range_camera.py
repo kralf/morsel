@@ -1,12 +1,12 @@
-from panda3d.pandac.Modules import Point3
-from panda3d.pandac.Modules import PNMImage
-from panda3d.pandac.Modules import Texture
-from panda3d.pandac.Modules import Vec4
-from panda3d.pandac.Modules import VBase3
+from panda3d.pandac import Point3
+from panda3d.pandac import PNMImage
+from panda3d.pandac import Texture
+from panda3d.pandac import Vec4
+from panda3d.pandac import VBase3
 
-from panda3d.pandac.Modules import BitMask32
-from panda3d.pandac.Modules import PandaNode
-from panda3d.pandac.Modules import NodePath
+from panda3d.pandac import BitMask32
+from panda3d.pandac import PandaNode
+from panda3d.pandac import NodePath
 
 from math import *
 
