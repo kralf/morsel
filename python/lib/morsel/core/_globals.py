@@ -11,4 +11,3 @@ panda.loadPrcFileData( "", "prefer-texture-buffer 1" )
 panda.loadPrcFileData( "", "framebuffer-stereo 0" )
 panda.loadPrcFileData( "", "depth-bits 16" )
 panda.loadPrcFileData( "", "direct-gui-edit 1" )
-

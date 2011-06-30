@@ -1,5 +1,7 @@
 #include "morsel.h"
 
+#include <pandaFramework.h>
+
 //------------------------------------------------------------------------------
 
 GraphicsStateGuardian * 

@@ -25,13 +25,14 @@ def error( message ):
 # Object list functions
 #-------------------------------------------------------------------------------
 
-def loadMesh( name, filename, selectable = True ):
+def loadMesh( name, filename, selectable = True, twoSided = True ):
   '''Loads an .egg or .bam mesh and adds it to the object list.'''
   meshfile = findFile( filename )
   if meshfile:
     mesh = loader.loadModel( meshfile )
     if selectable:
       meshes[name] = mesh
+    mesh.setTwoSided( twoSided )
     return mesh
   else:
     exit( 1 )
