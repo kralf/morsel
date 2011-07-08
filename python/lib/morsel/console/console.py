@@ -33,7 +33,6 @@ class customConsoleClass( InteractiveConsole ):
   outputColor = (0.8,1.0,1.0,1.0)
   def __init__( self, localsEnv=globals() ):
     InteractiveConsole.__init__( self, localsEnv )
-    print "customConsoleClass"
     self.consoleLocals = localsEnv
     
     # catch the output of the interactive interpreter

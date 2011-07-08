@@ -32,7 +32,6 @@ def loadMesh( name, filename, selectable = True, twoSided = True ):
     mesh = loader.loadModel( meshfile )
     if selectable:
       meshes[name] = mesh
-    mesh.setTwoSided( twoSided )
     return mesh
   else:
     exit( 1 )

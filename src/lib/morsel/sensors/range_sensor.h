@@ -61,7 +61,6 @@ public:
   double minRange();
   double maxRange();
   bool inRange( NodePath & node );
-  //additional accessors [M. Rufli, 25. June 2010]
   double hFov();
   double vFov();
   int hRays();

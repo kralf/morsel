@@ -110,10 +110,11 @@ RangeCamera::setupCamera()
 
   GraphicsOutput * window = getWindow( 0 );
 
-  _depthBuffer = window->make_texture_buffer( "depthmap", _width, _height, &_depthMap, true );
+  _depthBuffer = window->make_texture_buffer( "depthmap", _width, _height,
+    &_depthMap, true );
   if ( _colorInfo )
-    _colorBuffer = window->make_texture_buffer( "colormap", _width, _height, &_colorMap, true );
-
+    _colorBuffer = window->make_texture_buffer( "colormap", _width, _height,
+      &_colorMap, true );
 
   _cameraNode = new Camera( "cam" );
   _cameraNode->set_camera_mask( BitMask32( 1 ) );
@@ -194,7 +195,8 @@ RangeCamera::updateRays()
     RayInfo & ri = _rayInfo[i];
     Ray & ray    = _rays[i];
     double depth = _depth_texels.get_gray( ri.column, ri.row );
-    ray.x = _maxRange * _minRange / ( _maxRange - depth * ( _maxRange - _minRange ) );
+    ray.x = _maxRange * _minRange /
+      ( _maxRange - depth * ( _maxRange - _minRange ) );
     ray.column = ri.column;
     ray.row    = ri.row;
     if ( ray.x < 0 )

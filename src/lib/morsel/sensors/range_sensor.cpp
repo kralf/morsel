@@ -66,19 +66,16 @@ RangeSensor::ray( int index ) {
 bool
 RangeSensor::update( double time )
 {
-  for ( int ci = 0; ci < _cameras.size(); ci++ ) {
+  for ( int ci = 0; ci < _cameras.size(); ci++ )
     RangeCamera * c = _cameras[ci];
-    c->setActive( true );
-  }
-  getEngine()->render_frame();
   int rayIndex = 0;
   for ( int ci = 0; ci < _cameras.size(); ci++ ) {
     RangeCamera * c = _cameras[ci];
     c->update( time );
-    c->setActive( false );
     for ( int ri = 0; ri < c->rayCount(); ri++ ) {
       ::Ray & ray1 = c->ray( ri );
-      LPoint3f p = get_relative_point( *c, LVecBase3f( ray1.x, ray1.y, ray1.z ) );
+      LPoint3f p = get_relative_point( *c,
+        LVecBase3f( ray1.x, ray1.y, ray1.z ) );
       double r = ray1.radius;
       if ( r >= _maxRange )
         r = -1;
@@ -133,10 +130,6 @@ RangeSensor::inRange( NodePath & node )
   return true;
 }
 
-
-
-
-
 //------------------------------------------------------------------------------
 
 double
@@ -175,7 +168,8 @@ double
 RangeSensor::rayLength( int index )
 {
   if(index >= _rayCount) {
-    fprintf(stderr, "morsel->range_sensor->rayLength(...) index out of range: %d >= %d. Aborting...\n",index, _rayCount);
+    fprintf(stderr, "morsel->range_sensor->rayLength(...) "
+      "index out of range: %d >= %d. Aborting...\n", index, _rayCount);
     exit(1);
   }
   return _rays[index]._radius;
