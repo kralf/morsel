@@ -30,8 +30,8 @@ class RandomController( object ):
     elif right != 0:
       v[1] = -self.steeringRate
       
-    for p in self.platforms:
-      p.command = v
+    for platform in self.platforms:
+      platform.setCommand(v)
     return True
     
   def add( self, platform ):

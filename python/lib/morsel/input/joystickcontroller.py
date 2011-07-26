@@ -45,8 +45,9 @@ class JoystickController( object ):
           command[0] = self.velocity - maxAcceleration * deltaT
         elif acceleration > maxDeceleration:
           command[0] = self.velocity + maxDeceleration * deltaT
+          
       self.velocity         = command[0]
-      self.platform.command = command
+      self.platform.setCommand(command)
           
     self.oldTime = time
     return True

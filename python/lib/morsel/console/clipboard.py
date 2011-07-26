@@ -55,7 +55,6 @@ if sys.platform == 'darwin':
         out = cmd.read()
         cmd.close()
         return out
-    print "I: using pbcopy/pbpaste clipboard"
   else:
     pass
   
@@ -75,7 +74,6 @@ elif sys.platform == 'win32':
         d=w.GetClipboardData(win32con.CF_TEXT) 
         w.CloseClipboard() 
         return d
-    print "I: using win32clipboard"
   except:
     pass
   
@@ -103,7 +101,6 @@ elif sys.platform == 'linux2':
     # test it
     self.clipboard.setText( self.clipboard.text() )
     # the clipboard seems to run correctly
-    print "I: using pyqt clipboard"
     found = True
   except:
     pass
@@ -121,7 +118,6 @@ elif sys.platform == 'linux2':
         return self.klipper.getClipboardContents()
     # Test if we really use KDE
     clipboardClass().getText()
-    print "I: using pydcop clipboard"
     found = True
   except:
     pass
@@ -147,7 +143,6 @@ elif sys.platform == 'linux2':
         # rich text clipboard data with the
         # wait_for_image and wait_for_rich_text methods.
         return self.clipboard.wait_for_text()
-    print "I: using pygtk/gtk clipboard"
     found = True
   except:
     pass
@@ -169,7 +164,6 @@ elif sys.platform == 'linux2':
         out = cmd.read()
         cmd.close()
         return out
-    print "I: using xsel clipboard"
   elif xclipPath is not None:
     class clipboardClass:
       def setText( self, pasteString ):
@@ -182,9 +176,6 @@ elif sys.platform == 'linux2':
         out = cmd.read()
         cmd.close()
         return out
-    print "I: using xclip clipboard"
-  else:
-    print "W: clipboard environment found!"
 
 
 # if not clipboard could be created, use a dummy

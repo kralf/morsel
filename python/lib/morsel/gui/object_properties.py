@@ -1,14 +1,16 @@
-from object_selector         import ObjectSelector
-from morsel.core                    import *
+from morsel.core import *
+from morsel.world import globals
+from object_selector import ObjectSelector
 
 from panda3d.direct.gui.DirectGui    import DirectFrame, DGG
 from panda3d.direct.gui.DirectGui    import DirectOptionMenu
 from panda3d.direct.gui.OnscreenText import OnscreenText
 from panda3d.direct.showbase         import DirectObject
 
-
 from panda3d.pandac     import TextNode
 from panda3d.pandac     import Mat4
+
+#-------------------------------------------------------------------------------
 
 class ObjectProperties( DirectObject.DirectObject ):
   ''' Gui for object selection and displaying basic proerties.'''
@@ -19,8 +21,6 @@ class ObjectProperties( DirectObject.DirectObject ):
   NO_COLOR    = ( 0, 0, 0, 0 )
   HL_COLOR    = ( 0.65, 0.65, 0.65, 1 )
   SCALE       = 0.05
-
-#-------------------------------------------------------------------------------
 
   def __init__( self, toggleKey = "f9" ):
     self.top = 0.5 / self.SCALE
@@ -66,7 +66,6 @@ class ObjectProperties( DirectObject.DirectObject ):
 #-------------------------------------------------------------------------------
 
   def layout( self, widget, x, y ):
-    widget["scale"]          = 1
     widget["text_fg"]        = self.TEXT_COLOR
     widget["text_align"]     = TextNode.ALeft
     widget["highlightColor"] = self.HL_COLOR,
@@ -80,7 +79,7 @@ class ObjectProperties( DirectObject.DirectObject ):
     mat.invertInPlace()
     key = base.camera.getParent().getName()
     self.camera_poses[key] = mat
-    base.camera.reparentTo( meshes[item] )
+    base.camera.reparentTo( globals.world.meshes[item] )
     if self.camera_poses.has_key( item ):
       mat = self.camera_poses[item]
       base.mouseInterfaceNode.setMat( mat )
@@ -126,9 +125,9 @@ class ObjectProperties( DirectObject.DirectObject ):
     del items[:]
     i = 0
     selected = 0
-    for k, v in meshes.iteritems():
-      items.append( k )
-      if k == base.camera.getParent().getName():
+    for mesh in globals.world.scene.meshes:
+      items.append( mesh.getName() )
+      if mesh == base.camera.getParent():
         selected = i
       i = i + 1
     self.objectMenu["items"] = items
@@ -139,4 +138,4 @@ class ObjectProperties( DirectObject.DirectObject ):
       
   def windowEvent( self, window ):
     self.frame.setPos( -0.5, 0, -0.5 )
-    
+  

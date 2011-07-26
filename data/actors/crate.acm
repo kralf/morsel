@@ -1,0 +1,6 @@
+type  = "Inanimate"
+
+mesh  = "misc/crate.bam"
+solid = "Box"
+body  = "Box"
+mass  = 100

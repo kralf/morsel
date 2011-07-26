@@ -25,19 +25,19 @@ def error( message ):
 # Object list functions
 #-------------------------------------------------------------------------------
 
-def loadMesh( name, filename, selectable = True, twoSided = True ):
-  '''Loads an .egg or .bam mesh and adds it to the object list.'''
-  meshfile = findFile( filename )
-  if meshfile:
-    mesh = loader.loadModel( meshfile )
-    if selectable:
-      meshes[name] = mesh
+def loadMesh_( world, name, filename ):
+  mesh_file = findFile( filename )
+  if mesh_file:
+    mesh = loader.loadModel( mesh_file )
+    mesh.reparentTo( render )
+    
     return mesh
   else:
-    exit( 1 )
+    raise RuntimeError( "Mesh file '" + filename + "' not found." )
 
+#-------------------------------------------------------------------------------
 
-def loadActor( name, filename, animation = None, selectable = True ):
+def loadActor_( name, filename, animation = None, selectable = True ):
   '''Loads an .egg or .bam actor and adds it to the actor list.'''
   actorfile = findFile( filename )
   if not animation:
@@ -55,6 +55,8 @@ def loadActor( name, filename, animation = None, selectable = True ):
   else:
     exit( 1 )
 
+#-------------------------------------------------------------------------------
+
 def updateActors( time ):
   '''Actor update task'''
   for actor, animation, duration, frames in actors.values():
@@ -67,18 +69,17 @@ def updateActors( time ):
     actor.forceRecomputeBounds()
   return True
 
-
 #-------------------------------------------------------------------------------
 # File utility functions
 #-------------------------------------------------------------------------------
 
 def includeConfig( filename ):
-  configFile = findFile( filename )
-  if configFile:
+  config_file = findFile( filename )
+  if config_file:
     context = inspect.stack()[1][0].f_globals
-    execfile( configFile, context )
+    execfile( config_file, context )
   else:
-    error ( "Configuration file '" + filename + "' does not exist." )
+    raise RuntimeError( "Configuration file '" + filename + "' not found." )
 
 #-------------------------------------------------------------------------------
 
@@ -107,12 +108,13 @@ def findFile( filename ):
 
   name, extension = os.path.splitext( filename )
   extension = extension[1:]
+  
   if paths.has_key( extension ):
     for path in paths[extension]:
       resultPath = os.path.join( path, filename )
       if os.path.exists( resultPath ):
         return os.path.abspath( resultPath )
-  print "Warning: file %s not found" % filename
+
   return None
 
 #-------------------------------------------------------------------------------
@@ -123,6 +125,7 @@ def addPath( extension, path  ):
   '''Adds a search path for the given extension.'''
   if not paths.has_key( extension ):
     paths[extension] = []
+    
   if not path in paths[extension]:
     paths[extension].append( path )
 
@@ -153,7 +156,4 @@ def windowSize( width, height ):
 #-------------------------------------------------------------------------------
 
 paths = {}
-meshes = {}
 actors = {}
-
-

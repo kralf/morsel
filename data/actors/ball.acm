@@ -1,0 +1,6 @@
+type  = "Inanimate"
+
+mesh  = "misc/soccer_ball.bam"
+solid = "Sphere"
+body  = "Sphere"
+mass  = 0.42

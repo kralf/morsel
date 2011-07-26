@@ -9,10 +9,11 @@ from sys import exit
 #===============================================================================
 
 from _controllers import *
-from _globals     import *
-from _platforms   import *
-from _scene       import *
-from _screenshot  import *
-from _sensors     import *
-from _utility     import *
-from _viewers     import *
+from _globals import *
+from _nodes import *
+from _world import *
+from _scene import *
+from _screenshot import *
+from _sensors import *
+from _utility import *
+from _viewers import *

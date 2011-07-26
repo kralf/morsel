@@ -1,8 +1,8 @@
-from globals import *
-from shared  import *
 from morsel.core    import *
 from math    import *
 import time
+
+#-------------------------------------------------------------------------------
 
 DEBUG = False
 
@@ -68,10 +68,10 @@ class Differential( panda.NodePath ):
   def setupChassis( self ):
     self.body = panda.OdeBody( self.world )
     self.body.setPosition( *self.massOffset )
-    self.body.setQuaternion( panda.Quat( 1, 0, 0, 0 ) )
+    #self.body.setQuaternion( panda.Quat( 1, 0, 0, 0 ) )
 
     self.mass = panda.OdeMass()
-    self.mass.setBoxTotal( 
+    self.mass.setBoxTotal(
       self.vehicleMass, 
       self.wheelDistance, 
       self.wheelDistance, 
@@ -146,7 +146,6 @@ class Differential( panda.NodePath ):
       
       if DEBUG:
         wnode.showBounds()
-        
       
       mass = panda.OdeMass()
       mass.setSphereTotal( self.wheelMass, self.wheelRadius )

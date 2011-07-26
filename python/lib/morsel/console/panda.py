@@ -44,7 +44,6 @@ class panda3dIOClass( DirectObject.DirectObject ):
   # vertical size of the frame ( must be at max 2.0, best between 0.5 and 2.0 )
   v_size  = PANDA3D_CONSOLE_VERTICAL_SIZE
   linelength = int((h_size/scale - 5) / fontWidth)
-  print "max number of characters on a length:", linelength
   numlines = int(v_size/scale - 5)
   defaultTextColor  = (0.0,0.0,0.0,1.0)
   autoCompleteColor = (0,1.0,0,1.0)
