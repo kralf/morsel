@@ -1,10 +1,15 @@
+from morsel.world.globals import *
 from node import Node
+from morsel.nodes.facade import Collider
 
 #-------------------------------------------------------------------------------
 
 class Actor(Node):
   def __init__(self, world, name, **kargs):
     Node.__init__(self, world, name, **kargs)
+
+    self.collider = Collider(name+"Collider", parent = self,
+      collisionMasks = [ACTOR_COLLISIONS_FROM, ACTOR_COLLISIONS_INTO])
 
 #-------------------------------------------------------------------------------
 

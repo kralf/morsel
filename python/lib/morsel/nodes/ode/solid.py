@@ -16,15 +16,10 @@ class Solid(Base):
 
     Base.__init__(self, world, name, mesh, **kargs)
 
-    if not isinstance(self.parent, Collider):
-      if not self.parent.collider:
-        self.parent.collider = Collider(world, self.parent.name+"Collider",
-          parent = self.parent)
-      self.parent = self.parent.collider
-
     if geometry:
       self.geometry = Geometry(world, name+"Geometry", self, geometry,
         position = position, orientation = orientation, parent = self)
+      self.geometry.setCollisionMasks(self.parent.collisionMasks)
 
     if body:
       self.body = Body(name+"Body", body, self, mass = mass,
@@ -38,12 +33,6 @@ class Solid(Base):
     if self.geometry:
       self.positionOffset = self.mesh.getPos(self.geometry)
       self.orientationOffset = self.mesh.getQuat(self.geometry)
-
-#-------------------------------------------------------------------------------
-
-  def setCollisionMasks(self, collisionsFrom, collisionsInto):
-    if self.geometry:
-      self.geometry.setCollisionMasks(collisionsFrom, collisionsInto)
 
 #-------------------------------------------------------------------------------
 

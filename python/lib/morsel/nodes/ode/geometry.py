@@ -48,9 +48,9 @@ class Geometry(Node):
 
 #-------------------------------------------------------------------------------
 
-  def setCollisionMasks(self, collisionsFrom, collisionsInto):
-    self.geometry.setCategoryBits(collisionsFrom)
-    self.geometry.setCollideBits(collisionsInto)
+  def setCollisionMasks(self, collisionMasks):
+    self.geometry.setCategoryBits(collisionMasks[0])
+    self.geometry.setCollideBits(collisionMasks[1])
 
 #-------------------------------------------------------------------------------
 

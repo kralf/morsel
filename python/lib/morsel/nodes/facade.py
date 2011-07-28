@@ -14,6 +14,12 @@ def Mesh(name, filename, **kargs):
 
 #-------------------------------------------------------------------------------
 
+def Collider(name, *args, **kargs):
+  return Instance("morsel.nodes."+globals.world.physics, "Collider",
+    globals.world, name, *args, **kargs)
+
+#-------------------------------------------------------------------------------
+
 def Solid(name, type, mesh, *args, **kargs):
   return Instance("morsel.nodes."+globals.world.physics+".solids", type,
     globals.world, name, mesh, *args, **kargs)

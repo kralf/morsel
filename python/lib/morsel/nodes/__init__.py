@@ -11,3 +11,4 @@ from solid import Solid
 from environment import Environment
 from actor import Actor
 from platform import Platform
+from collider import Collider

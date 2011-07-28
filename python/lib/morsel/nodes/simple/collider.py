@@ -1,45 +1,42 @@
 from morsel.core import *
-from morsel.nodes.collection import Collection
+from morsel.nodes.collider import Collider as Base
 
 #-------------------------------------------------------------------------------
 
-class Collider(Collection):
-  def __init__(self, world, name, **kargs):
-    Collection.__init__(self, world, name, **kargs)
-    
-    node = panda.CollisionNode(self.parent.name+"Collider")
-    self.path = self.parent.attachNewNode(node)
-    
-    self.hide()
+class Collider(Base):
+  def __init__(self, world, name, parent = None, **kargs):
+    node = panda.CollisionNode(parent.name+"Collider")
+    self.path = parent.attachNewNode(node)
 
+    Base.__init__(self, world, name, parent = parent, **kargs)
+    
     world.addCollider(self)
 
 #-------------------------------------------------------------------------------
 
-  def getSolids(self):
-    return Iterator(self, Solid).generator
+  def setCollisionMasks(self, collisionMasks):
+    Base.setCollisionMasks(self, collisionMasks)
+    
+    self.path.node().setFromCollideMask(collisionMasks[0])
+    self.parent.setCollideMask(collisionMasks[1])
 
-  solids = property(getSolids)
-
-#-------------------------------------------------------------------------------
-
-  def setCollisionMasks(self, collisionsFrom, collisionsInto):
-    self.path.node().setFromCollideMask(collisionsFrom)
-    self.parent.setCollideMask(collisionsInto)
+  collisionMasks = property(Base.getCollisionMasks, setCollisionMasks)
 
 #-------------------------------------------------------------------------------
 
   def addSolid(self, solid):
-    self.path.node().addSolid(solid.geometry)
+    Base.addSolid(self, solid)
+    if solid.geometry:
+      self.path.node().addSolid(solid.geometry)
 
 #-------------------------------------------------------------------------------
 
   def show(self):
-    Collection.show(self)
+    Base.show(self)
     self.path.show()
 
 #-------------------------------------------------------------------------------
 
   def hide(self):
     self.path.hide()
-    Collection.hide(self)
+    Base.hide(self)

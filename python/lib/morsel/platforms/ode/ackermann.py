@@ -1,5 +1,4 @@
 from morsel.core import *
-from morsel.world.globals import *
 from morsel.platforms.ackermann import Ackermann as Base
 from morsel.nodes.facade import Mesh, Solid
 
@@ -51,9 +50,6 @@ class Ackermann(Base):
     
       self.wheelSolids.append(solid)
       self.wheelJoints.append(joint)
-
-    self.collider.setCollisionMasks(PLATFORM_COLLISIONS_FROM,
-      PLATFORM_COLLISIONS_INTO)
 
 #-------------------------------------------------------------------------------
 
