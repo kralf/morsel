@@ -10,7 +10,7 @@ class Platform(Node):
 
     self.limits = limits
     self.command = self._command
-    self.state = self.command
+    self.state = [0]*len(limits)
 
 #-------------------------------------------------------------------------------
 

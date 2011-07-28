@@ -29,16 +29,22 @@ class Geometry(Node):
 #-------------------------------------------------------------------------------
 
   def getBody(self):
-    if self.geometry:
-      return self.geometry.getBody()
-    else:
-      return None
+    return self.geometry.getBody()
 
   def setBody(self, body):
-    if self.geometry:
-      self.geometry.setBody(body)
+    self.geometry.setBody(body)
 
   body = property(getBody, setBody)
+
+#-------------------------------------------------------------------------------
+
+  def getPositionOffset(self):
+    return self.geometry.getOffsetPosition()
+
+  def setPositionOffset(self, positionOffset):
+    self.geometry.setOffsetPosition(*positionOffset)
+
+  positionOffset = property(getPositionOffset, setPositionOffset)
 
 #-------------------------------------------------------------------------------
 

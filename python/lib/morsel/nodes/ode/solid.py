@@ -8,8 +8,8 @@ from morsel.nodes.facade import Body
 
 class Solid(Base):
   def __init__(self, world, name, mesh, geometry = None, body = None,
-      mass = 0, display = None, position = [0, 0, 0], orientation = [0, 0, 0],
-      **kargs):
+      mass = 0, massOffset = [0, 0, 0], display = None, position = [0, 0, 0],
+      orientation = [0, 0, 0], **kargs):
     self.geometry = None
     self.body = None
     self.display = display
@@ -27,7 +27,8 @@ class Solid(Base):
         position = position, orientation = orientation, parent = self)
 
     if body:
-      self.body = Body(name+"Body", body, self, mass = mass, parent = self)
+      self.body = Body(name+"Body", body, self, mass = mass,
+        massOffset = massOffset, parent = self)
 
     if self.display:
       self.display.parent = self
@@ -52,7 +53,7 @@ class Solid(Base):
     if self.body:
       self.body.update()
     if self.display:
-      self.display.setPosHpr(self.geometry.getPos(), self.geometry.getHpr())
+      self.display.setPosQuat(self.geometry.getPos(), self.geometry.getQuat())
     if self.geometry:
       self.mesh.setPosQuat(self.geometry.getPos()+self.positionOffset,
         self.orientationOffset*self.geometry.getQuat())

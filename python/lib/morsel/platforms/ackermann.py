@@ -49,67 +49,18 @@ class Ackermann(Wheeled):
 #-------------------------------------------------------------------------------
 
   def updateState(self, period):
-    if abs(self.state[1]-self.command[1]) < self.maxSteeringRate*period:
-      self.state[1] = self.command[1]
-    else:
-      self.state[1] += (signum(self.command[1]-self.state[1])*
-        self.maxSteeringRate*period)
-    if self.state[1] > self.maxSteeringAngle:
-      self.state[1] = self.maxSteeringAngle
-    elif self.state[1] < - self.maxSteeringAngle:
-      self.state[1] = -self.maxSteeringAngle
-
-    dv = self.command[0]-self.state[0]
-    if dv > -self.maxDeceleration*period and dv < self.maxAcceleration*period:
-      self.state[0] = self.command[0]
-    else:
-      if dv < 0:
-        self.state[0] -= self.maxDeceleration*period
-      else:
-        self.state[0] += self.maxAcceleration*period
-
-    if self.state[0] > self.maxVelocity:
-      self.state[0] = self.maxVelocity
-    elif self.state[0] < 0:
-      self.state[0] = 0
-
-    self.setRatesFromVelocities([self.state[0]]*4)
-    self.steeringAngles = [self.state[1], self.state[1], 0, 0]
+    pass
 
 #-------------------------------------------------------------------------------
 
-  def updatePosition(self, period):
-    if abs(self.state[1]) >= self.epsilon:
-      radius = self.axesDistance/tan(self.state[1]*pi/180)
-      dtheta = self.state[0]*period/radius
-      
-      dx = radius*sin(dtheta)
-      dy = radius*(1-cos(dtheta))
-    else:
-      dx = self.state[0]*period
-      dy = 0
-
-    self.pose[0] += dx*cos(self.pose[2]*pi/180)-dy*sin(self.pose[2]*pi/180)
-    self.pose[1] += dx*sin(self.pose[2]*pi/180)+dy*cos(self.pose[2]*pi/180)
-
-#-------------------------------------------------------------------------------
-
-  def updateOrientation(self, period):
-    if abs(self.state[1]) >= self.epsilon:
-      radius = self.axesDistance/tan(self.state[1]*pi/180)
-      dtheta = self.state[0]*period/radius
-    else:
-      dtheta = 0
-
-    self.pose[2] += dtheta*180/pi
+  def updatePose(self, period):
+    pass
 
 #-------------------------------------------------------------------------------
 
   def updatePhysics(self, period):
     self.updateState(period)
-
-    self.updatePosition(period)
-    self.updateOrientation(period)
+    self.updatePose(period)
 
     Wheeled.updatePhysics(self, period)
     

@@ -5,7 +5,7 @@ import morsel.nodes
 
 #-------------------------------------------------------------------------------
 
-def Mesh(name, filename, *args, **kargs):
+def Mesh(name, filename, **kargs):
   meshFile = findFile(filename)
   if meshFile:
     return morsel.nodes.Mesh(globals.world, name, filename = meshFile, **kargs)

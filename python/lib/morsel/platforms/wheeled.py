@@ -30,7 +30,7 @@ class Wheeled(Platform):
         p0, p1 = wheelMesh.getTightBounds()
         dx = abs(p1[0]-p0[0])
         dz = abs(p1[2]-p0[2])
-        radius = max(dx, dz)
+        radius = 0.5*max(dx, dz)
         
         self.wheels.append(wheelMesh)
         self.wheelRadius.append(radius)
@@ -66,7 +66,7 @@ class Wheeled(Platform):
 
   def setRatesFromVelocities(self, velocities):
     for i in range(self.numWheels):
-      self.turningRates[i] = velocities[i]/self.wheelCircumference[i]*180
+      self.turningRates[i] = velocities[i]/self.wheelCircumference[i]*360
 
 #-------------------------------------------------------------------------------
 
