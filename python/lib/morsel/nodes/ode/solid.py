@@ -44,5 +44,5 @@ class Solid(Base):
     if self.display:
       self.display.setPosQuat(self.geometry.getPos(), self.geometry.getQuat())
     if self.geometry:
-      self.mesh.setPosQuat(self.geometry.getPos()+self.positionOffset,
-        self.orientationOffset*self.geometry.getQuat())
+      self.mesh.setPosQuat(self.geometry.getQuat().xform(self.positionOffset)+
+        self.geometry.getPos(), self.orientationOffset*self.geometry.getQuat())

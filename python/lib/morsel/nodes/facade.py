@@ -32,9 +32,23 @@ def Body(name, type, solid, *args, **kargs):
 
 #-------------------------------------------------------------------------------
 
-def Environment(name, mesh, *args, **kargs):
-  return Instance("morsel.nodes."+globals.world.physics, "Environment",
-    globals.world, name, mesh, *args, **kargs)
+def Static(name, mesh, **kargs):
+  return Instance("morsel.nodes", "Static", globals.world, name, mesh, **kargs)
+
+#-------------------------------------------------------------------------------
+
+def Scene(name, model, *args, **kargs):
+  sceneFile = findFile(model+".scm")
+  if sceneFile:
+    scene = Instance("morsel.nodes", "Scene", globals.world, name, *args,
+      **kargs)
+
+    context = inspect.stack()[1][0].f_globals
+    execfile(sceneFile, context)
+
+    return scene
+  else:
+    raise RuntimeError("Scene file '"+model+".scm' not found")
 
 #-------------------------------------------------------------------------------
 
@@ -69,3 +83,12 @@ def Platform(name, model, **kargs):
       globals.world, name, **parameters)
   else:
     raise RuntimeError("Platform file '"+model+".pfm' not found")
+
+#-------------------------------------------------------------------------------
+
+def Camera(position, object = None, **kargs):
+  if object:
+    object.attachCamera(position, **kargs)
+  else:
+    globals.world.scene.attachCamera(position, **kargs)
+  

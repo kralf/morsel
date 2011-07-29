@@ -8,7 +8,7 @@ from sys import exit
 # Submodules
 #===============================================================================
 
-from _controllers import *
+from _control import *
 from _globals import *
 from _nodes import *
 from _world import *

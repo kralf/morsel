@@ -130,3 +130,18 @@ class Node(panda.NodePath):
     return self.setProperty("collider", collider)
 
   collider = property(getCollider, setCollider)
+
+#-------------------------------------------------------------------------------
+
+  def attachCamera(self, position, lookAt = [0, 0, 0], camera = base.camera,
+      rotate = False):
+    camera.reparentTo(self)
+    camera.setPos(*position)
+    camera.lookAt(*lookAt)
+    
+    matrix = panda.Mat4(camera.getMat())
+    matrix.invertInPlace()
+    base.mouseInterfaceNode.setMat(matrix)
+    
+    if rotate == False:
+      camera.setEffect(panda.CompassEffect.make(self.world.scene))

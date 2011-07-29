@@ -79,5 +79,10 @@ class Ackermann(Base):
 #-------------------------------------------------------------------------------
 
   def updatePose(self, period):
-    self.clearTransform(self.chassis)
-    self.pose = [self.getX(), self.getY(), self.getH()]
+    self.pose = [self.chassis.getX(), self.chassis.getY(), self.chassis.getH()]
+
+#-------------------------------------------------------------------------------
+
+  def attachCamera(self, *args, **kargs):
+    self.chassis.attachCamera(*args, **kargs)
+    

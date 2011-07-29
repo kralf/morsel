@@ -1,4 +1,4 @@
-from morsel.nodes import *
+from morsel.nodes.scene import Scene
 
 #-------------------------------------------------------------------------------
 
@@ -7,9 +7,9 @@ class World:
     object.__init__(self)
     
     self.physics = physics
-    self.scene = Scene(self)
+    self.scene = None
     
-    scheduler.addTask("WorldUpdater", self.update)
+    scheduler.addTask("WorldUpdate", self.update)
     
 #-------------------------------------------------------------------------------
   

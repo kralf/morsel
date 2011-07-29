@@ -28,7 +28,7 @@ def Odometry(  name, parent, period = None):
 
 #-------------------------------------------------------------------------------
 
-def Camera( 
+def _Camera( 
     name, parent, 
     width = 512, height = 512, 
     hFov = 90, vFov = 90, near = 0.1, far = 100, depth = False, 

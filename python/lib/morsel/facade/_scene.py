@@ -52,7 +52,7 @@ def Frame( object, scale = 0.5 ):
 
 #-------------------------------------------------------------------------------
 
-def attachCamera( object, position = [ -5, 2, 5], lookAt = [0, 0, 0],
+def _attachCamera( object, position = [ -5, 2, 5], lookAt = [0, 0, 0],
                   camera = base.camera, rotate = False ):
   '''Attaches a camera to the given object'''
   camera.reparentTo( object )
