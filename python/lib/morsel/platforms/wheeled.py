@@ -1,42 +1,47 @@
 from morsel.core import *
-from morsel.nodes import Node, Mesh, Platform
-from morsel.nodes.facade import Mesh as _Mesh
+from morsel.nodes import Platform
+from morsel.nodes.facade import Mesh
 
 #-------------------------------------------------------------------------------
 
 class Wheeled(Platform):
-  def __init__(self, world, name, mesh, wheels = [], **kargs):
+  def __init__(self, world, name, mesh, chassis = None, wheels = [], **kargs):
     Platform.__init__(self, world, name, **kargs)
 
     self.numWheels = len(wheels)
     self.turningRates = [0]*self.numWheels
     self.steeringAngles = [0]*self.numWheels
 
-    self.chassis = _Mesh(name+"ChassisMesh", filename = mesh, parent = self)
+    self.mesh = Mesh(name+"Mesh", filename = mesh, parent = self)
+    self.chassis = None
     self.wheels = []
     self.wheelRadius = []
     self.wheelCircumference = []
     self.wheelYaw = []
     self.wheelRoll = []
 
-    for wheel in wheels:
-      wheelModel = self.chassis.find("**/"+wheel)
-      if not wheelModel.isEmpty():
-        wheelMesh = Mesh(world, name+"WheelMesh", parent = self)
-        wheelMesh.setTransformFromPath(wheelModel)
-        wheelMesh.setModel(wheelModel)
-        wheelModel.clearTransform()
+    chassisModel = self.mesh.find("**/"+chassis)
+    if not chassisModel.isEmpty():
+      self.chassis = Mesh(name+"ChassisMesh", model = chassisModel,
+        parent = self)
+    else:
+      raise RuntimeError("Chassis model '"+chassis+"' not found")
 
-        p0, p1 = wheelMesh.getTightBounds()
+    for wheel in wheels:
+      wheelModel = self.mesh.find("**/"+wheel)
+      if not wheelModel.isEmpty():
+        wheel = Mesh(name+"WheelMesh", model = wheelModel, parent = self)
+
+        p0, p1 = wheel.getTightBounds()
         dx = abs(p1[0]-p0[0])
         dz = abs(p1[2]-p0[2])
         radius = 0.5*max(dx, dz)
         
-        self.wheels.append(wheelMesh)
+        self.wheels.append(wheel)
         self.wheelRadius.append(radius)
         self.wheelCircumference.append(2*pi*radius)
-        self.wheelYaw.append(wheelMesh.yaw)
-        self.wheelRoll.append(wheelMesh.pitch)
+        self.wheelYaw.append(wheel.yaw)
+        self.wheelRoll.append(wheel.pitch)
       else:
         raise RuntimeError("Wheel model '"+wheel+"' not found")
     
@@ -45,22 +50,6 @@ class Wheeled(Platform):
   def getWheelDistance(self, i, j):
     vector = self.wheels[i].getPos(render)-self.wheels[j].getPos(render)
     return vector.length()
-
-#-------------------------------------------------------------------------------
-
-  def getERP(self, mass, period, damping):
-    frequency = 2*pi/period
-    delta = self.world.period
-
-    return delta*frequency/(delta*frequency+2*damping)
-
-#-------------------------------------------------------------------------------
-
-  def getCFM(self, mass, period, damping):
-    frequency = 2*pi/period
-    delta = self.world.period
-    
-    return self.getERP(mass, period, damping)/(delta*frequency**2*mass)
 
 #-------------------------------------------------------------------------------
 
@@ -78,6 +67,8 @@ class Wheeled(Platform):
 #-------------------------------------------------------------------------------
 
   def updateGraphics(self):
+    Platform.updateGraphics(self)
+
     for i in range(self.numWheels):
       self.wheels[i].yaw = self.wheelYaw[i]+self.steeringAngles[i]
       self.wheels[i].roll = self.wheelRoll[i]

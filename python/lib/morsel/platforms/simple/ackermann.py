@@ -7,9 +7,13 @@ from morsel.nodes.facade import Mesh, Solid
 
 class Ackermann(Base):
   def __init__(self, world, name, mesh, chassisSolid = None, wheelSolid = None,
-      **kargs):
+      maxSteeringRate = 0, maxAcceleration = 0, maxDeceleration = 0, **kargs):
     Base.__init__(self, world, name, mesh, **kargs)
 
+    self.maxSteeringRate = maxSteeringRate
+    self.maxAcceleration = maxAcceleration
+    self.maxDeceleration = maxDeceleration
+    
     self.chassisSolid = Solid(name+"ChassisSolid", chassisSolid, self.chassis,
       parent = self)
 
@@ -20,7 +24,7 @@ class Ackermann(Base):
 
 #-------------------------------------------------------------------------------
 
-  def updateState(self, period):
+  def updatePhysics(self, period):
     if abs(self.state[1]-self.command[1]) < self.maxSteeringRate*period:
       self.state[1] = self.command[1]
     else:
@@ -48,9 +52,6 @@ class Ackermann(Base):
     self.setRatesFromVelocities([self.state[0]]*4)
     self.steeringAngles = [self.state[1], self.state[1], 0, 0]
 
-#-------------------------------------------------------------------------------
-
-  def updatePose(self, period):
     if abs(self.state[1]) >= self.epsilon:
       radius = self.axesDistance/tan(self.state[1]*pi/180)
 
@@ -62,6 +63,9 @@ class Ackermann(Base):
       dx = self.state[0]*period
       dy = 0
 
-    self.pose[0] += dx*cos(self.pose[2]*pi/180)-dy*sin(self.pose[2]*pi/180)
-    self.pose[1] += dx*sin(self.pose[2]*pi/180)+dy*cos(self.pose[2]*pi/180)
-    self.pose[2] += dtheta*180/pi
+    self.pose[0] += dx*cos(self.pose[3]*pi/180)-dy*sin(self.pose[3]*pi/180)
+    self.pose[1] += dx*sin(self.pose[3]*pi/180)+dy*cos(self.pose[3]*pi/180)
+    self.pose[3] += dtheta*180/pi
+
+    Base.updatePhysics(self, period)
+    

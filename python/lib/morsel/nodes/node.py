@@ -113,11 +113,14 @@ class Node(panda.NodePath):
   def getParent(self):
     return panda.NodePath.getParent(self).getPythonTag("this")
 
-  def setParent(self, parent):
-    if parent:
-      self.reparentTo(parent)
-    else:
-      self.reparentTo(self.world.scene)
+  def setParent(self, parent, transform = False):
+    if not parent:
+      parent = self.world.scene
+
+    if transform:
+      self.setTransform(self.getTransform(parent))
+    
+    self.reparentTo(parent)
 
   parent = property(getParent, setParent)
 

@@ -53,7 +53,23 @@ class Ackermann(Base):
 
 #-------------------------------------------------------------------------------
 
-  def updateState(self, period):
+  def getERP(self, mass, period, damping):
+    frequency = 2*pi/period
+    delta = self.world.period
+
+    return delta*frequency/(delta*frequency+2*damping)
+
+#-------------------------------------------------------------------------------
+
+  def getCFM(self, mass, period, damping):
+    frequency = 2*pi/period
+    delta = self.world.period
+
+    return self.getERP(mass, period, damping)/(delta*frequency**2*mass)
+
+#-------------------------------------------------------------------------------
+
+  def updatePhysics(self, period):
     for i in range(self.numWheels):
       self.steeringAngles[i] = self.wheelJoints[i].getAngle1()*180/pi
       steeringRate = (-self.command[1]-self.steeringAngles[i])/period
@@ -76,10 +92,10 @@ class Ackermann(Base):
       self.turningRates[3]*self.wheelCircumference[3]/360)
     self.state[1] = 0.5*(self.steeringAngles[0]+self.steeringAngles[1])
 
-#-------------------------------------------------------------------------------
+    self.pose = [self.chassis.x, self.chassis.y, self.chassis.z,
+      self.chassis.yaw, self.chassis.pitch, self.chassis.roll]
 
-  def updatePose(self, period):
-    self.pose = [self.chassis.getX(), self.chassis.getY(), self.chassis.getH()]
+    Base.updatePhysics(self, period)
 
 #-------------------------------------------------------------------------------
 

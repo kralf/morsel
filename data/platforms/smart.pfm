@@ -1,8 +1,9 @@
 from math import pi
 
-type = "Ackermann"
+type              = "Ackermann"
 
 mesh              = "cars/lowpoly/smart.bam"
+chassis           = "chassis"
 wheels            = ["wheel_fl", "wheel_fr", "wheel_rl", "wheel_rr"]
 
 chassisSolid      = "Box"

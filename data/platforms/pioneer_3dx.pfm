@@ -1,20 +1,31 @@
 from math import pi
 
-type = "Differential"
+type                     = "Differential"
 
-arguments = dict(
-  mesh                   = "robots/pioneer3dx.bam",
-  maxSpeed               = 1.6, 
-  maxRotationalVelocity  = 1.6, 
-  
-  propulsionForce        = 1,
-  vehicleMass            = 15,
-  massOffset             = [0, 0, 0],
-  wheelMass              = 0.5,
-  wheelDistance          = 0.41,
-  wheelRadius            = 0.08,
-  pivot                  = [0, 0, 0.08],
+mesh                     = "robots/pioneer3dx.bam"
+chassis                  = "chassis"
+wheels                   = ["wheel_l", "wheel_r", "wheel_c"]
+casterCranks             = ["crank_c"]
+casterWheels             = ["wheel_c"]
 
-  maxAcceleration        = 30 / 3.6, 
-  maxDeceleration        = 300 / 3.6, 
-)
+chassisSolid             = "Box"
+chassisBody              = "Box"
+wheelSolid               = "Cylinder"
+wheelBody                = "Cylinder"
+crankSolid               = "Box"
+crankBody                = "Box"
+
+chassisMass              = 15
+chassisMassOffset        = [0, 0, 0]
+wheelMass                = 0.5
+
+maxSteeringAngle         = 0.436319*180/pi
+maxSteeringRate          = 180/pi
+
+maxTranslationalVelocity = 1.6
+maxRotationalVelocity    = 90
+maxAcceleration          = 30/3.6
+maxDeceleration          = 300/3.6
+
+propulsionForce          = 1
+brakingForce             = 3

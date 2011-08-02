@@ -5,12 +5,16 @@ import morsel.nodes
 
 #-------------------------------------------------------------------------------
 
-def Mesh(name, filename, **kargs):
-  meshFile = findFile(filename)
-  if meshFile:
-    return morsel.nodes.Mesh(globals.world, name, filename = meshFile, **kargs)
+def Mesh(name, filename = None, **kargs):
+  if filename:
+    meshFile = findFile(filename)
+    if not meshFile:
+      raise RuntimeError("Mesh file '"+filename+"' not found")
   else:
-    raise RuntimeError("Mesh file '"+filename+"' not found")
+    meshFile = None
+    
+  return morsel.nodes.Mesh(globals.world, name, filename = meshFile,
+    **kargs)
 
 #-------------------------------------------------------------------------------
 
