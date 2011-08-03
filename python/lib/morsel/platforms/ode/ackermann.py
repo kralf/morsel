@@ -1,12 +1,12 @@
 from morsel.core import *
 from morsel.platforms.ackermann import Ackermann as Base
-from morsel.nodes.facade import Mesh, Solid
+from morsel.nodes.facade import Solid
 
 #-------------------------------------------------------------------------------
 
 class Ackermann(Base):
   def __init__(self, world, name, mesh, chassisSolid = None, wheelSolid = None,
-      chassisBody = None, wheelBody = None, chassisMass = 0, wheelMass = 0,
+      chassisBody = None, wheelBody = None, chassisMass = 0, wheelMass = None,
       chassisMassOffset = [0, 0, 0], steeringForce = 0, propulsionForce = 0,
       brakingForce = 0, **kargs):
     Base.__init__(self, world, name, mesh, **kargs)
@@ -19,12 +19,21 @@ class Ackermann(Base):
       body = chassisBody, mass = chassisMass, massOffset = chassisMassOffset,
       parent = self)
 
+    self.nullBody = panda.OdeBody(world.world)
+    self.nullBody.setPosition(self.chassis.getPos(self.world.scene))
+    self.nullBody.setQuaternion(self.chassis.getQuat(self.world.scene))
+    self.nullJoint = panda.OdeFixedJoint(world.world)
+    self.nullJoint.attach(self.chassisSolid.body.body, self.nullBody)
+    self.nullJoint.set()
+
+    self.minSteeringAngles = self.getSteeringAngles(-self.maxSteeringAngle)
+    self.maxSteeringAngles = self.getSteeringAngles(self.maxSteeringAngle)
+
     self.wheelSolids = []
     self.wheelJoints = []
-    for wheel in self.wheels:
-      solid = Solid(name+"WheelSolid", wheelSolid, wheel, body = wheelBody,
-        mass = wheelMass, parent = self)
-      solid.body.body.setFiniteRotationMode(1)
+    for i in range(self.numWheels):
+      solid = Solid(name+"WheelSolid", wheelSolid, self.wheels[i],
+        body = wheelBody, mass = wheelMass[i], parent = self)
         
       joint = panda.OdeHinge2Joint(world.world)
       joint.attach(self.chassisSolid.body.body, solid.body.body)
@@ -32,52 +41,36 @@ class Ackermann(Base):
       joint.setAnchor(anchor[0], anchor[1], anchor[2])
       joint.setAxis1(0, 0, 1)
       joint.setAxis2(1, 0, 0)
-      joint.setParamFMax(0, self.steeringForce)
       joint.setParamFMax(1, self.propulsionForce)
+      joint.setParamLoStop(0, 0)
+      joint.setParamHiStop(0, 0)
       joint.setParamStopERP(0, 0.9)
       joint.setParamStopCFM(0, 0)
       joint.setParamStopERP(1, 0.9)
       joint.setParamStopCFM(1, 0)
-      joint.setParamSuspensionERP(0, self.getERP(chassisMass, 0.5, 1))
-      joint.setParamSuspensionCFM(0, self.getCFM(chassisMass, 0.5, 1))
+      joint.setParamSuspensionERP(0, world.getERP(chassisMass, 0.5, 1))
+      joint.setParamSuspensionCFM(0, world.getCFM(chassisMass, 0.5, 1))
 
-      if self.isFrontWheel(wheel):
-        joint.setParamLoStop(0, -self.maxSteeringAngle*pi/180)
-        joint.setParamHiStop(0, self.maxSteeringAngle*pi/180)
+      if self.isFrontWheel(self.wheels[i]):
+        joint.setParamFMax(0, self.steeringForce)
       else:
-        joint.setParamLoStop(0, 0)
-        joint.setParamHiStop(0, 0)
+        joint.setParamFMax(0, 0)
     
       self.wheelSolids.append(solid)
       self.wheelJoints.append(joint)
 
 #-------------------------------------------------------------------------------
-
-  def getERP(self, mass, period, damping):
-    frequency = 2*pi/period
-    delta = self.world.period
-
-    return delta*frequency/(delta*frequency+2*damping)
-
-#-------------------------------------------------------------------------------
-
-  def getCFM(self, mass, period, damping):
-    frequency = 2*pi/period
-    delta = self.world.period
-
-    return self.getERP(mass, period, damping)/(delta*frequency**2*mass)
-
-#-------------------------------------------------------------------------------
-
+    
   def updatePhysics(self, period):
+    steeringAngles = self.getSteeringAngles(-self.command[1])
+
     for i in range(self.numWheels):
       self.steeringAngles[i] = self.wheelJoints[i].getAngle1()*180/pi
-      steeringRate = (-self.command[1]-self.steeringAngles[i])/period
+      steeringError = self.steeringAngles[i]-steeringAngles[i]
+      steeringRate = -steeringError/period
       self.wheelJoints[i].setParamVel(0, steeringRate*pi/180)
-
-      axis = self.wheelJoints[i].getAxis2()
-      self.wheelSolids[i].body.body.setFiniteRotationAxis(
-        axis[0], axis[1], axis[2])
+      self.wheelJoints[i].setParamLoStop(0, steeringAngles[i]*pi/180)
+      self.wheelJoints[i].setParamHiStop(0, steeringAngles[i]*pi/180)
 
       if abs(self.command[0]) >= self.epsilon:
         self.wheelJoints[i].setParamFMax(1, self.propulsionForce)
@@ -88,12 +81,16 @@ class Ackermann(Base):
       turningRate = self.command[0]/self.wheelCircumference[i]*360
       self.wheelJoints[i].setParamVel(1, turningRate*pi/180)
 
-    self.state[0] = 0.5*(self.turningRates[2]*self.wheelCircumference[2]/360+
-      self.turningRates[3]*self.wheelCircumference[3]/360)
-    self.state[1] = 0.5*(self.steeringAngles[0]+self.steeringAngles[1])
+    self.state[0] = self.nullBody.getLinearVel().project(
+      panda.Quat(self.nullBody.getQuaternion()).xform(
+      panda.Vec3(1, 0, 0))).length()
+    self.state[1] = panda.Quat(self.nullBody.getQuaternion()).xform(
+      self.nullBody.getAngularVel())[2]*180.0/pi
 
-    self.pose = [self.chassis.x, self.chassis.y, self.chassis.z,
-      self.chassis.yaw, self.chassis.pitch, self.chassis.roll]
+    position = self.nullBody.getPosition()
+    orientation = panda.Quat(self.nullBody.getQuaternion()).getHpr()
+    self.pose = [position[0], position[1], position[2],
+      orientation[0], orientation[1], orientation[2]]
 
     Base.updatePhysics(self, period)
 

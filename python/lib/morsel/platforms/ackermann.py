@@ -15,8 +15,26 @@ class Ackermann(Wheeled):
       (-maxSteeringAngle, maxSteeringAngle)]
     Wheeled.__init__(self, world, name, mesh, limits = limits, **kargs)
 
+    self.wheelDistance = self.getWheelDistance(0, 1)
     self.axesDistance = 0.5*(self.getWheelDistance(0, 2)+
       self.getWheelDistance(1, 3))
+
+#-------------------------------------------------------------------------------
+
+  def getSteeringAngles(self, steeringAngle):
+    steeringAngles = [0]*self.numWheels
+    
+    if tan(steeringAngle*pi/180) == 0:
+      return steeringAngles
+      
+    cotLeftAngle = (1/tan(steeringAngle*pi/180)+
+      self.wheelDistance/(2*self.axesDistance))
+    cotRightAngle = cotLeftAngle-self.wheelDistance/self.axesDistance
+    
+    steeringAngles[0] = atan(1/cotLeftAngle)*180/pi
+    steeringAngles[1] = atan(1/cotRightAngle)*180/pi
+    
+    return steeringAngles
 
 #-------------------------------------------------------------------------------
 

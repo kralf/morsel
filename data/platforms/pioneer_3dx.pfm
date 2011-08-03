@@ -16,8 +16,9 @@ crankSolid               = "Box"
 crankBody                = "Box"
 
 chassisMass              = 15
-chassisMassOffset        = [0, 0, 0]
-wheelMass                = 0.5
+chassisMassOffset        = [0, 0, -0.1]
+wheelMass                = [0.5, 0.5, 0.2]
+crankMass                = [0.2]
 
 maxSteeringAngle         = 0.436319*180/pi
 maxSteeringRate          = 180/pi
@@ -27,5 +28,4 @@ maxRotationalVelocity    = 90
 maxAcceleration          = 30/3.6
 maxDeceleration          = 300/3.6
 
-propulsionForce          = 1
-brakingForce             = 3
+propulsionForce          = 250

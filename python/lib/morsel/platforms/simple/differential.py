@@ -16,14 +16,14 @@ class Differential(Base):
     self.chassisSolid = Solid(name+"ChassisSolid", chassisSolid, self.chassis,
       parent = self)
 
-    self.wheelSolids = []
-    for wheel in self.wheels:
-      self.wheelSolids.append(Solid(name+"WheelSolid", wheelSolid, wheel,
-        parent = self))
-
     self.crankSolids = []
     for crank in self.casterCranks:
       self.crankSolids.append(Solid(name+"CrankSolid", crankSolid, crank,
+        parent = self))
+        
+    self.wheelSolids = []
+    for wheel in self.wheels:
+      self.wheelSolids.append(Solid(name+"WheelSolid", wheelSolid, wheel,
         parent = self))
 
 #-------------------------------------------------------------------------------
@@ -57,20 +57,10 @@ class Differential(Base):
     dx = self.state[0]*cos(dtheta)*period
     dy = self.state[0]*sin(dtheta)*period
 
-    self.turningRates = [0]*self.numWheels
-    self.turningRates[0] = ((self.state[0]-0.5*self.wheelDistance*
-      self.state[1]*pi/180)/self.wheelRadius[0])*180/pi
-    self.turningRates[1] = ((self.state[0]+0.5*self.wheelDistance*
-      self.state[1]*pi/180)/self.wheelRadius[1])*180/pi
-
-    for i in range(len(self.casterWheels)):
-      psi = self.casterAngles[i]*pi/180
-      self.casterAngles[i] += ((1/self.casterLength[i]*(-self.state[1]*pi/180*
-        (self.casterDistance[i]*cos(psi)+self.casterLength[i])-self.state[0]*
-        sin(psi)))*180/pi*period)
-      j = self.wheels.index(self.casterWheels[i])
-      self.turningRates[j] = ((self.state[0]*cos(psi)-self.state[1]*pi/180*
-        self.casterDistance[i]*sin(psi))/self.wheelRadius[j]*180/pi)
+    casterRates = self.getCasterRates(self.state[0], self.state[1])
+    for i in range(self.numCasters):
+      self.casterAngles[i] += casterRates[i]*period
+    self.turningRates = self.getTurningRates(self.state[0], self.state[1])
 
     self.pose[0] += dx*cos(self.pose[3]*pi/180)-dy*sin(self.pose[3]*pi/180)
     self.pose[1] += dx*sin(self.pose[3]*pi/180)+dy*cos(self.pose[3]*pi/180)

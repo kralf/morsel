@@ -13,7 +13,7 @@ wheelBody         = "Cylinder"
 
 chassisMass       = 1000
 chassisMassOffset = [0, 0, -0.5]
-wheelMass         = 10
+wheelMass         = [10, 10, 12, 12]
 
 maxSteeringAngle  = 0.436319*180/pi
 maxSteeringRate   = 180/pi

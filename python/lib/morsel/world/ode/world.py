@@ -7,11 +7,12 @@ import morsel.nodes.simple
 #-------------------------------------------------------------------------------
 
 class World(Base):
-  def __init__(self, period = 0.01, gravity = -9.81):
+  def __init__(self, period = 0.01, gravity = -9.81, quickStep = False):
     Base.__init__(self, "ode")
 
     self.period = period
     self.gravity = gravity
+    self.quickStep = quickStep
     
     self.delta = 0
     self.lastTime = 0
@@ -33,6 +34,22 @@ class World(Base):
     scheduler.addTask("WorldUpdater", self.update)
   
 #-------------------------------------------------------------------------------
+
+  def getERP(self, mass, period, damping):
+    frequency = 2*pi/period
+    delta = self.period
+
+    return delta*frequency/(delta*frequency+2*damping)
+
+#-------------------------------------------------------------------------------
+
+  def getCFM(self, mass, period, damping):
+    frequency = 2*pi/period
+    delta = self.period
+
+    return self.getERP(mass, period, damping)/(delta*frequency**2*mass)
+
+#-------------------------------------------------------------------------------
   
   def update(self, time):
     self.delta += time - self.lastTime
@@ -44,7 +61,10 @@ class World(Base):
         actor.updatePhysics(self.period)
       for platform in self.scene.platforms:
         platform.updatePhysics(self.period)
-      self.world.quickStep(self.period)
+      if self.quickStep:
+        self.world.quickStep(self.period)
+      else:
+        self.world.step(self.period)
       self.collisionGroup.empty()
       self.delta -= self.period
       
