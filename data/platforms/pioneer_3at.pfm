@@ -2,7 +2,8 @@ from math import pi
 
 type                     = "Differential"
 
-mesh                     = "robots/pioneer3at.bam"
+mesh                     = "robots/pioneer_3at.bam"
+chassis                  = "chassis"
 wheels                   = ["wheel_fl", "wheel_fr", "wheel_rl", "wheel_rr"]
 
 chassisSolid             = "Box"
@@ -10,17 +11,13 @@ chassisBody              = "Box"
 wheelSolid               = "Cylinder"
 wheelBody                = "Cylinder"
 
-chassisMass              = 15
-chassisMassOffset        = [0, 0, 0]
-wheelMass                = 0.5
-
-maxSteeringAngle         = 0.436319*180/pi
-maxSteeringRate          = 180/pi
+chassisMass              = 20
+chassisMassOffset        = [0, 0, -0.1]
+wheelMass                = [1, 1, 1, 1]
 
 maxTranslationalVelocity = 1.6
-maxRotationalVelocity    = 1.6
+maxRotationalVelocity    = 90
 maxAcceleration          = 30/3.6
 maxDeceleration          = 300/3.6
 
-propulsionForce          = 1
-brakingForce             = 3
+propulsionForce          = 1000
