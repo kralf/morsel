@@ -1,20 +1,29 @@
 from math import pi
 
-type = "Differential"
+type                     = "Differential"
 
-arguments = dict(
-  mesh                   = "robots/robox.bam",
-  maxSpeed               = 1.6, 
-  maxRotationalVelocity  = 1.6, 
-  
-  propulsionForce        = 2,
-  vehicleMass            = 70,
-  massOffset             = [0, 0, 0],
-  wheelMass              = 0.5,
-  wheelDistance          = 0.54,
-  wheelRadius            = 0.09,
-  pivot                  = [0, 0, 0.08],
+mesh                     = "robots/robox.bam"
+chassis                  = "chassis"
+wheels                   = ["wheel_l", "wheel_r", "wheel_cf", "wheel_cr"]
+casterCranks             = ["crank_cf", "crank_cr"]
+casterWheels             = ["wheel_cf", "wheel_cr"]
 
-  maxAcceleration        = 30 / 3.6, 
-  maxDeceleration        = 300 / 3.6, 
-)
+chassisSolid             = "Cylinder"
+chassisBody              = "Cylinder"
+wheelSolid               = "Cylinder"
+wheelBody                = "Cylinder"
+crankSolid               = "Box"
+crankBody                = "Box"
+
+chassisMass              = 70
+chassisMassOffset        = [0, 0, -0.6]
+wheelMass                = [0.5, 0.5, 0.2, 0.2]
+wheelSuspension          = [0.01, 0.01, 0.1, 0.1]
+crankMass                = [0.2, 0.2]
+
+maxTranslationalVelocity = 1.6
+maxRotationalVelocity    = 90
+maxAcceleration          = 30/3.6
+maxDeceleration          = 300/3.6
+
+propulsionForce          = 750

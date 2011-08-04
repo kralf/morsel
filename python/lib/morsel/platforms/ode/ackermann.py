@@ -7,10 +7,11 @@ from morsel.nodes.facade import Solid
 class Ackermann(Base):
   def __init__(self, world, name, mesh, chassisSolid = None, wheelSolid = None,
       chassisBody = None, wheelBody = None, chassisMass = 0, wheelMass = None,
-      chassisMassOffset = [0, 0, 0], steeringForce = 0, propulsionForce = 0,
-      brakingForce = 0, **kargs):
+      wheelSuspension = None, chassisMassOffset = [0, 0, 0], steeringForce = 0,
+      propulsionForce = 0, brakingForce = 0, **kargs):
     Base.__init__(self, world, name, mesh, **kargs)
-    
+
+    self.wheelSuspension = wheelSuspension
     self.steeringForce = steeringForce
     self.propulsionForce = propulsionForce
     self.brakingForce = brakingForce
@@ -48,8 +49,10 @@ class Ackermann(Base):
       joint.setParamStopCFM(0, 0)
       joint.setParamStopERP(1, 0.9)
       joint.setParamStopCFM(1, 0)
-      joint.setParamSuspensionERP(0, world.getERP(chassisMass, 0.5, 1))
-      joint.setParamSuspensionCFM(0, world.getCFM(chassisMass, 0.5, 1))
+      joint.setParamSuspensionERP(0, world.getERP(chassisMass,
+        wheelSuspension[i], 1))
+      joint.setParamSuspensionCFM(0, world.getCFM(chassisMass,
+        wheelSuspension[i], 1))
 
       if self.isFrontWheel(self.wheels[i]):
         joint.setParamFMax(0, self.steeringForce)

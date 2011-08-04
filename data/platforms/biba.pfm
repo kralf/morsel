@@ -1,20 +1,29 @@
 from math import pi
 
-type = "Differential"
+type                     = "Differential"
 
-arguments = dict(
-  mesh                   = "robots/biba.bam",
-  maxSpeed               = 10 / 3.6,
-  maxRotationalVelocity  = 1.6,
+mesh                     = "robots/biba.bam"
+chassis                  = "chassis"
+wheels                   = ["wheel_l", "wheel_r", "wheel_c"]
+casterCranks             = ["crank_c"]
+casterWheels             = ["wheel_c"]
 
-  propulsionForce        = 1,
-  vehicleMass            = 15,
-  massOffset             = [0, 0, 0],
-  wheelMass              = 1.0,
-  wheelDistance          = 0.5,
-  wheelRadius            = 0.178 / 2,
-  pivot                  = [0, 0, 0.08],
+chassisSolid             = "Box"
+chassisBody              = "Box"
+wheelSolid               = "Cylinder"
+wheelBody                = "Cylinder"
+crankSolid               = "Box"
+crankBody                = "Box"
 
-  maxAcceleration        = 10 / 3.6,
-  maxDeceleration        = 100 / 3.6, 
-)
+chassisMass              = 50
+chassisMassOffset        = [-0.2, 0, -0.2]
+wheelMass                = [0.5, 0.5, 0.2]
+wheelSuspension          = [0.01, 0.01, 0.1]
+crankMass                = [0.2]
+
+maxTranslationalVelocity = 1.6
+maxRotationalVelocity    = 90
+maxAcceleration          = 30/3.6
+maxDeceleration          = 300/3.6
+
+propulsionForce          = 750

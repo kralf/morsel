@@ -18,6 +18,7 @@ crankBody                = "Box"
 chassisMass              = 15
 chassisMassOffset        = [0, 0, -0.1]
 wheelMass                = [0.5, 0.5, 0.2]
+wheelSuspension          = [0.01, 0.01, 0.1]
 crankMass                = [0.2]
 
 maxTranslationalVelocity = 1.6

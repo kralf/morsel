@@ -7,10 +7,12 @@ from morsel.nodes.facade import Solid
 class Differential(Base):
   def __init__(self, world, name, mesh, chassisSolid = None, wheelSolid = None,
       crankSolid = None, chassisBody = None, wheelBody = None,
-      crankBody = None, chassisMass = 0, wheelMass = [], crankMass = [],
-      chassisMassOffset = [0, 0, 0], propulsionForce = 0, **kargs):
+      crankBody = None, chassisMass = 0, wheelMass = None,
+      wheelSuspension = None, crankMass = None, chassisMassOffset = [0, 0, 0],
+      propulsionForce = 0, **kargs):
     Base.__init__(self, world, name, mesh, **kargs)
 
+    self.wheelSuspension = wheelSuspension
     self.propulsionForce = propulsionForce
     
     self.chassisSolid = Solid(name+"ChassisSolid", chassisSolid, self.chassis,
@@ -69,8 +71,10 @@ class Differential(Base):
       joint.setParamStopCFM(0, 0)
       joint.setParamStopERP(1, 0.9)
       joint.setParamStopCFM(1, 0)
-      joint.setParamSuspensionERP(0, world.getERP(chassisMass, 0.05, 1))
-      joint.setParamSuspensionCFM(0, world.getCFM(chassisMass, 0.05, 1))
+      joint.setParamSuspensionERP(0, world.getERP(chassisMass,
+        wheelSuspension[i], 1))
+      joint.setParamSuspensionCFM(0, world.getCFM(chassisMass,
+        wheelSuspension[i], 1))
 
       self.wheelSolids.append(solid)
       self.wheelJoints.append(joint)

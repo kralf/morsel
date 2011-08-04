@@ -17,16 +17,6 @@ class Differential(Wheeled):
     Wheeled.__init__(self, world, name, mesh, wheels = wheels, limits = limits,
       **kargs)
 
-    self.wheelAngles = []
-    for i in range(self.numWheels):
-      wheelPosition = panda.Vec3(self.chassis.getRelativePoint(self.wheels[i],
-        panda.Vec3(0, 0, 0)))
-      wheelPosition[2] = 0
-      wheelPosition.normalize()
-      
-      self.wheelAngles.append(panda.Vec3(1, 0, 0).signedAngleDeg(
-        wheelPosition, panda.Vec3(0, 0, 1)))
-
     self.numCasters = len(casterWheels)
     self.casterAngles = [0]*self.numCasters
     
@@ -57,6 +47,24 @@ class Differential(Wheeled):
       else:
         raise RuntimeError("Crank model '"+casterCranks[i]+"' not found")
 
+    self.crankAngles = []
+    for i in range(self.numCasters):
+      casterPosition = panda.Vec3(self.chassis.getRelativePoint(
+        self.casterCranks[i], panda.Vec3(0, 0, 0)))
+      casterPosition[2] = 0
+      casterPosition.normalize()
+      self.crankAngles.append(panda.Vec3(1, 0, 0).signedAngleDeg(
+        casterPosition, panda.Vec3(0, 0, 1)))
+
+    self.wheelAngles = []
+    for i in range(self.numWheels):
+      wheelPosition = panda.Vec3(self.chassis.getRelativePoint(self.wheels[i],
+        panda.Vec3(0, 0, 0)))
+      wheelPosition[2] = 0
+      wheelPosition.normalize()
+      self.wheelAngles.append(panda.Vec3(1, 0, 0).signedAngleDeg(
+        wheelPosition, panda.Vec3(0, 0, 1)))
+
     self.wheelDistance = self.getWheelDistance(0, 1)
 
 #-------------------------------------------------------------------------------
@@ -66,7 +74,8 @@ class Differential(Wheeled):
 
     for i in range(self.numCasters):
       psi = self.casterAngles[i]*pi/180
-      casterRates[i] = ((1/self.casterLength[i]*(-rotationalVelocity*
+      casterRates[i] = ((1/self.casterLength[i]*(
+        cos(self.crankAngles[i]*pi/180)*rotationalVelocity*
         pi/180*(self.casterDistance[i]*cos(psi)+self.casterLength[i])-
         translationalVelocity*sin(psi)))*180/pi)
 

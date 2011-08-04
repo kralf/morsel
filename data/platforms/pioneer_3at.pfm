@@ -14,6 +14,7 @@ wheelBody                = "Cylinder"
 chassisMass              = 20
 chassisMassOffset        = [0, 0, -0.1]
 wheelMass                = [1, 1, 1, 1]
+wheelSuspension          = [0.01, 0.01, 0.01, 0.01]
 
 maxTranslationalVelocity = 1.6
 maxRotationalVelocity    = 90
