@@ -1,4 +1,4 @@
-#include "laser_viewer.h"
+#include "laser_view.h"
 
 #include <geomVertexWriter.h>
 #include <geomVertexFormat.h>
@@ -12,7 +12,7 @@ using namespace std;
 
 //------------------------------------------------------------------------------
 
-LaserViewer::LaserViewer(
+LaserView::LaserView(
   std::string name,
   RangeSensor & laser,
   float r,
@@ -20,6 +20,7 @@ LaserViewer::LaserViewer(
   float b,
   float a,
   bool points,
+  bool lines,
   bool colorInfo
 ) : NodePath( name ),
     _name( name ),
@@ -27,6 +28,7 @@ LaserViewer::LaserViewer(
     _color( r, g, b, a ),
     _node( new GeomNode( name + "GeomNode" ) ),
     _points( points ),
+    _lines( lines ),
     _colorInfo( colorInfo )
 {
   set_two_sided( true );
@@ -39,14 +41,14 @@ LaserViewer::LaserViewer(
 
 //------------------------------------------------------------------------------
 
-LaserViewer::~LaserViewer()
+LaserView::~LaserView()
 {
 }
 
 //------------------------------------------------------------------------------
 
 bool
-LaserViewer::update( double time )
+LaserView::update( double time )
 {
   if ( ! is_hidden() )
     updateRays();
@@ -58,7 +60,7 @@ LaserViewer::update( double time )
 //------------------------------------------------------------------------------
 
 void
-LaserViewer::setupRendering()
+LaserView::setupRendering()
 {
   _geomData = new GeomVertexData( "geometry", GeomVertexFormat::get_v3c4(), Geom::UH_dynamic );
 
@@ -72,7 +74,7 @@ LaserViewer::setupRendering()
     c.add_data4f( 0, 1, 1, 1 );
   }
 
-  if ( ! _points ) {
+  if ( _lines ) {
     PT(GeomLines) line = new GeomLines( GeomLines( Geom::UH_static ) );
     for ( int i = 0; i < _laser.rayCount(); i++ ) {
       line->add_vertex( 0 );
@@ -83,7 +85,9 @@ LaserViewer::setupRendering()
     PT(Geom) geom = new Geom( _geomData );
     geom->add_primitive( line );
     _node->add_geom( geom );
-  } else {
+  }
+
+  if ( _points ) {
     PT(GeomPoints) points = new GeomPoints( GeomPoints( Geom::UH_static ) );
     for ( int i = 0; i < _laser.rayCount(); i++ ) {
       points->add_vertex( i );
@@ -100,7 +104,7 @@ LaserViewer::setupRendering()
 //------------------------------------------------------------------------------
 
 void
-LaserViewer::updateRays()
+LaserView::updateRays()
 {
   GeomVertexWriter v( _geomData, "vertex" );
   v.set_row( 1 );
@@ -113,6 +117,7 @@ LaserViewer::updateRays()
     double y = ray.y();
     double z = ray.z();
     double r = ray.radius();
+
     double red   = ray.red();
     double green = ray.green();
     double blue  = ray.blue();
@@ -123,9 +128,9 @@ LaserViewer::updateRays()
       x   = 0;
       y   = 0;
     }
-    v.set_data3f( x, y , z );
+    v.set_data3f( x, y, z );
     if ( _colorInfo )
-      c.set_data4f( red, green, blue, 0.5 );
+      c.set_data4f( red, green, blue, _color[3] );
     else
       c.set_data4f( _color[0], _color[1], _color[2], val );
   }

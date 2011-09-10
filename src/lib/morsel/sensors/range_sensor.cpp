@@ -18,7 +18,8 @@ RangeSensor::RangeSensor(
   int verticalRays,
   double minRange,
   double maxRange,
-  double cameraMaxFOV,
+  double cameraMaxHorizontalFOV,
+  double cameraMaxVerticalFOV,
   bool colorInfo )
   : NodePath( name ),
     _name( name ),
@@ -30,7 +31,8 @@ RangeSensor::RangeSensor(
     _maxRange( maxRange ),
     _rayCount( horizontalRays * verticalRays ),
     _rays( new RangeSensor::Ray[_rayCount] ),
-    _cameraMaxFOV( cameraMaxFOV ),
+    _cameraMaxHorizontalFOV( cameraMaxHorizontalFOV ),
+    _cameraMaxVerticalFOV( cameraMaxVerticalFOV ),
     _colorInfo( colorInfo )
 {
   setupCameras();
@@ -86,8 +88,8 @@ RangeSensor::update( double time )
       ray2._row    = ray1.row;
       ray2._column = ray1.column;
       ray2._index  = rayIndex;
-      ray2._vAngle = ray1.vAngle;
-      ray2._hAngle = ray1.hAngle;
+      ray2._hAngle = atan2( p[1], p[0] );
+      ray2._vAngle = atan2( p[2], sqrt( p[0] * p[0] + p[1] * p[1] ) );
       ray2._x      = p[0];
       ray2._y      = p[1];
       ray2._z      = p[2];
@@ -185,6 +187,7 @@ RangeSensor::rayLength( int index )
 void
 RangeSensor::computeParameters(
   double fov,
+  double cameraMaxFOV,
   int rayCount,
   deque<double> & fovs,
   deque<double> & angles,
@@ -196,14 +199,14 @@ RangeSensor::computeParameters(
   rayCounts.clear();
   double rayFov   = fov / rayCount;
 
-  int camRayCount = min( static_cast<int>( _cameraMaxFOV / rayFov ), rayCount );
+  int camRayCount = min( static_cast<int>( cameraMaxFOV / rayFov ), rayCount );
   if ( (rayCount - camRayCount) % 2 )
     camRayCount -= 1;
   rayCounts.push_front( camRayCount );
   fovs.push_front( camRayCount * rayFov );
 
-  for ( int i = (rayCount - camRayCount )/ 2; i > 0; ) {
-    camRayCount = min( static_cast<int>( _cameraMaxFOV / rayFov ), i );
+  for ( int i = (rayCount - camRayCount ) / 2; i > 0; ) {
+    camRayCount = min( static_cast<int>( cameraMaxFOV / rayFov ), i );
     rayCounts.push_front( camRayCount );
     fovs.push_front( camRayCount * rayFov );
     rayCounts.push_back( camRayCount );
@@ -226,12 +229,14 @@ RangeSensor::setupCameras()
   deque<double> hFovs;
   deque<double> hAngles;
   deque<int> hRayCounts;
-  computeParameters( _horizontalFOV, _horizontalRays, hFovs, hAngles, hRayCounts );
+  computeParameters( _horizontalFOV, _cameraMaxHorizontalFOV, _horizontalRays,
+    hFovs, hAngles, hRayCounts );
 
   deque<double> vFovs;
   deque<double> vAngles;
   deque<int> vRayCounts;
-  computeParameters( _verticalFOV, _verticalRays, vFovs, vAngles, vRayCounts );
+  computeParameters( _verticalFOV, _cameraMaxVerticalFOV, _verticalRays,
+    vFovs, vAngles, vRayCounts );
 
   for ( int i = 0; i < hFovs.size(); i++ ) {
     for ( int j = 0; j < vFovs.size(); j++ ) {

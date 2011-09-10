@@ -4,15 +4,15 @@ from morsel.nodes import Node
 #-------------------------------------------------------------------------------
 
 class Body(Node):
-  def __init__(self, world, name, solid, mass = None, position = [0, 0, 0],
-      massOffset = [0, 0, 0], **kargs):
+  def __init__(self, world, name, solid = None, mass = None,
+      position = [0, 0, 0], massOffset = [0, 0, 0], **kargs):
     self.solid = solid
     self.body = panda.OdeBody(world.world)
     self.mass = mass
 
     if self.mass:
       self.body.setMass(self.mass)
-    if self.solid.geometry:
+    if self.solid and self.solid.geometry:
       self.solid.geometry.body = self.body
       self.solid.geometry.positionOffset = [-p_i for p_i in massOffset]
 

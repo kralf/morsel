@@ -1,8 +1,6 @@
 from morsel.core import *
 from morsel.world import World as Base
-
-import morsel.nodes
-import morsel.nodes.simple
+from morsel.nodes.solid import Solid
 
 #-------------------------------------------------------------------------------
 
@@ -14,10 +12,8 @@ class World(Base):
     self.gravity = gravity
     self.quickStep = quickStep
     
-    self.delta = 0
-    self.lastTime = 0
-    self.world = None
-    
+    self.solids = []
+
     self.world = panda.OdeWorld()
     self.world.setGravity(0, 0, self.gravity)
     self.world.initSurfaceTable(1)
@@ -30,8 +26,6 @@ class World(Base):
     self.space.enable()
     self.collisionGroup = panda.OdeJointGroup()
     self.space.setAutoCollideJointGroup(self.collisionGroup)
-
-    scheduler.addTask("WorldUpdater", self.update)
   
 #-------------------------------------------------------------------------------
 
@@ -50,27 +44,38 @@ class World(Base):
     return self.getERP(mass, period, damping)/(delta*frequency**2*mass)
 
 #-------------------------------------------------------------------------------
-  
-  def update(self, time):
-    self.delta += time - self.lastTime
-    update = self.delta > self.period
-    
-    while self.delta > self.period:
-      contactPoints = self.space.autoCollide()
-      for actor in self.scene.actors:
-        actor.updatePhysics(self.period)
-      for platform in self.scene.platforms:
-        platform.updatePhysics(self.period)
-      if self.quickStep:
-        self.world.quickStep(self.period)
-      else:
-        self.world.step(self.period)
-      self.collisionGroup.empty()
-      self.delta -= self.period
+
+  def registerNode(self, node):
+    type = node.getPythonTag("type")
+
+    if issubclass(type, Solid):
+      self.solids.append(node)
+
+    Base.registerNode(self, node)
       
-    if update:
-      for solid in self.scene.solids:
-        solid.update()
-        
-    self.lastTime = time
-    return True
+#-------------------------------------------------------------------------------
+  
+  def updatePhysics(self, period):
+    contactPoints = self.space.autoCollide()
+    for actor in self.actors:
+      actor.updatePhysics(self.period)
+    for platform in self.platforms:
+      platform.updatePhysics(self.period)
+    for sensor in self.sensors:
+      sensor.updatePhysics(self.period)
+    if self.quickStep:
+      self.world.quickStep(self.period)
+    else:
+      self.world.step(self.period)
+    self.collisionGroup.empty()
+      
+#-------------------------------------------------------------------------------
+
+  def updateGraphics(self):
+    for solid in self.solids:
+      solid.update()
+    for sensor in self.sensors:
+      sensor.updateGraphics()
+    for view in self.views:
+      view.update()
+

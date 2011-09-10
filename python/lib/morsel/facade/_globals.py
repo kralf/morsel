@@ -1,11 +1,9 @@
-from morsel.config  import *
-from morsel.core    import *
-from morsel.gui     import *
+from morsel.config import *
+from morsel.core import *
+from morsel.gui import *
 from morsel.console import interactiveConsole as Console
 
 #-------------------------------------------------------------------------------
-
-camera = base.camera
 
 objectProperties = ObjectProperties()
 
@@ -22,5 +20,6 @@ addMorselPath("egg", "models")
 addMorselPath("trk", "tracks")
 addMorselPath("scm", "scenes")
 addMorselPath("acm", "actors")
+addMorselPath("sem", "sensors")
 addMorselPath("pfm", "platforms")
 addMorselPath("ctl", "control")

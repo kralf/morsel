@@ -13,6 +13,7 @@ class Node(panda.NodePath):
     self.type = self.__class__
     self.this = self
     self.world = world
+    self.world.registerNode(self)
 
     self.parent = parent
     self.position = position

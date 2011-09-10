@@ -1,31 +1,33 @@
-#ifndef LASER_VIEWER_H
-#define LASER_VIEWER_H
+#ifndef LASER_VIEW_H
+#define LASER_VIEW_H
 
 #include "morsel/morsel.h"
 #include "morsel/sensors/range_sensor.h"
 
 #include <nodePath.h>
 
-class LaserViewer : public NodePath
+class LaserView : public NodePath
 {
 public:
-  LaserViewer(
+  LaserView(
     std::string name,
     RangeSensor & laser,
     float r,
     float g,
     float b,
     float a,
-    bool points = false,
+    bool points = true,
+    bool lines = false,
     bool colorInfo = false
   );
-  virtual ~LaserViewer();
+  virtual ~LaserView();
   bool update( double time );
 private:
   std::string         _name;
   RangeSensor &       _laser;
   Colorf              _color;
   bool                _points;
+  bool                _lines;
   bool                _colorInfo;
   PointerTo<GeomNode>        _node;
   PointerTo<GeomVertexData>  _geomData;
@@ -33,4 +35,4 @@ private:
   void updateRays();
 };
 
-#endif /*LASER_VIEWER_H*/
+#endif /*LASER_VIEW_H*/

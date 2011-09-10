@@ -30,9 +30,9 @@ def Solid(name, type, mesh, *args, **kargs):
 
 #-------------------------------------------------------------------------------
 
-def Body(name, type, solid, *args, **kargs):
+def Body(name, type, *args, **kargs):
   return Instance("morsel.nodes."+globals.world.physics+".bodies", type,
-    globals.world, name, solid, *args, **kargs)
+    globals.world, name, *args, **kargs)
 
 #-------------------------------------------------------------------------------
 
@@ -73,6 +73,23 @@ def Actor(name, model, **kargs):
 
 #-------------------------------------------------------------------------------
 
+def Sensor(name, model, **kargs):
+  sensorFile = findFile(model+".sem")
+  if sensorFile:
+    context = {}
+    parameters = kargs
+    execfile(sensorFile, context, parameters)
+
+    type = parameters["type"]
+    del parameters["type"]
+
+    return Instance("morsel.sensors."+globals.world.physics, type,
+      globals.world, name, **parameters)
+  else:
+    raise RuntimeError("Sensor file '"+model+".sem' not found")
+
+#-------------------------------------------------------------------------------
+
 def Platform(name, model, **kargs):
   platformFile = findFile(model+".pfm")
   if platformFile:
@@ -90,9 +107,13 @@ def Platform(name, model, **kargs):
 
 #-------------------------------------------------------------------------------
 
+def View(name, type, *args, **kargs):
+  return Instance("morsel.views", type, globals.world, name, *args, **kargs)
+
+#-------------------------------------------------------------------------------
+
 def Camera(position, object = None, **kargs):
   if object:
     object.attachCamera(position, **kargs)
   else:
     globals.world.scene.attachCamera(position, **kargs)
-  

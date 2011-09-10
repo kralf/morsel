@@ -14,6 +14,4 @@ from _nodes import *
 from _world import *
 from _scene import *
 from _screenshot import *
-from _sensors import *
 from _utility import *
-from _viewers import *

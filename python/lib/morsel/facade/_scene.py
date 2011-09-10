@@ -3,21 +3,6 @@ import morsel.world
 
 #-------------------------------------------------------------------------------
 
-def Mesh_( name, filename, position = [0, 0, 0], orientation = [0, 0, 0],
-          scale = 1, two_sided = False ):
-  if world != None:
-    mesh = world.addMesh( name, filename )
-    mesh.setPos( *position )
-    mesh.setHpr( *orientation )
-    mesh.setScale( scale )
-    mesh.setTwoSided( two_sided )
-      
-    return mesh
-  else:
-    raise RuntimeError( "World not initialized" )  
-
-#-------------------------------------------------------------------------------
-
 def PointLight( name, position, color = panda.Vec4( 1, 1, 1, 1 ),
                 attenuation = False ):
   light = panda.PointLight( name )
@@ -49,20 +34,6 @@ def Frame( object, scale = 0.5 ):
     frame.node().adjustDrawMask( panda.PandaNode.getAllCameraMask(),
       panda.BitMask32( '001' ), panda.BitMask32( '0' ) )
     return frame
-
-#-------------------------------------------------------------------------------
-
-def _attachCamera( object, position = [ -5, 2, 5], lookAt = [0, 0, 0],
-                  camera = base.camera, rotate = False ):
-  '''Attaches a camera to the given object'''
-  camera.reparentTo( object )
-  camera.setPos( *position )
-  camera.lookAt( *lookAt )
-  mat = panda.Mat4( camera.getMat() )
-  mat.invertInPlace()
-  base.mouseInterfaceNode.setMat( mat )
-  if rotate == False:
-    camera.setEffect( panda.CompassEffect.make(render) )
 
 #-------------------------------------------------------------------------------
 

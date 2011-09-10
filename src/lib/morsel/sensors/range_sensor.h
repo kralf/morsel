@@ -49,7 +49,8 @@ public:
     int verticalRays,
     double minRange,
     double maxRange,
-    double cameraMaxFOV = 60,
+    double cameraMaxHorizontalFOV = 60,
+    double cameraMaxVerticalFOV = 60,
     bool colorInfo = false
   );
   virtual ~RangeSensor();
@@ -75,7 +76,8 @@ private:
   double      _minRange;
   double      _maxRange;
   int         _rayCount;
-  double      _cameraMaxFOV;
+  double      _cameraMaxHorizontalFOV;
+  double      _cameraMaxVerticalFOV;
   bool        _colorInfo;
 
   Ray     *   _rays;
@@ -83,6 +85,7 @@ private:
 
   void computeParameters(
     double fov,
+    double cameraMaxFOV,
     int rayCount,
     std::deque<double> & fovs,
     std::deque<double> & angles,

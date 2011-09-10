@@ -4,7 +4,9 @@ from mesh import Mesh
 from solid import Solid
 from static import Static
 from actor import Actor
+from sensor import Sensor
 from platform import Platform
+from view import View
 
 #-------------------------------------------------------------------------------
 
@@ -39,6 +41,7 @@ class Scene(Node):
   statics = property(getStatics)
 
 #-------------------------------------------------------------------------------
+
   def getActors(self):
     return Iterator(self, Actor).generator
 
@@ -46,10 +49,24 @@ class Scene(Node):
 
 #-------------------------------------------------------------------------------
 
+  def getSensors(self):
+    return Iterator(self, Sensor).generator
+
+  sensors = property(getSensors)
+
+#-------------------------------------------------------------------------------
+
   def getPlatforms(self):
     return Iterator(self, Platform).generator
 
   platforms = property(getPlatforms)
+
+#-------------------------------------------------------------------------------
+
+  def getViews(self):
+    return Iterator(self, View).generator
+
+  views = property(getViews)
 
 #-------------------------------------------------------------------------------
 

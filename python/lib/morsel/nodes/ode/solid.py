@@ -43,6 +43,6 @@ class Solid(Base):
       self.body.update()
     if self.display:
       self.display.setPosQuat(self.geometry.getPos(), self.geometry.getQuat())
-    if self.geometry:
+    if self.body:
       self.mesh.setPosQuat(self.geometry, self.positionOffset,
         self.orientationOffset)

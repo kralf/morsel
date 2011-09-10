@@ -1,6 +1,6 @@
 from morsel.core import *
 from morsel.platforms.differential import Differential as Base
-from morsel.nodes.facade import Solid
+from morsel.nodes.facade import Solid, Body
 
 #-------------------------------------------------------------------------------
 
@@ -19,13 +19,10 @@ class Differential(Base):
       body = chassisBody, mass = chassisMass, massOffset = chassisMassOffset,
       parent = self)
 
-    self.nullBody = panda.OdeBody(world.world)
-    self.nullBody.setPosition(self.chassisSolid.body.body.getPosition())
-    self.nullBody.setQuaternion(panda.Quat(
-      self.chassisSolid.body.body.getQuaternion()))
-    self.nullJoint = panda.OdeFixedJoint(world.world)
-    self.nullJoint.attach(self.chassisSolid.body.body, self.nullBody)
-    self.nullJoint.set()
+    self.body = Body(name+"Body", "Empty", parent = self.chassis)
+    joint = panda.OdeFixedJoint(world.world)
+    joint.attach(self.chassisSolid.body.body, self.body.body)
+    joint.set()
 
     self.crankSolids = []
     self.crankJoints = []
@@ -91,14 +88,14 @@ class Differential(Base):
       if not self.isCasterWheel(self.wheels[i]):
         self.wheelJoints[i].setParamVel(1, turningRates[i]*pi/180)
 
-    self.state[0] = self.nullBody.getLinearVel().project(
-      panda.Quat(self.nullBody.getQuaternion()).xform(
+    self.state[0] = self.body.body.getLinearVel().project(
+      panda.Quat(self.body.body.getQuaternion()).xform(
       panda.Vec3(1, 0, 0))).length()
-    self.state[1] = panda.Quat(self.nullBody.getQuaternion()).xform(
-      self.nullBody.getAngularVel())[2]*180.0/pi
+    self.state[1] = panda.Quat(self.body.body.getQuaternion()).xform(
+      self.body.body.getAngularVel())[2]*180.0/pi
 
-    position = self.nullBody.getPosition()
-    orientation = panda.Quat(self.nullBody.getQuaternion()).getHpr()
+    position = self.body.body.getPosition()
+    orientation = panda.Quat(self.body.body.getQuaternion()).getHpr()
     self.pose = [position[0], position[1], position[2],
       orientation[0], orientation[1], orientation[2]]
 

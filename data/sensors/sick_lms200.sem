@@ -1,0 +1,11 @@
+type         = "RangeSensor"
+
+mesh         = "sensors/sick_lms200.bam"
+solid        = "Box"
+body         = "Box"
+mass         = 4.5
+
+fieldOfView  = [180.5, 0]
+resolution   = [0.5, 0.5]
+rangeLimits  = [0.1, 15]
+acquireColor = False

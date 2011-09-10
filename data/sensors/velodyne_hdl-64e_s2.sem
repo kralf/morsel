@@ -1,0 +1,11 @@
+type         = "RangeSensor"
+
+mesh         = "sensors/velodyne_hdl-64e_s2.bam"
+solid        = "Box"
+body         = "Box"
+mass         = 30
+
+fieldOfView  = [360, 26.8]
+resolution   = [0.5, 0.4]
+rangeLimits  = [0.2, 30]
+acquireColor = False

@@ -1,0 +1,11 @@
+type         = "RangeSensor"
+
+mesh         = "sensors/ibeo_alasca_xt.bam"
+solid        = "Box"
+body         = "Box"
+mass         = 3.0
+
+fieldOfView  = [180, 3.2]
+resolution   = [0.5, 0.8]
+rangeLimits  = [0.2, 25]
+acquireColor = False
