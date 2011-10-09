@@ -1,9 +1,10 @@
 #include "range_sensor.h"
+#include "morsel/sensors/perspective_range_camera.h"
+#include "morsel/sensors/spherical_range_camera.h"
 
 #include <lpoint3.h>
 #include <lvecBase3.h>
 #include <numeric>
-#include <cmath>
 #include <sstream>
 
 using namespace std;
@@ -12,27 +13,41 @@ using namespace std;
 
 RangeSensor::RangeSensor(
   std::string name,
-  double horizontalFOV,
-  double verticalFOV,
-  int horizontalRays,
-  int verticalRays,
+  double horizontalMinAngle,
+  double horizontalMaxAngle,
+  double verticalMinAngle,
+  double verticalMaxAngle,
+  double horizontalResolution,
+  double verticalResolution,
   double minRange,
   double maxRange,
   double cameraMaxHorizontalFOV,
   double cameraMaxVerticalFOV,
+  int cameraHorizontalResolution,
+  int cameraVerticalResolution,
+  bool spherical,
   bool colorInfo )
   : NodePath( name ),
     _name( name ),
-    _horizontalFOV( horizontalFOV ),
-    _verticalFOV( verticalFOV ),
-    _horizontalRays( horizontalRays ),
-    _verticalRays( verticalRays ),
+    _horizontalMinAngle( horizontalMinAngle ),
+    _horizontalMaxAngle( horizontalMaxAngle ),
+    _verticalMinAngle( verticalMinAngle ),
+    _verticalMaxAngle( verticalMaxAngle ),
+    _horizontalResolution( horizontalResolution ),
+    _verticalResolution( verticalResolution ),
     _minRange( minRange ),
     _maxRange( maxRange ),
-    _rayCount( horizontalRays * verticalRays ),
+    _horizontalFOV( horizontalMaxAngle-horizontalMinAngle ),
+    _verticalFOV( verticalMaxAngle-verticalMinAngle ),
+    _horizontalRays( floor( _horizontalFOV / horizontalResolution ) ),
+    _verticalRays( floor( _verticalFOV / verticalResolution ) ),
+    _rayCount( _horizontalRays * _verticalRays ),
     _rays( new RangeSensor::Ray[_rayCount] ),
     _cameraMaxHorizontalFOV( cameraMaxHorizontalFOV ),
     _cameraMaxVerticalFOV( cameraMaxVerticalFOV ),
+    _cameraHorizontalResolution( cameraHorizontalResolution ),
+    _cameraVerticalResolution( cameraVerticalResolution ),
+    _spherical( spherical ),
     _colorInfo( colorInfo )
 {
   setupCameras();
@@ -177,8 +192,23 @@ RangeSensor::rayLength( int index )
   return _rays[index]._radius;
 }
 
+//------------------------------------------------------------------------------
 
+void
+RangeSensor::showFrustums()
+{
+  for ( int i = 0; i < _cameras.size(); ++i )
+    _cameras[i]->showFrustum();
+}
 
+//------------------------------------------------------------------------------
+
+void
+RangeSensor::hideFrustums()
+{
+  for ( int i = 0; i < _cameras.size(); ++i )
+    _cameras[i]->hideFrustum();
+}
 
 //------------------------------------------------------------------------------
 // Private methods
@@ -186,9 +216,10 @@ RangeSensor::rayLength( int index )
 
 void
 RangeSensor::computeParameters(
-  double fov,
-  double cameraMaxFOV,
+  double minAngle,
+  double maxAngle,
   int rayCount,
+  double cameraMaxFOV,
   deque<double> & fovs,
   deque<double> & angles,
   deque<int> & rayCounts
@@ -197,26 +228,22 @@ RangeSensor::computeParameters(
   fovs.clear();
   angles.clear();
   rayCounts.clear();
-  double rayFov   = fov / rayCount;
+  
+  double fov = maxAngle - minAngle;
+  double rayFov = fov / rayCount;
+  int camCount = ceil( fov / cameraMaxFOV );
+  double camFOV = fov / camCount;
 
-  int camRayCount = min( static_cast<int>( cameraMaxFOV / rayFov ), rayCount );
-  if ( (rayCount - camRayCount) % 2 )
-    camRayCount -= 1;
-  rayCounts.push_front( camRayCount );
-  fovs.push_front( camRayCount * rayFov );
-
-  for ( int i = (rayCount - camRayCount ) / 2; i > 0; ) {
-    camRayCount = min( static_cast<int>( cameraMaxFOV / rayFov ), i );
-    rayCounts.push_front( camRayCount );
-    fovs.push_front( camRayCount * rayFov );
+  for ( int i = rayCount; i > 0; ) {
+    int camRayCount = fmin( round( camFOV / rayFov ), i );
     rayCounts.push_back( camRayCount );
     fovs.push_back( camRayCount * rayFov );
     i -= camRayCount;
   }
 
-  double angle = -fov / 2;
+  double angle = minAngle;
   for ( int i = 0; i < rayCounts.size(); i++ ) {
-    angles.push_back( angle + fovs[i] / 2 );
+    angles.push_back( angle + 0.5 * fovs[i] );
     angle += fovs[i];
   }
 }
@@ -229,31 +256,52 @@ RangeSensor::setupCameras()
   deque<double> hFovs;
   deque<double> hAngles;
   deque<int> hRayCounts;
-  computeParameters( _horizontalFOV, _cameraMaxHorizontalFOV, _horizontalRays,
-    hFovs, hAngles, hRayCounts );
+  computeParameters( _horizontalMinAngle, _horizontalMaxAngle, _horizontalRays,
+    _cameraMaxHorizontalFOV, hFovs, hAngles, hRayCounts );
 
   deque<double> vFovs;
   deque<double> vAngles;
   deque<int> vRayCounts;
-  computeParameters( _verticalFOV, _cameraMaxVerticalFOV, _verticalRays,
-    vFovs, vAngles, vRayCounts );
+  computeParameters( _verticalMinAngle, _verticalMaxAngle, _verticalRays,
+    _cameraMaxVerticalFOV, vFovs, vAngles, vRayCounts );
 
   for ( int i = 0; i < hFovs.size(); i++ ) {
     for ( int j = 0; j < vFovs.size(); j++ ) {
       stringstream s;
       s << get_name() << ":" << i << "," << j;
-      RangeCamera * c = new RangeCamera(
-        s.str(),
-        hFovs[i],
-        vFovs[j],
-        hRayCounts[i],
-        vRayCounts[j],
-        _minRange,
-        _maxRange,
-        _colorInfo
-      );
+
+      RangeCamera * c;
+      if ( _spherical )
+        c = new SphericalRangeCamera(
+          s.str(),
+          hAngles[i],
+          vAngles[j],
+          hFovs[i],
+          vFovs[j],
+          hRayCounts[i],
+          vRayCounts[j],
+          _minRange,
+          _maxRange,
+          _cameraHorizontalResolution,
+          _cameraVerticalResolution,
+          _colorInfo
+        );
+      else
+        c = new PerspectiveRangeCamera(
+          s.str(),
+          hAngles[i],
+          vAngles[j],
+          hFovs[i],
+          vFovs[j],
+          hRayCounts[i],
+          vRayCounts[j],
+          _minRange,
+          _maxRange,
+          _cameraHorizontalResolution,
+          _cameraVerticalResolution,
+          _colorInfo
+        );        
       c->reparent_to( *this );
-      c->set_hpr( hAngles[i], vAngles[j], 0 );
       _cameras.push_back( c );
     }
   }

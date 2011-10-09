@@ -2,9 +2,10 @@
 #define LASER_VIEW_H
 
 #include "morsel/morsel.h"
-#include "morsel/sensors/range_sensor.h"
 
 #include <nodePath.h>
+
+class RangeSensor;
 
 class LaserView : public NodePath
 {

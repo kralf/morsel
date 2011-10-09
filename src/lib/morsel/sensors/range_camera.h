@@ -27,16 +27,27 @@ struct Ray {
 class RangeCamera : public NodePath
 {
 public:
-  struct RayInfo;
+  struct RayInfo {
+    double hAngle;
+    double vAngle;
+    int row;
+    int column;
+    double hTan;
+    double vTan;
+  };
 
   RangeCamera(
     std::string name,
+    double horizontalAngle,
+    double verticalAngle,
     double horizontalFOV,
     double verticalFOV,
     int horizontalRays,
     int verticalRays,
     double minRange,
     double maxRange,
+    int horizontalResolution = 128,
+    int verticalResolution = 128,
     bool colorInfo = false
   );
   virtual ~RangeCamera();
@@ -45,14 +56,19 @@ public:
   bool update( double time );
   bool inRange( NodePath & node );
   void setActive( bool active );
-private:
+  void showFrustum();
+  void hideFrustum();
+protected:
   std::string _name;
+  double      _horizontalAngle;
+  double      _verticalAngle;
   double      _horizontalFOV;
   double      _verticalFOV;
   int         _horizontalRays;
   int         _verticalRays;
   double      _minRange;
   double      _maxRange;
+  int         _resolution;
   bool        _colorInfo;
 
   int         _width;
@@ -71,9 +87,10 @@ private:
   PT(Camera)  _cameraNode;
   NodePath    _camera;
 
-  void setupCamera();
-  void setupRays();
+  void setupCamera( PT(Lens) lens );
   void updateRays();
+
+  virtual void setupLens() = 0;
 };
 
 

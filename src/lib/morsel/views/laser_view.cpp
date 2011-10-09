@@ -1,4 +1,5 @@
 #include "laser_view.h"
+#include "morsel/sensors/range_sensor.h"
 
 #include <geomVertexWriter.h>
 #include <geomVertexFormat.h>
@@ -35,7 +36,8 @@ LaserView::LaserView(
   set_depth_write( false );
   set_transparency( TransparencyAttrib::M_alpha );
   attach_new_node( _node );
-  _node->adjust_draw_mask( PandaNode::get_all_camera_mask(), BitMask32( 1 ), BitMask32( 0 ) );
+  _node->adjust_draw_mask( PandaNode::get_all_camera_mask(), BitMask32( 1 ),
+    BitMask32( 0 ) );
   setupRendering();
 }
 
@@ -62,7 +64,8 @@ LaserView::update( double time )
 void
 LaserView::setupRendering()
 {
-  _geomData = new GeomVertexData( "geometry", GeomVertexFormat::get_v3c4(), Geom::UH_dynamic );
+  _geomData = new GeomVertexData( "geometry", GeomVertexFormat::get_v3c4(),
+    Geom::UH_dynamic );
 
   GeomVertexWriter v( _geomData, "vertex" );
   GeomVertexWriter c( _geomData, "color" );

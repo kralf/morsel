@@ -1,11 +1,14 @@
-type         = "RangeSensor"
+type             = "RangeSensor"
 
-mesh         = "sensors/sick_lms200.bam"
-solid        = "Box"
-body         = "Box"
-mass         = 4.5
+mesh             = "sensors/sick_lms200.bam"
+solid            = "Box"
+body             = "Box"
+mass             = 4.5
 
-fieldOfView  = [180.5, 0]
-resolution   = [0.5, 0.5]
-rangeLimits  = [0.1, 15]
-acquireColor = False
+fieldOfView      = [(-90.25, 90.25), (-0.25, 0.25)]
+resolution       = [0.5, 0.5]
+rangeLimits      = [0.1, 15]
+
+cameraResolution = [128, 128]
+spherical        = True
+acquireColor     = False

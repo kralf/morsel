@@ -9,6 +9,7 @@
 #include <string>
 #include <deque>
 #include <cstring>
+#include <cmath>
 
 class RangeSensor : public NodePath
 {
@@ -43,14 +44,19 @@ public:
 
   RangeSensor(
     std::string name,
-    double horizontalFOV,
-    double verticalFOV,
-    int horizontalRays,
-    int verticalRays,
+    double horizontalMinAngle,
+    double horizontalMaxAngle,
+    double verticalMinAngle,
+    double verticalMaxAngle,
+    double horizontalResolution,
+    double verticalResolution,
     double minRange,
     double maxRange,
-    double cameraMaxHorizontalFOV = 60,
-    double cameraMaxVerticalFOV = 60,
+    double cameraMaxHorizontalFOV = 60 * M_PI / 180.0,
+    double cameraMaxVerticalFOV = 60 * M_PI / 180.0,
+    int cameraHorizontalResolution = 128,
+    int cameraVerticalResolution = 128,
+    bool sphericalLens = false,
     bool colorInfo = false
   );
   virtual ~RangeSensor();
@@ -67,26 +73,38 @@ public:
   int hRays();
   int vRays();
   double rayLength( int index );
-private:
+  void showFrustums();
+  void hideFrustums();
+protected:
   std::string _name;
+  double      _horizontalMinAngle;
+  double      _horizontalMaxAngle;
+  double      _verticalMinAngle;
+  double      _verticalMaxAngle;
+  double      _horizontalResolution;
+  double      _verticalResolution;
+  double      _minRange;
+  double      _maxRange;
   double      _horizontalFOV;
   double      _verticalFOV;
   int         _horizontalRays;
   int         _verticalRays;
-  double      _minRange;
-  double      _maxRange;
   int         _rayCount;
   double      _cameraMaxHorizontalFOV;
   double      _cameraMaxVerticalFOV;
+  int         _cameraHorizontalResolution;
+  int         _cameraVerticalResolution;
+  bool        _spherical;
   bool        _colorInfo;
 
   Ray     *   _rays;
   std::vector<RangeCamera*> _cameras;
 
   void computeParameters(
-    double fov,
-    double cameraMaxFOV,
+    double minAngle,
+    double maxAngle,
     int rayCount,
+    double cameraMaxFOV,
     std::deque<double> & fovs,
     std::deque<double> & angles,
     std::deque<int> & rayCounts
