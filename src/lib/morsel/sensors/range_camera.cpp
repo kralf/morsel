@@ -62,6 +62,19 @@ RangeCamera::ray( int index ) {
   return _rays[index];
 }
 
+
+//------------------------------------------------------------------------------
+
+double
+RangeCamera::depth( int column, int row ) {
+  if ( ( column >= 0 ) && ( column < _depth_texels.get_x_size() )  &&
+      ( row >= 0 ) && ( row < _depth_texels.get_y_size() ) )
+    return _maxRange * _minRange / ( _maxRange - _depth_texels.get_gray(
+      column, row ) * ( _maxRange - _minRange ) );
+  else
+    return -1.0;
+}
+
 //------------------------------------------------------------------------------
 
 bool
@@ -152,13 +165,7 @@ RangeCamera::updateRays()
     RayInfo & ri = _rayInfo[i];
     Ray & ray = _rays[i];
 
-    double depth = 0.0;
-    if ( ( ri.column >= 0 ) && ( ri.column < _depth_texels.get_x_size() )  &&
-         ( ri.row >= 0 ) && ( ri.row < _depth_texels.get_y_size() ) )
-      depth = _depth_texels.get_gray( ri.column, ri.row );
-
-    ray.y = _maxRange * _minRange /
-      ( _maxRange - depth * ( _maxRange - _minRange ) );
+    ray.y = depth( round( ri.column ), round( ri.row ) );
     if ( ray.y < _minRange )
       ray.y = 0.0;
     ray.x = ray.y * ri.hTan;

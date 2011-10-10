@@ -15,8 +15,8 @@ struct Ray {
   double y;
   double z;
   double radius;
-  int column;
-  int row;
+  double column;
+  double row;
   double hAngle;
   double vAngle;
   double red;
@@ -30,8 +30,8 @@ public:
   struct RayInfo {
     double hAngle;
     double vAngle;
-    int row;
-    int column;
+    double row;
+    double column;
     double hTan;
     double vTan;
   };
@@ -53,6 +53,7 @@ public:
   virtual ~RangeCamera();
   int rayCount();
   Ray & ray( int index );
+  double depth( int column, int row );
   bool update( double time );
   bool inRange( NodePath & node );
   void setActive( bool active );

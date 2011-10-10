@@ -109,8 +109,8 @@ SphericalRangeCamera::setupRays()
       LPoint2f dist;
       _cameraNode->get_lens()->project( point, dist );
 
-      int column = round( 0.5 * _width * ( 1.0 + dist[0] ) );
-      int row = round( 0.5 * _height * ( 1.0 - dist[1] ) );
+      double column = 0.5 * _width * ( 1.0 + dist[0] );
+      double row = 0.5 * _height * ( 1.0 - dist[1] );
       
       RayInfo ri;
       ri.row    = row;

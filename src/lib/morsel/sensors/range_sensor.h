@@ -16,8 +16,8 @@ class RangeSensor : public NodePath
 public:
   class Ray {
   public:
-    int column() { return _column; }
-    int row() { return _row; }
+    double column() { return _column; }
+    double row() { return _row; }
     int index() { return _index; }
     double hAngle() { return _hAngle; }
     double vAngle() { return _vAngle; }
@@ -28,8 +28,8 @@ public:
     double red() { return _red;}
     double green() { return _green;}
     double blue() { return _blue;}
-    int _column;
-    int _row;
+    double _column;
+    double _row;
     int _index;
     double _hAngle;
     double _vAngle;
