@@ -23,7 +23,7 @@ class RangeSensor(Sensor):
     self.spherical = spherical
     self.acquireColor = acquireColor
 
-    self.sensor = CRangeSensor("C"+name,
+    self.sensor = CRangeSensor(name,
       self.fieldOfView[0][0]*pi/180.0, self.fieldOfView[0][1]*pi/180.0,
       self.fieldOfView[1][0]*pi/180.0, self.fieldOfView[1][1]*pi/180.0,
       self.resolution[0]*pi/180.0, self.resolution[1]*pi/180.0,

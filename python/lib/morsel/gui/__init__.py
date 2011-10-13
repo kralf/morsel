@@ -2,4 +2,5 @@
 # Submodules
 #===============================================================================
 
-from object_properties import *
+from object_manager import ObjectManager
+from object_selector import ObjectSelector

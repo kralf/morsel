@@ -7,7 +7,8 @@
 GraphicsStateGuardian * 
 getGSG() 
 {
-  return static_cast<GraphicsStateGuardian*>( GraphicsStateGuardianBase::get_default_gsg() );
+  return static_cast<GraphicsStateGuardian*>(
+    GraphicsStateGuardianBase::get_default_gsg() );
 }
 
 //------------------------------------------------------------------------------

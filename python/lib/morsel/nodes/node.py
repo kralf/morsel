@@ -137,8 +137,11 @@ class Node(panda.NodePath):
 
 #-------------------------------------------------------------------------------
 
-  def attachCamera(self, position, lookAt = [0, 0, 0], camera = base.camera,
+  def attachCamera(self, position, lookAt = [0, 0, 0], camera = None,
       rotate = False):
+    if not camera:
+      camera = framework.base.camera
+      
     camera.reparentTo(self)
     camera.setPos(*position)
     camera.lookAt(*lookAt)

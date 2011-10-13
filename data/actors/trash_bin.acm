@@ -1,0 +1,6 @@
+type  = "Inanimate"
+
+mesh  = "misc/trash_bin.bam"
+solid = "Cylinder"
+body  = "Cylinder"
+mass  = 30

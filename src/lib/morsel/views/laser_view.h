@@ -9,10 +9,10 @@ class RangeSensor;
 
 class LaserView : public NodePath
 {
-public:
+PUBLISHED:
   LaserView(
     std::string name,
-    RangeSensor & laser,
+    NodePath & sensor,
     float r,
     float g,
     float b,
@@ -21,15 +21,17 @@ public:
     bool lines = false,
     bool colorInfo = false
   );
+public:
   virtual ~LaserView();
+PUBLISHED:
   bool update( double time );
-private:
-  std::string         _name;
-  RangeSensor &       _laser;
-  Colorf              _color;
-  bool                _points;
-  bool                _lines;
-  bool                _colorInfo;
+protected:
+  std::string                _name;
+  RangeSensor &              _sensor;
+  Colorf                     _color;
+  bool                       _points;
+  bool                       _lines;
+  bool                       _colorInfo;
   PointerTo<GeomNode>        _node;
   PointerTo<GeomVertexData>  _geomData;
   void setupRendering();

@@ -1,12 +1,12 @@
 from morsel.core import *
 from morsel.nodes.ode.solid import Solid
+from morsel.nodes.ode.geometries.cylinder import Cylinder as Geometry
 from morsel.nodes.facade import Mesh
 
 #-------------------------------------------------------------------------------
 
 class Cylinder(Solid):
-  def __init__(self, world, name, mesh, body = None, mass = 0, parent = None,
-      **kargs):
+  def __init__(self, world, name, mesh, parent = None, **kargs):
     p_min, p_max = mesh.getTightBounds()
     p_min = parent.getRelativeVector(mesh, p_min)
     p_max = parent.getRelativeVector(mesh, p_max)
@@ -35,10 +35,14 @@ class Cylinder(Solid):
       length = dx
       orientation = [0, 0, 90]
 
-    geometry = panda.OdeCylinderGeom(world.space, radius, length)
-    display = Mesh(name+"Display", "geometry/cylinder.bam",
-      scale = [2*radius, 2*radius, length])
+    geometry = Geometry(world, name+"Geometry", self, radius = radius,
+      length = length)
+    display = Mesh(name+"Display", "geometry/cylinder.bam")
 
+    quaternion = panda.Quat()
+    quaternion.setHpr(panda.Vec3(*orientation))
+    scale = quaternion.xform(panda.Vec3(dx, dy, dz))
+    
     Solid.__init__(self, world, name, mesh, geometry = geometry,
-      body = body, mass = mass, display = display, position = [x, y, z],
-      orientation = orientation, parent = parent, **kargs)
+      display = display, position = [x, y, z], orientation = orientation,
+      scale = [scale[0], scale[1], scale[2]], parent = parent, **kargs)

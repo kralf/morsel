@@ -1,0 +1,11 @@
+type        = "ImageSensor"
+
+mesh        = "sensors/avt_stingray_f-xxx.bam"
+solid       = "Box"
+body        = "Box"
+mass        = 0.2
+
+resolution  = [656, 492]
+range       = [0.1, 100]
+filmSize    = [6.5, 4.9]
+focalLength = 4.5

@@ -41,7 +41,7 @@ public:
     double _green;
     double _blue;
   };
-
+PUBLISHED:
   RangeSensor(
     std::string name,
     double horizontalMinAngle,
@@ -59,9 +59,10 @@ public:
     bool sphericalLens = false,
     bool colorInfo = false
   );
+public:
   virtual ~RangeSensor();
-  
-  //accessors
+PUBLISHED:
+  const std::string & name();
   int rayCount();
   Ray & ray( int index );
   bool update( double time );

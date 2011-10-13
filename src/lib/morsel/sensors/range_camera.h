@@ -51,6 +51,7 @@ public:
     bool colorInfo = false
   );
   virtual ~RangeCamera();
+
   int rayCount();
   Ray & ray( int index );
   double depth( int column, int row );
@@ -81,8 +82,8 @@ protected:
 
   PointerTo<GraphicsOutput> _depthBuffer;
   PointerTo<GraphicsOutput> _colorBuffer;
-  PNMImage    _depth_texels;
-  PNMImage    _color_texels;
+  PNMImage    _depthTexels;
+  PNMImage    _colorTexels;
   Texture     _depthMap;
   Texture     _colorMap;
   PT(Camera)  _cameraNode;

@@ -7,7 +7,6 @@ panda3d_interrogate(
   COMMAND ${PANDA3D_INTERROGATE_EXECUTABLE}
   SOURCES ${REMAKE_PROJECT_SOURCE_DIR}/lib
   MODULE morsel
-  PROMISCUOUS
 )
 
 remake_add_library(views)

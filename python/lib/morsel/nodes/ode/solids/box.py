@@ -1,12 +1,12 @@
 from morsel.core import *
 from morsel.nodes.ode.solid import Solid
+from morsel.nodes.ode.geometries.box import Box as Geometry
 from morsel.nodes.facade import Mesh
 
 #-------------------------------------------------------------------------------
 
 class Box(Solid):
-  def __init__(self, world, name, mesh, body = None, mass = 0, parent = None,
-      **kargs):
+  def __init__(self, world, name, mesh, parent = None, **kargs):
     p_min, p_max = mesh.getTightBounds()
     p_min = parent.getRelativeVector(mesh, p_min)
     p_max = parent.getRelativeVector(mesh, p_max)
@@ -18,10 +18,9 @@ class Box(Solid):
     dy = abs(p_max[1]-p_min[1])
     dz = abs(p_max[2]-p_min[2])
     
-    geometry = panda.OdeBoxGeom(world.space, dx, dy, dz)
-    display = Mesh(name+"Display", "geometry/cube.bam", scale = [dx, dy, dz])
+    geometry = Geometry(world, name+"Geometry", self, length = [dx, dy, dz])
+    display = Mesh(name+"Display", "geometry/cube.bam")
 
     Solid.__init__(self, world, name, mesh, geometry = geometry,
-      body = body, mass = mass, display = display, position = [x, y, z],
+      display = display, position = [x, y, z], scale = [dx, dy, dz],
       parent = parent, **kargs)
-    

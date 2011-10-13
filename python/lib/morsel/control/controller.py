@@ -7,7 +7,7 @@ class Controller(object):
     self.platform = platform
     self.time = None
     
-    scheduler.addTask(name+"ControllerUpdate", self.update)
+    framework.scheduler.addTask(name+"ControllerUpdate", self.update)
     
 #-------------------------------------------------------------------------------
   

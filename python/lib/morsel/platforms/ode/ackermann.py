@@ -33,13 +33,15 @@ class Ackermann(Base):
     for i in range(self.numWheels):
       solid = Solid(name+"WheelSolid", wheelSolid, self.wheels[i],
         body = wheelBody, mass = wheelMass[i], parent = self)
-        
+
       joint = panda.OdeHinge2Joint(world.world)
       joint.attach(self.chassisSolid.body.body, solid.body.body)
       anchor = solid.geometry.getPos(self.world.scene)
       joint.setAnchor(anchor[0], anchor[1], anchor[2])
-      joint.setAxis1(0, 0, 1)
-      joint.setAxis2(1, 0, 0)
+      axis1 = panda.Vec3(0, 0, 1)
+      joint.setAxis1(self.world.scene.getRelativeVector(self, axis1))
+      axis2 = panda.Vec3(0, -1, 0)
+      joint.setAxis2(self.world.scene.getRelativeVector(self, axis2))
       joint.setParamFMax(1, self.propulsionForce)
       joint.setParamLoStop(0, 0)
       joint.setParamHiStop(0, 0)

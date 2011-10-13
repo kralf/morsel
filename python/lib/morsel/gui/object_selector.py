@@ -1,15 +1,15 @@
-from morsel.core.framework  import *
-from morsel.world           import globals
+from morsel.core import *
+from morsel.world import globals
 
-from panda3d.direct.gui.DirectGui  import DirectOptionMenu
-from panda3d.direct.showbase       import DirectObject
-from panda3d.pandac                import Mat4
+from panda3d.direct.gui.DirectGui import DirectOptionMenu
+from panda3d.direct.showbase import DirectObject
+from panda3d.pandac import Mat4
 
 #-------------------------------------------------------------------------------
 
-class ObjectSelector( DirectObject.DirectObject ):
-  def __init__( self ):
-    self.menu = DirectOptionMenu( 
+class ObjectSelector(DirectObject.DirectObject):
+  def __init__(self):
+    self.menu = DirectOptionMenu(
       text = "Attach camera to", 
       scale = 0.05,
       items = [],
@@ -17,33 +17,33 @@ class ObjectSelector( DirectObject.DirectObject ):
       highlightColor = (0.65,0.65,0.65,1),
       command = self.select,
       textMayChange = 1
-    )
+   )
     self.visible = False
     self.menu.hide()
     self.camera_poses = {}
     
 #-------------------------------------------------------------------------------
 
-  def select( self, item ):
-    mat = Mat4( base.camera.getMat() )
+  def select(self, item):
+    mat = Mat4(base.camera.getMat())
     mat.invertInPlace()
     key = base.camera.getParent().getName()
     self.camera_poses[key] = mat
-    base.camera.reparentTo( globals.world.meshes[item] )
-    if self.camera_poses.has_key( item ):
+    base.camera.reparentTo(globals.world.meshes[item])
+    if self.camera_poses.has_key(item):
       mat = self.camera_poses[item]
-      base.mouseInterfaceNode.setMat( mat )
+      base.mouseInterfaceNode.setMat(mat)
     else:
-      base.camera.setPos( -10, -5, 5 )
-      base.camera.lookAt( 5, 0, 0 )
-      mat = Mat4( base.camera.getMat() )
+      base.camera.setPos(-10, -5, 5)
+      base.camera.lookAt(5, 0, 0)
+      mat = Mat4(base.camera.getMat())
       mat.invertInPlace()
-      base.mouseInterfaceNode.setMat( mat )
+      base.mouseInterfaceNode.setMat(mat)
     self.toggle()
     
 #-------------------------------------------------------------------------------
 
-  def toggle( self ):
+  def toggle(self):
     self.visible = not self.visible
     if self.visible:
       items = self.menu["items"]
@@ -51,12 +51,12 @@ class ObjectSelector( DirectObject.DirectObject ):
       i = 0
       selected = 0
       for k, v in globals.world.meshes.iteritems():
-        items.append( k )
+        items.append(k)
         if k == base.camera.getParent().getName():
           selected = i
         i = i + 1
       self.menu["items"] = items
-      self.menu.set( selected, 0 )
+      self.menu.set(selected, 0)
       self.menu.show()
     else:
       self.menu.hide()

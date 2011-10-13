@@ -15,7 +15,7 @@ using namespace std;
 
 LaserView::LaserView(
   std::string name,
-  RangeSensor & laser,
+  NodePath & sensor,
   float r,
   float g,
   float b,
@@ -25,7 +25,7 @@ LaserView::LaserView(
   bool colorInfo
 ) : NodePath( name ),
     _name( name ),
-    _laser( laser ),
+    _sensor( static_cast<RangeSensor&>( sensor ) ),
     _color( r, g, b, a ),
     _node( new GeomNode( name + "GeomNode" ) ),
     _points( points ),
@@ -58,7 +58,7 @@ LaserView::update( double time )
 }
 
 //------------------------------------------------------------------------------
-// Private methods
+// Protected methods
 //------------------------------------------------------------------------------
 
 void
@@ -72,14 +72,14 @@ LaserView::setupRendering()
 
   v.add_data3f( 0, 0, 0 );
   c.add_data4f( 0, 0, 0, 0 );
-  for ( int i = 0; i < _laser.rayCount(); i++ ) {
-    v.add_data3f( 10, i - _laser.rayCount() / 2.0, 0 );
+  for ( int i = 0; i < _sensor.rayCount(); i++ ) {
+    v.add_data3f( 10, i - _sensor.rayCount() / 2.0, 0 );
     c.add_data4f( 0, 1, 1, 1 );
   }
 
   if ( _lines ) {
     PT(GeomLines) line = new GeomLines( GeomLines( Geom::UH_static ) );
-    for ( int i = 0; i < _laser.rayCount(); i++ ) {
+    for ( int i = 0; i < _sensor.rayCount(); i++ ) {
       line->add_vertex( 0 );
       line->add_vertex( i );
       line->close_primitive();
@@ -92,7 +92,7 @@ LaserView::setupRendering()
 
   if ( _points ) {
     PT(GeomPoints) points = new GeomPoints( GeomPoints( Geom::UH_static ) );
-    for ( int i = 0; i < _laser.rayCount(); i++ ) {
+    for ( int i = 0; i < _sensor.rayCount(); i++ ) {
       points->add_vertex( i );
       points->close_primitive();
     }
@@ -114,8 +114,8 @@ LaserView::updateRays()
   GeomVertexWriter c( _geomData, "color" );
   c.set_row( 1 );
 
-  for ( int i = 0; i < _laser.rayCount(); i++ ) {
-    RangeSensor::Ray & ray = _laser.ray( i );
+  for ( int i = 0; i < _sensor.rayCount(); i++ ) {
+    RangeSensor::Ray & ray = _sensor.ray( i );
     double x = ray.x();
     double y = ray.y();
     double z = ray.z();
@@ -125,7 +125,7 @@ LaserView::updateRays()
     double green = ray.green();
     double blue  = ray.blue();
 
-    double val = 1.0 - r / _laser.maxRange();
+    double val = 1.0 - r / _sensor.maxRange();
     if ( r <= 0 ) {
       val = 0;
       x   = 0;

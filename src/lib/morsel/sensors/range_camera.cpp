@@ -67,9 +67,9 @@ RangeCamera::ray( int index ) {
 
 double
 RangeCamera::depth( int column, int row ) {
-  if ( ( column >= 0 ) && ( column < _depth_texels.get_x_size() )  &&
-      ( row >= 0 ) && ( row < _depth_texels.get_y_size() ) )
-    return _maxRange * _minRange / ( _maxRange - _depth_texels.get_gray(
+  if ( ( column >= 0 ) && ( column < _depthTexels.get_x_size() )  &&
+      ( row >= 0 ) && ( row < _depthTexels.get_y_size() ) )
+    return _maxRange * _minRange / ( _maxRange - _depthTexels.get_gray(
       column, row ) * ( _maxRange - _minRange ) );
   else
     return -1.0;
@@ -80,9 +80,9 @@ RangeCamera::depth( int column, int row ) {
 bool
 RangeCamera::update( double time )
 {
-  _depthMap.store( _depth_texels );
+  _depthMap.store( _depthTexels );
   if ( _colorInfo )
-    _colorMap.store( _color_texels );
+    _colorMap.store( _colorTexels );
   updateRays();
   return true;
 }
@@ -177,9 +177,9 @@ RangeCamera::updateRays()
     ray.row    = ri.row;
     
     if ( _colorInfo ) {
-      ray.red   = _color_texels.get_red( ri.column, ri.row );
-      ray.green = _color_texels.get_green( ri.column, ri.row );
-      ray.blue  = _color_texels.get_blue( ri.column, ri.row );
+      ray.red   = _colorTexels.get_red( ri.column, ri.row );
+      ray.green = _colorTexels.get_green( ri.column, ri.row );
+      ray.blue  = _colorTexels.get_blue( ri.column, ri.row );
     }
   }
 }

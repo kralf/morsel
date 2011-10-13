@@ -5,7 +5,7 @@ import morsel.control
 #-------------------------------------------------------------------------------
 
 def Controller(model, **kargs):
-  controllerFile = findFile(model+".ctl")
+  controllerFile = framework.findFile(model+".ctl")
   if controllerFile:
     context = {}
     parameters = kargs

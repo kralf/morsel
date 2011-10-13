@@ -14,13 +14,12 @@ class LaserView(View):
     self.showLines = showLines
     self.showColors = showColors
 
-    self.view = CLaserView("C"+name, self.sensor.sensor, self.color[0],
+    self.view = CLaserView(name, self.sensor.sensor, self.color[0],
       self.color[1], self.color[2], self.color[3], self.showPoints,
       self.showLines, self.showColors)
     self.view.reparentTo(self.sensor.mesh)
-    
+
 #-------------------------------------------------------------------------------
 
   def update(self):
     self.view.update(self.world.time)
-  

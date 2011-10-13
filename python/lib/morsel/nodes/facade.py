@@ -2,12 +2,13 @@ from morsel.core import *
 from morsel.world import globals
 
 import morsel.nodes
+import inspect
 
 #-------------------------------------------------------------------------------
 
 def Mesh(name, filename = None, **kargs):
   if filename:
-    meshFile = findFile(filename)
+    meshFile = framework.findFile(filename)
     if not meshFile:
       raise RuntimeError("Mesh file '"+filename+"' not found")
   else:
@@ -41,23 +42,25 @@ def Static(name, mesh, **kargs):
 
 #-------------------------------------------------------------------------------
 
-def Scene(name, model, *args, **kargs):
-  sceneFile = findFile(model+".scm")
-  if sceneFile:
-    scene = Instance("morsel.nodes", "Scene", globals.world, name, *args,
-      **kargs)
+def Scene(name, model = None, *args, **kargs):
+  scene = Instance("morsel.nodes", "Scene", globals.world, name, *args,
+    **kargs)
+    
+  if model:
+    sceneFile = framework.findFile(model+".scm")
+    if sceneFile:
 
-    context = inspect.stack()[1][0].f_globals
-    execfile(sceneFile, context)
+      context = inspect.stack()[1][0].f_globals
+      execfile(sceneFile, context)
 
-    return scene
-  else:
-    raise RuntimeError("Scene file '"+model+".scm' not found")
+      return scene
+    else:
+      raise RuntimeError("Scene file '"+model+".scm' not found")
 
 #-------------------------------------------------------------------------------
 
 def Actor(name, model, **kargs):
-  actorFile = findFile(model+".acm")
+  actorFile = framework.findFile(model+".acm")
   if actorFile:
     context = {}
     parameters = kargs
@@ -74,7 +77,7 @@ def Actor(name, model, **kargs):
 #-------------------------------------------------------------------------------
 
 def Sensor(name, model, **kargs):
-  sensorFile = findFile(model+".sem")
+  sensorFile = framework.findFile(model+".sem")
   if sensorFile:
     context = {}
     parameters = kargs
@@ -91,7 +94,7 @@ def Sensor(name, model, **kargs):
 #-------------------------------------------------------------------------------
 
 def Platform(name, model, **kargs):
-  platformFile = findFile(model+".pfm")
+  platformFile = framework.findFile(model+".pfm")
   if platformFile:
     context = {}
     parameters = kargs

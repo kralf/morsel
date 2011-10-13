@@ -1,159 +1,152 @@
-''' @package Framework.
-This package contains framework specific functions that are primarily intended
-to be used by programmers.
-'''
+from panda3d import pandac as panda
+from panda3d.direct.showbase.ShowBase import ShowBase
 
-import panda3d.pandac as panda
-from panda3d.direct.actor import Actor as pandaActor
+from scheduler import Scheduler
+from event_manager import EventManager
+from morsel.console import interactive_console as Console
+from morsel.gui.object_manager import ObjectManager
+
 from morsel.config import *
-import math
-import os.path
-import os
+from morsel.facade import *
+from math import *
+from os import *
+from os.path import *
+
 import inspect
 
 #-------------------------------------------------------------------------------
-# Logging functions
-#-------------------------------------------------------------------------------
 
-def error( message ):
-  print "Usage: morsel configfile"
-  print
-  print "ERROR:", message
-  exit()
-
-#-------------------------------------------------------------------------------
-# Object list functions
-#-------------------------------------------------------------------------------
-
-def loadMesh_( world, name, filename ):
-  mesh_file = findFile( filename )
-  if mesh_file:
-    mesh = loader.loadModel( mesh_file )
-    mesh.reparentTo( render )
-    
-    return mesh
-  else:
-    raise RuntimeError( "Mesh file '" + filename + "' not found." )
-
-#-------------------------------------------------------------------------------
-
-def loadActor_( name, filename, animation = None, selectable = True ):
-  '''Loads an .egg or .bam actor and adds it to the actor list.'''
-  actorfile = findFile( filename )
-  if not animation:
-    animation = os.path.splitext( os.path.basename( filename ) )[0]
-  if actorfile:
-    actor = pandaActor.Actor( actorfile )
-    actor.reparentTo( render )
-    actor.node().setBounds( panda.OmniBoundingVolume() )
-    actor.node().setFinal( True )
-    actors[name] = [  actor,
-                      animation,
-                      actor.getDuration( animation ),
-                      actor.getNumFrames( animation )]
-    return actor
-  else:
-    exit( 1 )
-
-#-------------------------------------------------------------------------------
-
-def updateActors( time ):
-  '''Actor update task'''
-  for actor, animation, duration, frames in actors.values():
-    frameTime = time - math.floor( time / duration ) * duration
-    if frameTime == 0:
-      frame = 0
-    else:
-      frame     = int( frames * frameTime / duration )
-    actor.pose( animation, frame )
-    actor.forceRecomputeBounds()
-  return True
-
-#-------------------------------------------------------------------------------
-# File utility functions
-#-------------------------------------------------------------------------------
-
-def includeConfig( filename ):
-  config_file = findFile( filename )
-  if config_file:
-    context = inspect.stack()[1][0].f_globals
-    execfile( config_file, context )
-  else:
-    raise RuntimeError( "Configuration file '" + filename + "' not found." )
-
-#-------------------------------------------------------------------------------
-
-def homeDir():
-  return os.environ["HOME"]
-
-#-------------------------------------------------------------------------------
-
-def morselSystem():
-  try:
-    return os.environ["MORSEL_HOME"]
-  except KeyError:
-    return MORSEL_FILE_PATH
-
-#-------------------------------------------------------------------------------
-
-def morselUser():
-  return homeDir() + "/.morsel"
-
-#-------------------------------------------------------------------------------
-
-def findFile( filename ):
-  '''Finds a filename in all search paths according to its extension.'''
-  if os.path.exists( filename ):
-    return os.path.abspath( filename )
-
-  name, extension = os.path.splitext( filename )
-  extension = extension[1:]
+class Framework:
+  def __init__(self, *argv):
+    self.arguments = argv[0]
+    self.paths = {}
+    self.configFiles = ["defaults.cfg"];
+    for argument in self.arguments[1:]:
+      self.configFiles.append(argument)
+      
+    self.base = None
+    self.scheduler = None
+    self.eventManager = None
+    self.objectManager = None
+    self.console = None
   
-  if paths.has_key( extension ):
-    for path in paths[extension]:
-      resultPath = os.path.join( path, filename )
-      if os.path.exists( resultPath ):
-        return os.path.abspath( resultPath )
-
-  return None
-
-#-------------------------------------------------------------------------------
-# Configuration Functions
 #-------------------------------------------------------------------------------
 
-def addPath( extension, path  ):
-  '''Adds a search path for the given extension.'''
-  if not paths.has_key( extension ):
-    paths[extension] = []
+  def getHomeDir(self):
+    return os.environ["HOME"]
+
+  homeDir = property(getHomeDir)
+
+#-------------------------------------------------------------------------------
+
+  def getMorselSystem(self):
+    try:
+      return os.environ["MORSEL_HOME"]
+    except KeyError:
+      return MORSEL_FILE_PATH
+
+  morselSystem = property(getMorselSystem)
+
+#-------------------------------------------------------------------------------
+
+  def getMorselUser(self):
+    return self.homeDir+"/.morsel"
+
+  morselUser = property(getMorselUser)
+
+#-------------------------------------------------------------------------------
+
+  def setConfigVariable(self, variable, *values):
+    prc = variable
+
+    for value in values:
+      if isinstance(value, bool):
+        if value:
+          value = "#t"
+        else:
+          value = "#f"
+      prc += " %s" % (value)
+
+    panda.loadPrcFileData("", prc)
+
+#-------------------------------------------------------------------------------
+
+  def setFullscreen(self, value):
+    self.setConfigVariable("fullscreen", value)
+
+#-------------------------------------------------------------------------------
+
+  def setWindowSize(self, width, height):
+    self.setConfigVariable("win-size", "%s %s" % (width, height))
+
+#-------------------------------------------------------------------------------
+
+  def setWindowTitle(self, title):
+    self.setConfigVariable("window-title", title)
+
+#-------------------------------------------------------------------------------
+
+  def addPath(self, extension, path):
+    if not self.paths.has_key(extension):
+      self.paths[extension] = []
+
+    if not path in self.paths[extension]:
+      self.paths[extension].append(path)
+
+#-------------------------------------------------------------------------------
+
+  def addMorselPath(self, extension, path):
+    self.addPath(extension, os.path.join(".", path))
+    self.addPath(extension, os.path.join(self.morselUser, path))
+    self.addPath(extension, os.path.join(self.morselSystem, path))
+
+#-------------------------------------------------------------------------------
+
+  def error(self, message):
+    raise RuntimeError("Error: "+message)
+
+#-------------------------------------------------------------------------------
+
+  def findFile(self, filename):
+    if os.path.exists(filename):
+      return os.path.abspath(filename)
+
+    name, extension = os.path.splitext(filename)
+    extension = extension[1:]
+
+    if self.paths.has_key(extension):
+      for path in self.paths[extension]:
+        resultPath = os.path.join(path, filename)
+        if os.path.exists(resultPath):
+          return os.path.abspath(resultPath)
+
+    return None
+
+#-------------------------------------------------------------------------------
+
+  def loadConfigFile(self, filename):
+    configFile = self.findFile(filename)
+    if configFile:
+      context = inspect.stack()[1][0].f_globals
+      execfile(configFile, context)
+    else:
+      self.error("Configuration file '" + filename + "' not found.")
     
-  if not path in paths[extension]:
-    paths[extension].append( path )
-
 #-------------------------------------------------------------------------------
 
-def addMorselPath( extension, path ):
-  addPath( extension, os.path.join( ".", path ) )
-  addPath( extension, os.path.join( morselUser(), path ) )
-  addPath( extension, os.path.join( morselSystem(), path ) )
+  def run(self):
+    if not self.base:
+      self.base = ShowBase()
+      self.scheduler = Scheduler()
+      self.eventManager = EventManager()
+      self.console = Console.pandaConsole(Console.INPUT_GUI |
+        Console.OUTPUT_PYTHON, inspect.stack()[2][0].f_globals)
+      self.console.toggle()
+      self.objectManager = ObjectManager()
 
-#-------------------------------------------------------------------------------
+      for configFile in self.configFiles:
+        self.loadConfigFile(configFile)
 
-def fullscreen( value ):
-  '''Selects fullscreen or windowed mode.'''
-  if value:
-    panda.loadPrcFileData("", "fullscreen 1")
-  else:
-    panda.loadPrcFileData("", "fullscreen 0")
-
-#-------------------------------------------------------------------------------
-
-def windowSize( width, height ):
-  '''Sets the window width and height for windowed mode.'''
-  panda.loadPrcFileData("", "win-size %s %s" % ( width, height ) )
-
-#-------------------------------------------------------------------------------
-# Module Variables
-#-------------------------------------------------------------------------------
-
-paths = {}
-actors = {}
+      self.base.run()
+    else:
+      self.error("Framework.run() may only be called once.")
