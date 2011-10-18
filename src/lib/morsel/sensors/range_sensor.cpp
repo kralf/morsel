@@ -12,7 +12,7 @@ using namespace std;
 //------------------------------------------------------------------------------
 
 RangeSensor::RangeSensor(
-  std::string name,
+  string name,
   double horizontalMinAngle,
   double horizontalMaxAngle,
   double verticalMinAngle,
@@ -26,7 +26,8 @@ RangeSensor::RangeSensor(
   int cameraHorizontalResolution,
   int cameraVerticalResolution,
   bool spherical,
-  bool colorInfo )
+  bool acquireColor,
+  string acquireLabel )
   : NodePath( name ),
     _name( name ),
     _horizontalMinAngle( horizontalMinAngle ),
@@ -48,7 +49,8 @@ RangeSensor::RangeSensor(
     _cameraHorizontalResolution( cameraHorizontalResolution ),
     _cameraVerticalResolution( cameraVerticalResolution ),
     _spherical( spherical ),
-    _colorInfo( colorInfo )
+    _acquireColor( acquireColor ),
+    _acquireLabel( acquireLabel )
 {
   setupCameras();
   getEngine()->render_frame();
@@ -65,7 +67,7 @@ RangeSensor::~RangeSensor()
 
 //------------------------------------------------------------------------------
 
-const std::string &
+const string &
 RangeSensor::name() {
   return _name;
 }
@@ -116,7 +118,7 @@ RangeSensor::update( double time )
       ray2._y      = p[1];
       ray2._z      = p[2];
       ray2._radius = r;
-      if ( _colorInfo ) {
+      if ( _acquireColor ) {
         ray2._red   = ray1.red;
         ray2._green = ray1.green;
         ray2._blue  = ray1.blue;
@@ -125,6 +127,10 @@ RangeSensor::update( double time )
         ray2._green = 0;
         ray2._blue  = 0;
       }
+      if ( !_acquireLabel.empty() )
+        ray2._label = ray1.label;
+      else
+        ray2._label = 0;
     }
   }
   return true;
@@ -291,7 +297,8 @@ RangeSensor::setupCameras()
           _maxRange,
           _cameraHorizontalResolution,
           _cameraVerticalResolution,
-          _colorInfo
+          _acquireColor,
+          _acquireLabel
         );
       else
         c = new PerspectiveRangeCamera(
@@ -306,7 +313,8 @@ RangeSensor::setupCameras()
           _maxRange,
           _cameraHorizontalResolution,
           _cameraVerticalResolution,
-          _colorInfo
+          _acquireColor,
+          _acquireLabel
         );        
       c->reparent_to( *this );
       _cameras.push_back( c );

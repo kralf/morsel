@@ -20,6 +20,8 @@ framework.addMorselPath("acm", "actors")
 framework.addMorselPath("sem", "sensors")
 framework.addMorselPath("pfm", "platforms")
 framework.addMorselPath("ctl", "control")
+framework.addMorselPath("sha", "shaders")
+framework.addMorselPath("glsl", "shaders")
 
 framework.setFullscreen(False)
 framework.setWindowSize(800, 600)

@@ -6,6 +6,7 @@
 #include <nodePath.h>
 #include <pnmImage.h>
 #include <texture.h>
+#include <shader.h>
 #include <graphicsOutput.h>
 
 #include <string>
@@ -22,6 +23,7 @@ struct Ray {
   double red;
   double green;
   double blue;
+  size_t label;
 };
 
 class RangeCamera : public NodePath
@@ -48,7 +50,8 @@ public:
     double maxRange,
     int horizontalResolution = 128,
     int verticalResolution = 128,
-    bool colorInfo = false
+    bool acquireColor = false,
+    std::string acquireLabel = ""
   );
   virtual ~RangeCamera();
 
@@ -71,7 +74,8 @@ protected:
   double      _minRange;
   double      _maxRange;
   int         _resolution;
-  bool        _colorInfo;
+  bool        _acquireColor;
+  std::string _acquireLabel;
 
   int         _width;
   int         _height;
@@ -82,12 +86,20 @@ protected:
 
   PointerTo<GraphicsOutput> _depthBuffer;
   PointerTo<GraphicsOutput> _colorBuffer;
+  PointerTo<GraphicsOutput> _labelBuffer;
   PNMImage    _depthTexels;
   PNMImage    _colorTexels;
+  PNMImage    _labelTexels;
   Texture     _depthMap;
   Texture     _colorMap;
-  PT(Camera)  _cameraNode;
-  NodePath    _camera;
+  Texture     _labelMap;
+  PointerTo<Camera> _depthCameraNode;
+  PointerTo<Camera> _colorCameraNode;
+  PointerTo<Camera> _labelCameraNode;
+  NodePath    _depthCamera;
+  NodePath    _colorCamera;
+  NodePath    _labelCamera;
+  PointerTo<Shader> _labelShader;
 
   void setupCamera( PT(Lens) lens );
   void updateRays();

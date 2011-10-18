@@ -11,4 +11,3 @@ rangeLimits      = [0.9, 30]
 
 cameraResolution = [256, 256]
 spherical        = True
-acquireColor     = False

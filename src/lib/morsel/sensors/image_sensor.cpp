@@ -38,7 +38,7 @@ ImageSensor::~ImageSensor()
 
 //------------------------------------------------------------------------------
 
-const std::string &
+const string &
 ImageSensor::name() {
   return _name;
 }

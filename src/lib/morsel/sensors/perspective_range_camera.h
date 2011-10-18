@@ -18,7 +18,8 @@ public:
     double maxRange,
     int horizontalResolution = 128,
     int verticalResolution = 128,
-    bool colorInfo = false
+    bool acquireColor = false,
+    std::string acquireLabel = ""
   );
   virtual ~PerspectiveRangeCamera();
 protected:

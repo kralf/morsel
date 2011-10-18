@@ -18,7 +18,8 @@ public:
     double maxRange,
     int horizontalResolution = 256,
     int verticalResolution = 256,
-    bool colorInfo = false
+    bool acquireColor = false,
+    std::string acquireLabel = ""
   );
   virtual ~SphericalRangeCamera();
 protected:

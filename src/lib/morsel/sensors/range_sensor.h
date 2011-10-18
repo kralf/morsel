@@ -21,13 +21,14 @@ public:
     int index() { return _index; }
     double hAngle() { return _hAngle; }
     double vAngle() { return _vAngle; }
-    double x() { return _x;}
-    double y() { return _y;}
-    double z() { return _z;}
-    double radius() { return _radius;}
-    double red() { return _red;}
-    double green() { return _green;}
-    double blue() { return _blue;}
+    double x() { return _x; }
+    double y() { return _y; }
+    double z() { return _z; }
+    double radius() { return _radius; }
+    double red() { return _red; }
+    double green() { return _green; }
+    double blue() { return _blue; }
+    size_t label() { return _label; }
     double _column;
     double _row;
     int _index;
@@ -40,6 +41,7 @@ public:
     double _red;
     double _green;
     double _blue;
+    size_t _label;
   };
 PUBLISHED:
   RangeSensor(
@@ -57,7 +59,8 @@ PUBLISHED:
     int cameraHorizontalResolution = 128,
     int cameraVerticalResolution = 128,
     bool sphericalLens = false,
-    bool colorInfo = false
+    bool acquireColor = false,
+    std::string acquireLabel = ""
   );
 public:
   virtual ~RangeSensor();
@@ -96,7 +99,8 @@ protected:
   int         _cameraHorizontalResolution;
   int         _cameraVerticalResolution;
   bool        _spherical;
-  bool        _colorInfo;
+  bool        _acquireColor;
+  std::string _acquireLabel;
 
   Ray     *   _rays;
   std::vector<RangeCamera*> _cameras;

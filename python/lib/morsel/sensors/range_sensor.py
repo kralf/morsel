@@ -9,8 +9,9 @@ from morsel.morselc import RangeSensor as CRangeSensor
 class RangeSensor(Sensor):
   def __init__(self, world, name, mesh, fieldOfView = [(-30, 30), (-30, 30)],
       resolution = [1.0, 1.0], rangeLimits = [0.0, 10.0], spherical = False,
-      acquireColor = False, cameraMaxFieldOfView = [60.0, 60.0],
-      cameraResolution = [128, 128], **kargs):
+      acquireColor = False, acquireLabel = None,
+      cameraMaxFieldOfView = [60.0, 60.0], cameraResolution = [128, 128],
+      **kargs):
     Sensor.__init__(self, world, name, **kargs)
 
     self.mesh = Mesh(name+"Mesh", mesh, parent = self)
@@ -22,6 +23,10 @@ class RangeSensor(Sensor):
     self.cameraResolution = cameraResolution
     self.spherical = spherical
     self.acquireColor = acquireColor
+    if acquireLabel:
+      self.acquireLabel = acquireLabel
+    else:
+      self.acquireLabel = ""
 
     self.sensor = CRangeSensor(name,
       self.fieldOfView[0][0]*pi/180.0, self.fieldOfView[0][1]*pi/180.0,
@@ -31,7 +36,7 @@ class RangeSensor(Sensor):
       self.cameraMaxFieldOfView[0]*pi/180.0,
       self.cameraMaxFieldOfView[1]*pi/180.0,
       self.cameraResolution[0], self.cameraResolution[1],
-      self.spherical, self.acquireColor)
+      self.spherical, self.acquireColor, self.acquireLabel)
     self.sensor.reparentTo(self.mesh)
 
 #-------------------------------------------------------------------------------

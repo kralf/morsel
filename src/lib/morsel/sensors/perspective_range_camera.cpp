@@ -10,7 +10,7 @@ using namespace std;
 //------------------------------------------------------------------------------
 
 PerspectiveRangeCamera::PerspectiveRangeCamera(
-  std::string name,
+  string name,
   double horizontalAngle,
   double verticalAngle,
   double horizontalFOV,
@@ -21,10 +21,12 @@ PerspectiveRangeCamera::PerspectiveRangeCamera(
   double maxRange,
   int horizontalResolution,
   int verticalResolution,
-  bool colorInfo )
+  bool acquireColor,
+  string acquireLabel )
   : RangeCamera( name, horizontalAngle, verticalAngle, horizontalFOV,
                  verticalFOV, horizontalRays, verticalRays, minRange, maxRange,
-                 horizontalResolution, verticalResolution, colorInfo )
+                 horizontalResolution, verticalResolution, acquireColor,
+                 acquireLabel )
 {
   setupLens();
   setupRays();
@@ -80,7 +82,7 @@ PerspectiveRangeCamera::setupRays()
       point[0] = _maxRange * tan( hAngle );
       point[1] = _maxRange;
       point[2] = _maxRange * tan( vAngle );
-      _cameraNode->get_lens()->project( point, dist );
+      _depthCameraNode->get_lens()->project( point, dist );
 
       double column = 0.5 * _width * ( 1.0 + dist[0] );
       double row = 0.5 * _height * ( 1.0 - dist[1] );

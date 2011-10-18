@@ -1,5 +1,7 @@
 from morsel.core import *
 
+import sys
+
 #-------------------------------------------------------------------------------
 
 class Node(panda.NodePath):
@@ -77,6 +79,20 @@ class Node(panda.NodePath):
   def getRelativePosition(self, node, position):
     relative = self.getRelativePoint(node, panda.Vec3(*position))
     return [relative[0], relative[1], relative[2]]
+
+#-------------------------------------------------------------------------------
+
+  def getLabel(self, name):
+    l = self.getShaderInput(name).getVector()
+    return (int(l[3]) << 24)+(int(l[2]) << 16)+(int(l[1]) << 8)+int(l[0])
+
+  def setLabel(self, name, label):
+    l_0 = label%256
+    l_1 = (label >> 8)%256
+    l_2 = (label >> 16)%256
+    l_3 = (label >> 24)%256
+
+    self.setShaderInput(name, panda.Vec4(l_0, l_1, l_2, l_3))
 
 #-------------------------------------------------------------------------------
 
