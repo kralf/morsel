@@ -127,6 +127,7 @@ class Scheduler:
     return self.tasks.has_key(name)
 
 #-------------------------------------------------------------------------------
+
   def addTask(self, name, function, period = None, priority = 0):
     ''' Adds a periodic task to the scheduler.
     The name for the task should be unique. If 'period == 0' then the value
@@ -148,7 +149,6 @@ class Scheduler:
       else:
         self.renderTasks.append(self.tasks[name])
         self.renderTasks.sort(lambda x, y: x["priority"] - y ["priority"])
-
 
 #-------------------------------------------------------------------------------
 

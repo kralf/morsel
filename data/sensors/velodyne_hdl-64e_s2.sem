@@ -9,5 +9,5 @@ fieldOfView      = [(-180, 180), (-24.8, 2)]
 resolution       = [0.5, 0.4]
 rangeLimits      = [0.9, 30]
 
-cameraResolution = [256, 256]
+cameraResolution = [128, 512]
 spherical        = True
