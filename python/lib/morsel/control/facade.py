@@ -8,8 +8,9 @@ def Controller(model, **kargs):
   controllerFile = framework.findFile(model+".ctl")
   if controllerFile:
     context = {}
-    parameters = kargs
+    parameters = {}
     execfile(controllerFile, context, parameters)
+    parameters.update(kargs)
 
     type = parameters["type"]
     del parameters["type"]

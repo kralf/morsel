@@ -72,10 +72,10 @@ SphericalRangeCamera::setupLens()
     sin( maxVAngle ) );
 
   lens->set_frustum_from_corners(
-    _depthCamera.get_relative_point( get_parent(), ul ),
-    _depthCamera.get_relative_point( get_parent(), ur ),
-    _depthCamera.get_relative_point( get_parent(), ll ),
-    _depthCamera.get_relative_point( get_parent(), lr ),
+    _camera.get_relative_point( get_parent(), ul ),
+    _camera.get_relative_point( get_parent(), ur ),
+    _camera.get_relative_point( get_parent(), ll ),
+    _camera.get_relative_point( get_parent(), lr ),
     Lens::FC_aspect_ratio | Lens::FC_off_axis );
   set_hpr( lens->get_view_hpr() );
   lens->set_view_hpr( 0.0, 0.0, 0.0 );
@@ -104,12 +104,12 @@ SphericalRangeCamera::setupRays()
       vAngle = 0.5 * ( -_verticalFOV + deltaVAngle );
 
     while ( vAngle < 0.5 * _verticalFOV ) {
-      LPoint3f point = _depthCamera.get_relative_point( get_parent(), LPoint3f(
+      LPoint3f point = _camera.get_relative_point( get_parent(), LPoint3f(
         cos( _horizontalAngle + hAngle ) * cos( _verticalAngle + vAngle ),
         sin( _horizontalAngle + hAngle ) * cos( _verticalAngle + vAngle ),
         sin( _verticalAngle + vAngle ) ) );
       LPoint2f dist;
-      _depthCameraNode->get_lens()->project( point, dist );
+      _cameraNode->get_lens()->project( point, dist );
 
       double column = 0.5 * _width * ( 1.0 + dist[0] );
       double row = 0.5 * _height * ( 1.0 - dist[1] );

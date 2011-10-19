@@ -86,7 +86,7 @@ RangeCamera::update( double time )
   _depthMap.store( _depthTexels );
   if ( _acquireColor )
     _colorMap.store( _colorTexels );
-  if ( !_acquireLabel.empty() )
+  else if ( !_acquireLabel.empty() )
     _labelMap.store( _labelTexels );
   updateRays();
   return true;
@@ -105,9 +105,7 @@ RangeCamera::inRange( NodePath & node )
 void
 RangeCamera::setActive( bool active )
 {
-  _depthCameraNode->set_active( active );
-  _colorCameraNode->set_active( active );
-  _labelCameraNode->set_active( active );
+  _cameraNode->set_active( active );
 }
 
 //------------------------------------------------------------------------------
@@ -115,7 +113,7 @@ RangeCamera::setActive( bool active )
 void
 RangeCamera::showFrustum()
 {
-  _depthCameraNode->show_frustum();
+  _cameraNode->show_frustum();
 }
 
 //------------------------------------------------------------------------------
@@ -123,7 +121,7 @@ RangeCamera::showFrustum()
 void
 RangeCamera::hideFrustum()
 {
-  _depthCameraNode->hide_frustum();
+  _cameraNode->hide_frustum();
 }
 
 //------------------------------------------------------------------------------
@@ -136,55 +134,30 @@ RangeCamera::setupCamera( PT(Lens) lens )
   _depthMap.set_format( Texture::F_depth_component );
   _depthMap.set_component_type( Texture::T_unsigned_short );
 
-  GraphicsOutput * window = getWindow( 0 );
-
-  _depthBuffer = window->make_texture_buffer( "depthmap", _width, _height,
+  _buffer = getWindow( 0 )->make_texture_buffer( "depthmap", _width, _height,
     &_depthMap, true );
-  if ( _acquireColor )
-    _colorBuffer = window->make_texture_buffer( "colormap", _width, _height,
-      &_colorMap, true );
-  if ( !_acquireLabel.empty() )
-    _labelBuffer = window->make_texture_buffer( "labelmap", _width, _height,
-      &_labelMap, true );
+  
+  _cameraNode = new Camera( "cam" );
+  _cameraNode->set_camera_mask( BitMask32( 1 ) );
+  _cameraNode->set_scene( getGSG()->get_scene()->get_scene_root() );
+  _cameraNode->set_lens( lens );
 
-  _depthCameraNode = new Camera( "depthcam" );
-  _depthCameraNode->set_camera_mask( BitMask32( 1 ) );
-  _depthCameraNode->set_scene( getGSG()->get_scene()->get_scene_root() );
-  _depthCameraNode->set_lens( lens );
+  _camera = attach_new_node( _cameraNode );
+  _camera.set_light_off( true );
+  _camera.set_material_off( true );
+  _camera.set_color_off( true );
 
-  _depthCamera = attach_new_node( _depthCameraNode );
-  _depthCamera.set_light_off( true );
-  _depthCamera.set_material_off( true );
-  _depthCamera.set_color_off( true );
-
-  PT(DisplayRegion) drd = _depthBuffer->make_display_region();
+  PT(DisplayRegion) drd = _buffer->make_display_region();
   drd->set_sort( 0 );
-  drd->set_camera( _depthCamera );
-
+  drd->set_camera( _camera );
+  
   if ( _acquireColor ) {
-    _colorCameraNode = new Camera( "colorcam" );
-    _colorCameraNode->set_camera_mask( BitMask32( 1 ) );
-    _colorCameraNode->set_scene( getGSG()->get_scene()->get_scene_root() );
-    _colorCameraNode->set_lens( lens );
-
-    _colorCamera = attach_new_node( _colorCameraNode );
-    
-    PT(DisplayRegion) drc = _colorBuffer->make_display_region();
-    drc->set_sort( 0 );
-    drc->set_camera( _colorCamera );
+    _buffer->add_render_texture( &_colorMap, GraphicsOutput::RTM_copy_ram,
+      DrawableRegion::RTP_color );
   }
-
-  if ( !_acquireLabel.empty() ) {
-    _labelCameraNode = new Camera( "labelcam" );
-    _labelCameraNode->set_camera_mask( BitMask32( 1 ) );
-    _labelCameraNode->set_scene( getGSG()->get_scene()->get_scene_root() );
-    _labelCameraNode->set_lens( lens );
-
-    _labelCamera = attach_new_node( _labelCameraNode );
-
-    PT(DisplayRegion) drc = _labelBuffer->make_display_region();
-    drc->set_sort( 0 );
-    drc->set_camera( _labelCamera );
+  else if ( !_acquireLabel.empty() ) {
+    _buffer->add_render_texture( &_labelMap, GraphicsOutput::RTM_copy_ram,
+      DrawableRegion::RTP_color );
     
     ostringstream stream;
     stream << "void vshader(uniform float4x4 mat_modelproj," << endl;
@@ -211,8 +184,8 @@ RangeCamera::setupCamera( PT(Lens) lens )
       LVecBase4f(0.0, 0.0, 0.0, 0.0) );
     shaderAttrib.set_shader_input( "max_label",
       LVecBase4f(255.0, 255.0, 255.0, 255.0) );
-    _labelCameraNode->set_initial_state( shaderAttrib.get_state() );
-    _labelBuffer->set_clear_color( LVecBase4f(0.0, 0.0, 0.0, 0.0) );
+    _cameraNode->set_initial_state( shaderAttrib.get_state() );
+    _buffer->set_clear_color( LVecBase4f(0.0, 0.0, 0.0, 0.0) );
   }
 }
 
@@ -222,8 +195,11 @@ RangeCamera::updateRays()
   for ( int i = 0; i < _rayCount; i++ ) {
     RayInfo & ri = _rayInfo[i];
     Ray & ray = _rays[i];
-
-    ray.y = depth( round( ri.column ), round( ri.row ) );
+    
+    int row = round ( ri.row );
+    int column = round ( ri.column );
+    
+    ray.y = depth( column, row );
     if ( ray.y < _minRange )
       ray.y = 0.0;
     ray.x = ray.y * ri.hTan;
@@ -235,16 +211,15 @@ RangeCamera::updateRays()
     ray.row = ri.row;
     
     if ( _acquireColor ) {
-      ray.red = _colorTexels.get_red( ri.column, ri.row );
-      ray.green = _colorTexels.get_green( ri.column, ri.row );
-      ray.blue = _colorTexels.get_blue( ri.column, ri.row );
+      ray.red = _colorTexels.get_red( column, row );
+      ray.green = _colorTexels.get_green( column, row );
+      ray.blue = _colorTexels.get_blue( column, row );
     }
-
-    if ( !_acquireLabel.empty() ) {
-      ray.label = ( _labelTexels.get_alpha_val( ri.column, ri.row ) << 24 ) +
-        ( _labelTexels.get_blue_val( ri.column, ri.row ) << 16 ) +
-        ( _labelTexels.get_green_val( ri.column, ri.row ) << 8 ) +
-        _labelTexels.get_red_val( ri.column, ri.row );
+    else if ( !_acquireLabel.empty() ) {
+      ray.label = ( _labelTexels.get_alpha_val( column, row ) << 24 ) +
+        ( _labelTexels.get_blue_val( column, row ) << 16 ) +
+        ( _labelTexels.get_green_val( column, row ) << 8 ) +
+        _labelTexels.get_red_val( column, row );
     }
   }
 }

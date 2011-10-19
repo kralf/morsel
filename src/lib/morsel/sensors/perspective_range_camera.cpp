@@ -82,7 +82,7 @@ PerspectiveRangeCamera::setupRays()
       point[0] = _maxRange * tan( hAngle );
       point[1] = _maxRange;
       point[2] = _maxRange * tan( vAngle );
-      _depthCameraNode->get_lens()->project( point, dist );
+      _cameraNode->get_lens()->project( point, dist );
 
       double column = 0.5 * _width * ( 1.0 + dist[0] );
       double row = 0.5 * _height * ( 1.0 - dist[1] );

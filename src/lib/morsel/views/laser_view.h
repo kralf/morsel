@@ -17,23 +17,28 @@ PUBLISHED:
     float g,
     float b,
     float a,
-    bool points = true,
-    bool lines = false,
-    bool colorInfo = false
+    bool showPoints = true,
+    bool showLines = false,
+    bool showColors = false,
+    bool showLabels = false
   );
 public:
   virtual ~LaserView();
 PUBLISHED:
   bool update( double time );
 protected:
-  std::string                _name;
-  RangeSensor &              _sensor;
-  Colorf                     _color;
-  bool                       _points;
-  bool                       _lines;
-  bool                       _colorInfo;
-  PointerTo<GeomNode>        _node;
-  PointerTo<GeomVertexData>  _geomData;
+  std::string   _name;
+  RangeSensor & _sensor;
+  Colorf        _color;
+  bool          _showPoints;
+  bool          _showLines;
+  bool          _showColors;
+  bool          _showLabels;
+  PointerTo<GeomNode> _node;
+  PointerTo<GeomVertexData> _geomData;
+
+  double labelToHue( size_t label );
+  Colorf hsvToRgb( double hue, double sat, double val );
   void setupRendering();
   void updateRays();
 };

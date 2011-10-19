@@ -84,21 +84,15 @@ protected:
   RayInfo *   _rayInfo;
   Ray     *   _rays;
 
-  PointerTo<GraphicsOutput> _depthBuffer;
-  PointerTo<GraphicsOutput> _colorBuffer;
-  PointerTo<GraphicsOutput> _labelBuffer;
-  PNMImage    _depthTexels;
-  PNMImage    _colorTexels;
-  PNMImage    _labelTexels;
+  PointerTo<GraphicsOutput> _buffer;
   Texture     _depthMap;
   Texture     _colorMap;
   Texture     _labelMap;
-  PointerTo<Camera> _depthCameraNode;
-  PointerTo<Camera> _colorCameraNode;
-  PointerTo<Camera> _labelCameraNode;
-  NodePath    _depthCamera;
-  NodePath    _colorCamera;
-  NodePath    _labelCamera;
+  PNMImage    _depthTexels;
+  PNMImage    _colorTexels;
+  PNMImage    _labelTexels;
+  PointerTo<Camera> _cameraNode;
+  NodePath    _camera;
   PointerTo<Shader> _labelShader;
 
   void setupCamera( PT(Lens) lens );
@@ -106,6 +100,5 @@ protected:
 
   virtual void setupLens() = 0;
 };
-
 
 #endif /*RANGE_CAMERA_H*/

@@ -49,7 +49,6 @@ def Scene(name, model = None, *args, **kargs):
   if model:
     sceneFile = framework.findFile(model+".scm")
     if sceneFile:
-
       context = inspect.stack()[1][0].f_globals
       execfile(sceneFile, context)
 
@@ -63,8 +62,9 @@ def Actor(name, model, **kargs):
   actorFile = framework.findFile(model+".acm")
   if actorFile:
     context = {}
-    parameters = kargs
+    parameters = {}
     execfile(actorFile, context, parameters)
+    parameters.update(kargs)
 
     type = parameters["type"]
     del parameters["type"]
@@ -80,8 +80,9 @@ def Sensor(name, model, **kargs):
   sensorFile = framework.findFile(model+".sem")
   if sensorFile:
     context = {}
-    parameters = kargs
+    parameters = {}
     execfile(sensorFile, context, parameters)
+    parameters.update(kargs)
 
     type = parameters["type"]
     del parameters["type"]
@@ -97,8 +98,9 @@ def Platform(name, model, **kargs):
   platformFile = framework.findFile(model+".pfm")
   if platformFile:
     context = {}
-    parameters = kargs
+    parameters = {}
     execfile(platformFile, context, parameters)
+    parameters.update(kargs)
     
     type = parameters["type"]
     del parameters["type"]
