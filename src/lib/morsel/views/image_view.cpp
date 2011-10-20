@@ -30,7 +30,6 @@ ImageView::~ImageView()
 bool
 ImageView::update( double time )
 {
-  _card.set_texture( _sensor.colorMap() );
   return true;
 }
 
@@ -77,4 +76,5 @@ ImageView::setupRendering()
   CardMaker cm( "card" );
   cm.set_frame( -1.0, 1.0, -1.0, 1.0 );
   _card = _scene.attach_new_node( cm.generate() );
+  _card.set_texture( _sensor.colorMap() );
 }

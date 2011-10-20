@@ -66,6 +66,8 @@ public:
   virtual ~RangeSensor();
 PUBLISHED:
   const std::string & name();
+  int cameraCount();
+  RangeCamera & camera( int index );
   int rayCount();
   Ray & ray( int index );
   bool update( double time );
@@ -102,7 +104,7 @@ protected:
   bool        _acquireColor;
   std::string _acquireLabel;
 
-  Ray     *   _rays;
+  Ray*        _rays;
   std::vector<RangeCamera*> _cameras;
 
   void computeParameters(

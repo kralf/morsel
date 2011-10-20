@@ -1,5 +1,7 @@
 #include "range_camera.h"
 
+#include "morsel/utils/color.h"
+
 #include <cmath>
 #include <string>
 #include <limits>
@@ -52,6 +54,14 @@ RangeCamera::~RangeCamera()
 
 //------------------------------------------------------------------------------
 
+Lens &
+RangeCamera::lens()
+{
+  return *_cameraNode->get_lens();
+}
+
+//------------------------------------------------------------------------------
+
 int
 RangeCamera::rayCount()
 {
@@ -60,11 +70,17 @@ RangeCamera::rayCount()
 
 //------------------------------------------------------------------------------
 
+RangeCamera::RayInfo &
+RangeCamera::rayInfo( int index ) {
+  return _rayInfo[index];
+}
+
+//------------------------------------------------------------------------------
+
 Ray &
 RangeCamera::ray( int index ) {
   return _rays[index];
 }
-
 
 //------------------------------------------------------------------------------
 
@@ -76,6 +92,27 @@ RangeCamera::depth( int column, int row ) {
       column, row ) * ( _maxRange - _minRange ) );
   else
     return -1.0;
+}
+
+//------------------------------------------------------------------------------
+
+Texture &
+RangeCamera::depthMap() {
+  return _depthMap;
+}
+
+//------------------------------------------------------------------------------
+
+Texture &
+RangeCamera::colorMap() {
+  return _colorMap;
+}
+
+//------------------------------------------------------------------------------
+
+Texture &
+RangeCamera::labelMap() {
+  return _labelMap;
 }
 
 //------------------------------------------------------------------------------
@@ -133,6 +170,12 @@ RangeCamera::setupCamera( PT(Lens) lens )
 {
   _depthMap.set_format( Texture::F_depth_component );
   _depthMap.set_component_type( Texture::T_unsigned_short );
+  _depthMap.set_minfilter( Texture::FT_nearest );
+  _depthMap.set_magfilter( Texture::FT_nearest );
+  _colorMap.set_minfilter( Texture::FT_nearest );
+  _colorMap.set_magfilter( Texture::FT_nearest );
+  _labelMap.set_minfilter( Texture::FT_nearest );
+  _labelMap.set_magfilter( Texture::FT_nearest );
 
   _buffer = getWindow( 0 )->make_texture_buffer( "depthmap", _width, _height,
     &_depthMap, true );
@@ -162,30 +205,20 @@ RangeCamera::setupCamera( PT(Lens) lens )
     ostringstream stream;
     stream << "void vshader(uniform float4x4 mat_modelproj," << endl;
     stream << "    in float4 vtx_position : POSITION," << endl;
-    stream << "    out float4 l_position : POSITION," << endl;
-    stream << "    out float4 l_color : COLOR) {" << endl;
+    stream << "    out float4 l_position : POSITION) {" << endl;
     stream << "  l_position = mul(mat_modelproj, vtx_position);" << endl;
     stream << "}" << endl;
     stream << "void fshader(uniform float4 " << _acquireLabel << "," << endl;
-    stream << "    uniform float4 max_label," << endl;
     stream << "    out float4 o_color : COLOR) {" << endl;
-    stream << "  o_color = float4(" << endl;
-    stream << "    " << _acquireLabel << "[0]/max_label[0]," << endl;
-    stream << "    " << _acquireLabel << "[1]/max_label[1]," << endl;
-    stream << "    " << _acquireLabel << "[2]/max_label[2]," << endl;
-    stream << "    " << _acquireLabel << "[3]/max_label[3]" << endl;
-    stream << "  );" << endl;
+    stream << "  o_color = " << _acquireLabel << ";" << endl;
     stream << "}" << endl;
     _labelShader = Shader::make( stream.str(), Shader::SL_Cg );
     
     NodePath shaderAttrib( "shader label" );
     shaderAttrib.set_shader( _labelShader );
-    shaderAttrib.set_shader_input( _acquireLabel,
-      LVecBase4f(0.0, 0.0, 0.0, 0.0) );
-    shaderAttrib.set_shader_input( "max_label",
-      LVecBase4f(255.0, 255.0, 255.0, 255.0) );
+    shaderAttrib.set_shader_input( _acquireLabel, Color::intToRgb( 0 ) );
     _cameraNode->set_initial_state( shaderAttrib.get_state() );
-    _buffer->set_clear_color( LVecBase4f(0.0, 0.0, 0.0, 0.0) );
+    _buffer->set_clear_color( Color::intToRgb( 0 ) );
   }
 }
 
@@ -215,11 +248,7 @@ RangeCamera::updateRays()
       ray.green = _colorTexels.get_green( column, row );
       ray.blue = _colorTexels.get_blue( column, row );
     }
-    else if ( !_acquireLabel.empty() ) {
-      ray.label = ( _labelTexels.get_alpha_val( column, row ) << 24 ) +
-        ( _labelTexels.get_blue_val( column, row ) << 16 ) +
-        ( _labelTexels.get_green_val( column, row ) << 8 ) +
-        _labelTexels.get_red_val( column, row );
-    }
+    else if ( !_acquireLabel.empty() )
+      ray.label = Color::rgbToInt( _labelTexels.get_xel_a(column, row) );
   }
 }

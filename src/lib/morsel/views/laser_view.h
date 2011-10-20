@@ -34,13 +34,12 @@ protected:
   bool          _showLines;
   bool          _showColors;
   bool          _showLabels;
-  PointerTo<GeomNode> _node;
-  PointerTo<GeomVertexData> _geomData;
+  PointerTo<Shader> _pointShader;
 
-  double labelToHue( size_t label );
-  Colorf hsvToRgb( double hue, double sat, double val );
+  std::vector<GeomNode*> _nodes;
+  std::vector<GeomVertexData*> _geomData;
+  
   void setupRendering();
-  void updateRays();
 };
 
 #endif /*LASER_VIEW_H*/

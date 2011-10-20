@@ -1,6 +1,6 @@
 #include "range_sensor.h"
-#include "morsel/sensors/perspective_range_camera.h"
-#include "morsel/sensors/spherical_range_camera.h"
+#include "perspective_range_camera.h"
+#include "spherical_range_camera.h"
 
 #include <lpoint3.h>
 #include <lvecBase3.h>
@@ -70,6 +70,20 @@ RangeSensor::~RangeSensor()
 const string &
 RangeSensor::name() {
   return _name;
+}
+
+//------------------------------------------------------------------------------
+
+int
+RangeSensor::cameraCount() {
+  return _cameras.size();
+}
+
+//------------------------------------------------------------------------------
+
+RangeCamera &
+RangeSensor::camera( int index ) {
+  return *_cameras[index];
 }
 
 //------------------------------------------------------------------------------

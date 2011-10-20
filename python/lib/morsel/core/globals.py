@@ -31,5 +31,6 @@ framework.setWindowTitle("%s version %s.%s.%s" % (MORSEL_NAME,
 framework.setConfigVariable("background-color", 0.5, 0.5, 0.8)
 framework.setConfigVariable("depth-bits", 16)
 framework.setConfigVariable("direct-gui-edit", True)
+framework.setConfigVariable("basic-shaders-only", False)
 
 framework.run()

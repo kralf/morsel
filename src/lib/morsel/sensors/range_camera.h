@@ -55,9 +55,14 @@ public:
   );
   virtual ~RangeCamera();
 
+  Lens & lens();
   int rayCount();
+  RayInfo & rayInfo( int index );
   Ray & ray( int index );
   double depth( int column, int row );
+  Texture & depthMap();
+  Texture & colorMap();
+  Texture & labelMap();
   bool update( double time );
   bool inRange( NodePath & node );
   void setActive( bool active );
