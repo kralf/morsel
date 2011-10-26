@@ -37,3 +37,9 @@ remake_pack_deb(
   DESCRIPTION "data"
   morsel
 )
+remake_pack_deb(
+  ARCH all
+  COMPONENT blender
+  DESCRIPTION "blender scripts"
+  blender
+)

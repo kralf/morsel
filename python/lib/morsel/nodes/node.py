@@ -29,11 +29,19 @@ class Node(panda.NodePath):
 
 #-------------------------------------------------------------------------------
 
-  def getPosition(self):
-    return [self.getX(), self.getY(), self.getZ()]
+  def getPosition(self, node = None):
+    if node:
+      position = self.getPos(node)
+    else:
+      position = self.getPos()
+      
+    return [position[0], position[1], position[2]]
 
-  def setPosition(self, position):
-    self.setPos(*position)
+  def setPosition(self, position, node = None):
+    if node:
+      self.setPos(node, *position)
+    else:
+      self.setPos(*position)
 
   position = property(getPosition, setPosition)
 
@@ -45,11 +53,19 @@ class Node(panda.NodePath):
 
 #-------------------------------------------------------------------------------
 
-  def getOrientation(self):
-    return [self.getH(), self.getP(), self.getR()]
+  def getOrientation(self, node = None):
+    if node:
+      orientation = self.getHpr(node)
+    else:
+      orientation = self.getHpr()
+      
+    return [orientation[0], orientation[1], orientation[2]]
 
-  def setOrientation(self, orientation):
-    self.setHpr(*orientation)
+  def setOrientation(self, orientation, node = None):
+    if node:
+      self.setHpr(node, *orientation)
+    else:
+      self.setHpr(*orientation)
 
   orientation = property(getOrientation, setOrientation)
 

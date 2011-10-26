@@ -19,6 +19,19 @@ def Mesh(name, filename = None, **kargs):
 
 #-------------------------------------------------------------------------------
 
+def Path(name, filename = None, **kargs):
+  if filename:
+    pathFile = framework.findFile(filename)
+    if not pathFile:
+      raise RuntimeError("Path file '"+filename+"' not found")
+  else:
+    pathFile = None
+
+  return morsel.nodes.Path(globals.world, name, filename = pathFile,
+    **kargs)
+
+#-------------------------------------------------------------------------------
+
 def Collider(name, *args, **kargs):
   return Instance("morsel.nodes."+globals.world.physics, "Collider",
     globals.world, name, *args, **kargs)
@@ -109,6 +122,23 @@ def Platform(name, model, **kargs):
       globals.world, name, **parameters)
   else:
     raise RuntimeError("Platform file '"+model+".pfm' not found")
+
+#-------------------------------------------------------------------------------
+
+def Controller(model, **kargs):
+  controllerFile = framework.findFile(model+".ctl")
+  if controllerFile:
+    context = {}
+    parameters = {}
+    execfile(controllerFile, context, parameters)
+    parameters.update(kargs)
+
+    type = parameters["type"]
+    del parameters["type"]
+
+    return Instance("morsel.control", type, globals.world, **parameters)
+  else:
+    raise RuntimeError("Contoller file '"+model+".ctl' not found")
 
 #-------------------------------------------------------------------------------
 

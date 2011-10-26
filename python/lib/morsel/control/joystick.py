@@ -1,14 +1,14 @@
 from morsel.core import *
-from controller import Controller
+from morsel.nodes.controller import Controller
 
 import pygame.joystick
 
 #-------------------------------------------------------------------------------
 
 class Joystick(Controller):
-  def __init__(self, name = "Joystick", platform = None, device = 0,
-      axes = [0, 1]):
-    Controller.__init__(self, name = name, platform = platform)
+  def __init__(self, world, name = "Joystick", device = 0, axes = [0, 1],
+      **kargs):
+    Controller.__init__(self, world, name = name, **kargs)
 
     self.device = device
     self.axes = axes

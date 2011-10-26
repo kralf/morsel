@@ -1,14 +1,14 @@
 from morsel.core import *
-from controller import Controller
+from morsel.nodes.controller import Controller
 
 from numpy.random import *
 
 #-------------------------------------------------------------------------------
 
 class Random(Controller):
-  def __init__(self, name = "Random", platform = None,
-      range = [(0, 1), (-1, 1)], delay = [1, 1]):
-    Controller.__init__(self, name = name, platform = platform)
+  def __init__(self, world, name = "Random", range = [(0, 1), (-1, 1)],
+      delay = [1, 1], **kargs):
+    Controller.__init__(self, name = name, **kargs)
 
     self.delay = delay
     self.range = range

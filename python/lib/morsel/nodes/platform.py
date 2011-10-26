@@ -14,31 +14,54 @@ class Platform(Node):
       collisionMasks = [PLATFORM_COLLISIONS_FROM, PLATFORM_COLLISIONS_INTO])
 
     self._command = [0]*len(limits)
+    self._translationalVelocity = [0, 0, 0]
+    self._rotationalVelocity = [0, 0, 0]
     self.limits = limits
     self.command = self._command
     self.state = [0]*len(limits)
 
 #-------------------------------------------------------------------------------
 
-  def setPosition(self, position):
-    Node.setPosition(self, position)
+  def setPosition(self, position, node = None):
+    Node.setPosition(self, position, node)
     
-    self.pose[0] = position[0]
-    self.pose[1] = position[1]
-    self.pose[2] = position[2]
+    self.pose[0] = self.position[0]
+    self.pose[1] = self.position[1]
+    self.pose[2] = self.position[2]
 
   position = property(Node.getPosition, setPosition)
 
 #-------------------------------------------------------------------------------
 
-  def setOrientation(self, orientation):
-    Node.setOrientation(self, orientation)
+  def setOrientation(self, orientation, node = None):
+    Node.setOrientation(self, orientation, node)
     
-    self.pose[3] = orientation[0]
-    self.pose[4] = orientation[1]
-    self.pose[5] = orientation[2]
+    self.pose[3] = self.orientation[0]
+    self.pose[4] = self.orientation[1]
+    self.pose[5] = self.orientation[2]
 
   orientation = property(Node.getOrientation, setOrientation)
+
+#-------------------------------------------------------------------------------
+
+  def getTranslationalVelocity(self):
+    pass
+
+  def setTranslationalVelocity(self, translationalVelocity):
+    pass
+
+  translationalVelocity = property(getTranslationalVelocity,
+    setTranslationalVelocity)
+  
+#-------------------------------------------------------------------------------
+
+  def getRotationalVelocity(self):
+    pass
+
+  def setRotationalVelocity(self, rotationalVelocity):
+    pass
+
+  rotationalVelocity = property(getRotationalVelocity, setRotationalVelocity)
 
 #-------------------------------------------------------------------------------
 

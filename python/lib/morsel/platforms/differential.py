@@ -116,6 +116,27 @@ class Differential(Wheeled):
 
 #-------------------------------------------------------------------------------
 
+  def getTranslationalVelocity(self):
+    return [self.state[0], 0, 0]
+
+  def setTranslationalVelocity(self, translationalVelocity):
+    self.command = [translationalVelocity[0], self.command[1]]
+
+  translationalVelocity = property(getTranslationalVelocity,
+    setTranslationalVelocity)
+
+#-------------------------------------------------------------------------------
+
+  def getRotationalVelocity(self):
+    return [self.state[1], 0, 0]
+
+  def setRotationalVelocity(self, rotationalVelocity):
+    self.command = [self.command[0], rotationalVelocity[0]]
+
+  rotationalVelocity = property(getRotationalVelocity, setRotationalVelocity)
+
+#-------------------------------------------------------------------------------
+
   def isCasterWheel(self, wheel):
     return wheel in self.casterWheels
 
@@ -137,3 +158,4 @@ class Differential(Wheeled):
       self.casterCranks[i].yaw = self.casterYaw[i]+self.casterAngles[i]
       self.casterWheels[i].setPos(self.casterCranks[i],
         panda.Vec3(-self.casterLength[i], 0, self.casterDepth[i]))
+    

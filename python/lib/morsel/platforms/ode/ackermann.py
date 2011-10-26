@@ -87,8 +87,7 @@ class Ackermann(Base):
     self.state[0] = self.body.body.getLinearVel().project(
       panda.Quat(self.body.body.getQuaternion()).xform(
       panda.Vec3(1, 0, 0))).length()
-    self.state[1] = panda.Quat(self.body.body.getQuaternion()).xform(
-      self.body.body.getAngularVel())[2]*180.0/pi
+    self.state[1] = -self.getSteeringAngle(self.steeringAngles)
 
     position = self.body.body.getPosition()
     orientation = panda.Quat(self.body.body.getQuaternion()).getHpr()

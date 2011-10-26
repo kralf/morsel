@@ -13,16 +13,16 @@ class Plane(Geometry):
 
 #-------------------------------------------------------------------------------
 
-  def setPosition(self, position):
-    Node.setPosition(self, position)
+  def setPosition(self, position, node = None):
+    Node.setPosition(self, position, node)
     self.setOrientation(self.orientation)
     
   position = property(Geometry.getPosition, setPosition)
 
 #-------------------------------------------------------------------------------
 
-  def setOrientation(self, orientation):
-    Node.setOrientation(self, orientation)
+  def setOrientation(self, orientation, node = None):
+    Node.setOrientation(self, orientation, node)
     
     quaternion = panda.Quat()
     quaternion.setHpr(panda.Vec3(*orientation))

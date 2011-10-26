@@ -68,4 +68,3 @@ class Ackermann(Base):
     self.pose[3] += dtheta*180/pi
 
     Base.updatePhysics(self, period)
-    

@@ -1,13 +1,13 @@
 from morsel.core import *
-from controller import Controller
+from morsel.nodes.controller import Controller
 
 #-------------------------------------------------------------------------------
 
 class Keyboard(Controller):
-  def __init__(self, name = "Keyboard", platform = None,
-      keys = [("arrow_down", "arrow_up"), ("arrow_right", "arrow_left")],
-      delay = [1, 1]):
-    Controller.__init__(self, name = name, platform = platform)
+  def __init__(self, world, name = "Keyboard",
+      keys = [("arrow_down","arrow_up"), ("arrow_right", "arrow_left")],
+      delay = [1, 1], **kargs):
+    Controller.__init__(self, world, name = name, **kargs)
 
     self.delay = delay
     self.keys = keys

@@ -23,16 +23,16 @@ class Body(Node):
 
 #-------------------------------------------------------------------------------
 
-  def setPosition(self, position):
-    Node.setPosition(self, position)
+  def setPosition(self, position, node = None):
+    Node.setPosition(self, position, node)
     self.body.setPosition(self.getPos(self.world.scene))
 
   position = property(Node.getPosition, setPosition)
 
 #-------------------------------------------------------------------------------
 
-  def setOrientation(self, orientation):
-    Node.setOrientation(self, orientation)
+  def setOrientation(self, orientation, node = None):
+    Node.setOrientation(self, orientation, node)
     self.body.setQuaternion(self.getQuat(self.world.scene))
 
   orientation = property(Node.getOrientation, setOrientation)

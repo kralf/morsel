@@ -13,4 +13,6 @@ from static import Static
 from actor import Actor
 from sensor import Sensor
 from platform import Platform
+from controller import Controller
+from path import Path
 from view import View

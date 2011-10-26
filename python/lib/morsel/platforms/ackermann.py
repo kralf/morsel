@@ -21,6 +21,24 @@ class Ackermann(Wheeled):
 
 #-------------------------------------------------------------------------------
 
+  def getSteeringAngle(self, steeringAngles):
+    steeringAngle = 0
+    
+    if tan(steeringAngles[0]*pi/180) == 0:
+      return steeringAngle
+
+    cotLeftAngle = 1/tan(steeringAngles[0]*pi/180)
+    cotRightAngle = 1/tan(steeringAngles[1]*pi/180)
+    
+    leftSteeringAngle = atan(1/(cotLeftAngle-self.wheelDistance/
+      (2*self.axesDistance)))*180/pi
+    rightSteeringAngle = atan(1/(cotRightAngle+self.wheelDistance/
+      (2*self.axesDistance)))*180/pi
+
+    return 0.5*(leftSteeringAngle+rightSteeringAngle)
+
+#-------------------------------------------------------------------------------
+
   def getSteeringAngles(self, steeringAngle):
     steeringAngles = [0]*self.numWheels
     
@@ -35,6 +53,35 @@ class Ackermann(Wheeled):
     steeringAngles[1] = atan(1/cotRightAngle)*180/pi
     
     return steeringAngles
+
+#-------------------------------------------------------------------------------
+
+  def getTranslationalVelocity(self):
+    return [self.state[0], 0, 0]
+
+  def setTranslationalVelocity(self, translationalVelocity):
+    self.command = [translationalVelocity[0], self.command[1]]
+
+  translationalVelocity = property(getTranslationalVelocity,
+    setTranslationalVelocity)
+
+#-------------------------------------------------------------------------------
+
+  def getRotationalVelocity(self):
+    if abs(self.state[1]) >= self.epsilon:
+      radius = self.axesDistance/tan(self.state[1]*pi/180)
+      return self.state[0]/radius*180/pi
+    else:
+      return [0, 0, 0]
+
+  def setRotationalVelocity(self, rotationalVelocity):
+    if abs(rotationalVelocity[0]) >= self.epsilon:
+      radius = self.command[0]/(rotationalVelocity[0]*pi/180)
+      self.command = [self.command[0], atan(self.axesDistance/radius)*180/pi]
+    else:
+      self.command = [self.command[0], 0]
+
+  rotationalVelocity = property(getRotationalVelocity, setRotationalVelocity)
 
 #-------------------------------------------------------------------------------
 

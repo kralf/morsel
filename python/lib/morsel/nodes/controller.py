@@ -1,9 +1,11 @@
-from morsel.core import *
+from node import Node
 
 #-------------------------------------------------------------------------------
 
-class Controller(object):
-  def __init__(self, name, platform = None):
+class Controller(Node):
+  def __init__(self, world, name, platform = None, **kargs):
+    Node.__init__(self, world, name, **kargs)
+    
     self.platform = platform
     self.time = None
     
