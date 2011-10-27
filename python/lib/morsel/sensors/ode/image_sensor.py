@@ -12,5 +12,5 @@ class ImageSensor(Base):
     self.solid = Solid(name+"Solid", solid, self.mesh, body = body,
       mass = mass, parent = self)
     joint = panda.OdeFixedJoint(world.world)
-    joint.attach(self.parent.body.body, self.solid.body.body)
+    joint.attach(self.parent.solid.body.body, self.solid.body.body)
     joint.set()

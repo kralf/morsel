@@ -24,7 +24,8 @@ class Ackermann(Wheeled):
   def getSteeringAngle(self, steeringAngles):
     steeringAngle = 0
     
-    if tan(steeringAngles[0]*pi/180) == 0:
+    if ((tan(steeringAngles[0]*pi/180) == 0) or 
+        tan(steeringAngles[1]*pi/180) == 0):
       return steeringAngle
 
     cotLeftAngle = 1/tan(steeringAngles[0]*pi/180)

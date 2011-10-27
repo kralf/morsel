@@ -7,10 +7,9 @@ class LaserView(View):
   def __init__(self, world, name, sensor, color = [1, 0, 0, 0.5],
       showPoints = True, showLines = False, showColors = False,
       showLabels = False, **kargs):
-    View.__init__(self, world, name, **kargs)
+    View.__init__(self, world, name, color = color, **kargs)
 
     self.sensor = sensor
-    self.color = color
     self.showPoints = showPoints
     self.showLines = showLines
     self.showColors = showColors

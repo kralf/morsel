@@ -38,9 +38,9 @@ def Collider(name, *args, **kargs):
 
 #-------------------------------------------------------------------------------
 
-def Solid(name, type, mesh, *args, **kargs):
+def Solid(name, type, *args, **kargs):
   return Instance("morsel.nodes."+globals.world.physics+".solids", type,
-    globals.world, name, mesh, *args, **kargs)
+    globals.world, name, *args, **kargs)
 
 #-------------------------------------------------------------------------------
 

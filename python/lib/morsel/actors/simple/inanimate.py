@@ -8,4 +8,6 @@ class Inanimate(Actor):
     Actor.__init__(self, world, name, **kargs)
 
     self.mesh = Mesh(name+"Mesh", mesh, parent = self)
-    self.solid = Solid(name+"Solid", solid, self.mesh, parent = self)
+    self.solid = Solid(name+"Solid", "Empty", parent = self)
+    self.boundingSolid = Solid(name+"Solid", solid, self.mesh,
+      parent = self.solid)

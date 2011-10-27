@@ -51,9 +51,3 @@ class Geometry(Node):
   def setCollisionMasks(self, collisionMasks):
     self.geometry.setCategoryBits(collisionMasks[0])
     self.geometry.setCollideBits(collisionMasks[1])
-
-#-------------------------------------------------------------------------------
-
-  def update(self):
-    self.setPosQuat(self.world.scene, self.geometry.getPosition(),
-      self.geometry.getQuaternion())

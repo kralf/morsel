@@ -8,8 +8,8 @@ from morsel.nodes.facade import Mesh
 class Sphere(Solid):
   def __init__(self, world, name, mesh, parent = None, **kargs):
     p_min, p_max = mesh.getTightBounds()
-    p_min = parent.getRelativeVector(mesh, p_min)
-    p_max = parent.getRelativeVector(mesh, p_max)
+    p_min = parent.getRelativePoint(mesh.parent, p_min)
+    p_max = parent.getRelativePoint(mesh.parent, p_max)
     
     x = 0.5*(p_min[0]+p_max[0])
     y = 0.5*(p_min[1]+p_max[1])

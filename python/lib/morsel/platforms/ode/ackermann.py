@@ -16,13 +16,13 @@ class Ackermann(Base):
     self.propulsionForce = propulsionForce
     self.brakingForce = brakingForce
 
+    self.solid = Solid(name+"Solid", "Empty", parent = self)
     self.chassisSolid = Solid(name+"ChassisSolid", chassisSolid, self.chassis,
       body = chassisBody, mass = chassisMass, massOffset = chassisMassOffset,
-      parent = self)
+      parent = self.solid)
 
-    self.body = Body(name+"Body", "Empty", parent = self.chassis)
     joint = panda.OdeFixedJoint(world.world)
-    joint.attach(self.chassisSolid.body.body, self.body.body)
+    joint.attach(self.chassisSolid.body.body, self.solid.body.body)
     joint.set()
 
     self.minSteeringAngles = self.getSteeringAngles(-self.maxSteeringAngle)
@@ -32,11 +32,11 @@ class Ackermann(Base):
     self.wheelJoints = []
     for i in range(self.numWheels):
       solid = Solid(name+"WheelSolid", wheelSolid, self.wheels[i],
-        body = wheelBody, mass = wheelMass[i], parent = self)
+        body = wheelBody, mass = wheelMass[i], parent = self.chassisSolid)
 
       joint = panda.OdeHinge2Joint(world.world)
       joint.attach(self.chassisSolid.body.body, solid.body.body)
-      anchor = solid.geometry.getPos(self.world.scene)
+      anchor = solid.mesh.getPos(self.world.scene)
       joint.setAnchor(anchor[0], anchor[1], anchor[2])
       axis1 = panda.Vec3(0, 0, 1)
       joint.setAxis1(self.world.scene.getRelativeVector(self, axis1))
@@ -84,13 +84,13 @@ class Ackermann(Base):
       turningRate = self.command[0]/self.wheelCircumference[i]*360
       self.wheelJoints[i].setParamVel(1, turningRate*pi/180)
 
-    self.state[0] = self.body.body.getLinearVel().project(
-      panda.Quat(self.body.body.getQuaternion()).xform(
+    self.state[0] = self.solid.body.body.getLinearVel().project(
+      panda.Quat(self.solid.body.body.getQuaternion()).xform(
       panda.Vec3(1, 0, 0))).length()
     self.state[1] = -self.getSteeringAngle(self.steeringAngles)
 
-    position = self.body.body.getPosition()
-    orientation = panda.Quat(self.body.body.getQuaternion()).getHpr()
+    position = self.solid.position
+    orientation = self.solid.orientation
     self.pose = [position[0], position[1], position[2],
       orientation[0], orientation[1], orientation[2]]
 

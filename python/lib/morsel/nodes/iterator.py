@@ -3,7 +3,7 @@ from node import Node
 #-------------------------------------------------------------------------------
 
 class Iterator(object):
-  def __init__(self, node, type = Node):
+  def __init__(self, node, type):
     object.__init__(self)
     
     self.node = node

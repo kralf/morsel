@@ -34,4 +34,4 @@ class Collider(Collection):
 #-------------------------------------------------------------------------------
 
   def addSolid(self, solid):
-    solid.parent = self
+    solid.collider = self

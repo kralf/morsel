@@ -6,8 +6,8 @@ import sys
 #-------------------------------------------------------------------------------
 
 class Node(panda.NodePath):
-  def __init__(self, world, name, parent = None, position = [0, 0, 0],
-      orientation = [0, 0, 0], scale = 1, **kargs):
+  def __init__(self, world, name, parent = None, position = None,
+      orientation = None, scale = None, color = None, **kargs):
     panda.NodePath.__init__(self, name)
 
     if not world:
@@ -19,9 +19,15 @@ class Node(panda.NodePath):
     self.world.registerNode(self)
 
     self.parent = parent
-    self.position = position
-    self.orientation = orientation
-    self.scale = scale
+
+    if position:
+      self.position = position
+    if orientation:
+      self.orientation = orientation
+    if scale:
+      self.scale = scale
+    if color:
+      self.color = color
 
 #-------------------------------------------------------------------------------
 
@@ -53,6 +59,16 @@ class Node(panda.NodePath):
 
 #-------------------------------------------------------------------------------
 
+  def getGlobalPosition(self):
+    return self.getPosition(self.world.scene)
+
+  def setGlobalPosition(self, position):
+    self.setPosition(position, self.world.scene)
+
+  globalPosition = property(getGlobalPosition, setGlobalPosition)
+
+#-------------------------------------------------------------------------------
+
   def getOrientation(self, node = None):
     if node:
       orientation = self.getHpr(node)
@@ -77,13 +93,59 @@ class Node(panda.NodePath):
 
 #-------------------------------------------------------------------------------
 
-  def setScale(self, scale):
-    if isinstance(scale, list):
-      panda.NodePath.setScale(self, *scale)
-    else:
-      panda.NodePath.setScale(self, scale)
+  def getGlobalOrientation(self):
+    return self.getOrientation(self.world.scene)
 
-  scale = property(panda.NodePath.getScale, setScale)
+  def setGlobalOrientation(self, orientation):
+    self.setOrientation(orientation, self.world.scene)
+
+  globalOrientation = property(getGlobalOrientation, setGlobalOrientation)
+
+#-------------------------------------------------------------------------------
+
+  def getHeading(self, node = None):
+    quaternion = panda.Quat()
+    quaternion.setHpr(panda.Vec3(*self.getOrientation(node)))
+    heading = quaternion.xform(panda.Vec3(1, 0, 0))
+
+    return [heading[0], heading[1], heading[2]]
+
+  heading = property(getHeading)
+
+#-------------------------------------------------------------------------------
+
+  def getScale(self, node = None):
+    if node:
+      scale = panda.NodePath.getScale(node)
+    else:
+      scale = panda.NodePath.getScale()
+      
+    return [scale[0], scale[1], scale[2]]
+    
+  def setScale(self, scale, node = None):
+    if not isinstance(scale, list):
+      scale = [scale]*3
+      
+    if node:
+      panda.NodePath.setScale(node, *scale)
+    else:
+      panda.NodePath.setScale(self, *scale)
+
+  scale = property(getScale, setScale)
+
+#-------------------------------------------------------------------------------
+
+  def getColor(self):
+    if self.hasColor():
+      color = panda.NodePath.getColor(self)
+      return [color[0], color[1], color[2], color[3]]
+    else:
+      return [0]*4
+
+  def setColor(self, color):
+    panda.NodePath.setColor(self, *color)
+
+  color = property(getColor, setColor)
 
 #-------------------------------------------------------------------------------
 
@@ -151,6 +213,20 @@ class Node(panda.NodePath):
     self.reparentTo(parent)
 
   parent = property(getParent, setParent)
+
+#-------------------------------------------------------------------------------
+
+  def getChildren(self, type = None):
+    if not type:
+      type = Node
+      
+    for i in range(0, self.getNumChildren()):
+      node = self.getChild(i)      
+      childType = node.getPythonTag("type")
+      if childType and issubclass(childType, type):
+        yield node.getPythonTag("this")
+
+  children = property(getChildren)
 
 #-------------------------------------------------------------------------------
 

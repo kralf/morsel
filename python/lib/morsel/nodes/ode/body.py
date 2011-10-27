@@ -36,9 +36,3 @@ class Body(Node):
     self.body.setQuaternion(self.getQuat(self.world.scene))
 
   orientation = property(Node.getOrientation, setOrientation)
-
-#-------------------------------------------------------------------------------
-
-  def update(self):
-    self.setPosQuat(self.world.scene, self.body.getPosition(),
-      panda.Quat(self.body.getQuaternion()))

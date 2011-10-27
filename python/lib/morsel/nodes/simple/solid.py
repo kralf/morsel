@@ -4,7 +4,7 @@ from morsel.nodes.simple.collider import Collider
 #-------------------------------------------------------------------------------
 
 class Solid(Base):
-  def __init__(self, world, name, mesh, geometry = None, **kargs):
+  def __init__(self, world, name, mesh = None, geometry = None, **kargs):
     self.geometry = geometry
 
-    Base.__init__(self, world, name, mesh, **kargs)
+    Base.__init__(self, world, name, mesh = mesh, **kargs)

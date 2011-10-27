@@ -6,7 +6,7 @@ from morsel.nodes.facade import Path
 
 class PurePursuit(Controller):
   def __init__(self, world, name = "PathFollow", filename = None, velocity = 1,
-      lookAhead = 1, waypoint = -1, kidnap = True, epsilon = 1e-6, **kargs):
+      lookAhead = 1, waypoint = None, kidnap = True, epsilon = 1e-6, **kargs):
     Controller.__init__(self, world, name = name, **kargs)
     
     self.path = Path(name+"Path", filename, parent = self)
@@ -17,7 +17,7 @@ class PurePursuit(Controller):
     self.kidnap = kidnap
     self.epsilon = epsilon
 
-    if self.waypoint < 0:
+    if self.waypoint == None:
       self.waypoint = self.getClosestWaypoint()
 
     if self.kidnap:
@@ -27,7 +27,7 @@ class PurePursuit(Controller):
 #-------------------------------------------------------------------------------
 
   def getLookAheadDistance(self, position):
-    origin = self.getRelativePoint(self.platform, panda.Vec3(0, 0, 0))
+    origin = panda.Point3(*self.platform.getPosition(self))
     lookAhead = panda.Point3(*position)-origin
     
     return lookAhead.length()
@@ -35,8 +35,8 @@ class PurePursuit(Controller):
 #-------------------------------------------------------------------------------
 
   def getLookAheadAngle(self, position):
-    origin = self.getRelativePoint(self.platform, panda.Vec3(0, 0, 0))
-    heading = self.getRelativeVector(self.platform, panda.Vec3(1, 0, 0))
+    origin = panda.Point3(*self.platform.getPosition(self))
+    heading = panda.Vec3(*self.platform.getHeading(self))
     lookAhead = panda.Point3(*position)-origin
     lookAhead.normalize()
 
@@ -63,7 +63,7 @@ class PurePursuit(Controller):
 #-------------------------------------------------------------------------------
 
   def getNextWaypoint(self, waypoint):
-    origin = self.getRelativePoint(self.platform, panda.Vec3(0, 0, 0))
+    origin = panda.Point3(*self.platform.getPosition(self))
     for i in range(waypoint, self.path.numWaypoints):
       vector = panda.Vec3(*self.path.positions[i])-origin
       if vector.length() > self.lookAheadThreshold:
@@ -94,7 +94,7 @@ class PurePursuit(Controller):
     if (waypoint > 0) or self.path.cyclic:
       l_t = self.lookAheadThreshold
       if self.getLookAheadDistance(self.path.positions[self.waypoint-1]) < l_t:
-        p_0 = self.getRelativePoint(self.platform, panda.Vec3(0, 0, 0))
+        p_0 = panda.Point3(*self.platform.getPosition(self))
         p_1 = panda.Point3(*self.path.positions[waypoint-1])
         p_2 = panda.Point3(*self.path.positions[waypoint])
         

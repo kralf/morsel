@@ -13,18 +13,19 @@ class Differential(Base):
     self.maxAcceleration = maxAcceleration
     self.maxDeceleration = maxDeceleration
 
+    self.solid = Solid(name+"Solid", "Empty", parent = self)
     self.chassisSolid = Solid(name+"ChassisSolid", chassisSolid, self.chassis,
-      parent = self)
+      parent = self.solid)
 
     self.crankSolids = []
     for crank in self.casterCranks:
       self.crankSolids.append(Solid(name+"CrankSolid", crankSolid, crank,
-        parent = self))
+        parent = self.chassisSolid))
         
     self.wheelSolids = []
     for wheel in self.wheels:
       self.wheelSolids.append(Solid(name+"WheelSolid", wheelSolid, wheel,
-        parent = self))
+        parent = self.chassisSolid))
 
 #-------------------------------------------------------------------------------
 

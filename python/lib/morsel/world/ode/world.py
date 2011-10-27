@@ -59,8 +59,6 @@ class World(Base):
     contactPoints = self.space.autoCollide()
     for actor in self.actors:
       actor.updatePhysics(self.period)
-    for platform in self.platforms:
-      platform.updatePhysics(self.period)
     for sensor in self.sensors:
       sensor.updatePhysics(self.period)
     if self.quickStep:
