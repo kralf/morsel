@@ -40,7 +40,7 @@ ImageView::update( double time )
 void
 ImageView::setupRendering()
 {
-  GraphicsStateGuardian * gsg = getGSG();
+  GraphicsOutput * window = getWindow( 0 );
   GraphicsEngine * engine = getEngine();
 
   FrameBufferProperties fbProps = FrameBufferProperties::get_default();
@@ -51,8 +51,8 @@ ImageView::setupRendering()
   int flags = GraphicsPipe::BF_require_window |
     GraphicsPipe::BF_fb_props_optional;
 
-  _window = engine->make_output( gsg->get_pipe(), "window", 0, fbProps,
-      winProps, flags, gsg );
+  _window = engine->make_output( window->get_pipe(), "window", 0, fbProps,
+      winProps, flags, window->get_gsg() );
 
   _sceneNode = new PandaNode( "scene" );
   _scene = attach_new_node( _sceneNode );
