@@ -1,19 +1,16 @@
 from morsel.core import *
-from morsel.nodes import Actor
-from morsel.nodes.facade import Mesh, Solid
+from morsel.actors import Inanimate as Base
+from morsel.nodes.facade import Solid
 
 #-------------------------------------------------------------------------------
 
-class Inanimate(Actor):
+class Inanimate(Base):
   def __init__(self, world, name, mesh, solid = None, body = None, mass = 0,
       **kargs):
-    Actor.__init__(self, world, name, **kargs)
+    Base.__init__(self, world, name, mesh, **kargs)
 
-    self.mesh = Mesh(name+"Mesh", mesh, parent = self)
-    self.solid = Solid(name+"Solid", "Empty", parent = self)
-    self.boundingSolid = Solid(name+"Solid", solid, self.mesh, body = body,
+    self.body.solid = Solid(name+"Solid", solid, self.body, body = body,
       mass = mass, parent = self.solid)
-
     joint = panda.OdeFixedJoint(world.world)
-    joint.attach(self.boundingSolid.body.body, self.solid.body.body)
+    joint.attach(self.body.solid.body.body, self.solid.body.body)
     joint.set()

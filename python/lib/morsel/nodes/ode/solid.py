@@ -51,9 +51,9 @@ class Solid(Base):
     if self.geometry:
       self.geometry.position = [0, 0, 0]
       self.geometry.orientation = [0, 0, 0]
-    if self.mesh:
-      self.mesh.setPosition(self.positionOffset, self)
-      self.mesh.setOrientation(self.orientationOffset, self)
+      if self.mesh:
+        self.mesh.setPosition(self.positionOffset, self.geometry)
+        self.mesh.setOrientation(self.orientationOffset, self)
 
   position = property(Base.getPosition, setPosition)
 
@@ -68,11 +68,28 @@ class Solid(Base):
     if self.geometry:
       self.geometry.position = [0, 0, 0]
       self.geometry.orientation = [0, 0, 0]
-    if self.mesh:
-      self.mesh.setPosition(self.positionOffset, self)
-      self.mesh.setOrientation(self.orientationOffset, self)
+      if self.mesh:
+        self.mesh.setPosition(self.positionOffset, self)
+        self.mesh.setOrientation(self.orientationOffset, self.geometry)
 
   orientation = property(Base.getOrientation, setOrientation)
+
+#-------------------------------------------------------------------------------
+
+  def getCollisionMasks(self):
+    if self.geometry:
+      return self.geometry.getCollisionMasks()
+    else:
+      return []
+
+  def setCollisionMasks(self, collisionMasks):
+    if self.geometry:
+      self.geometry.setCollisionMasks(collisionMasks)
+      
+    for child in self.getChildren(Solid):
+      child.setCollisionMasks(collisionMasks)
+
+  collisionMasks = property(getCollisionMasks, setCollisionMasks)
 
 #-------------------------------------------------------------------------------
 

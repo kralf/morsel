@@ -1,22 +1,21 @@
-from math import pi
-
-type                     = "Differential"
+type                     = "Wheeled"
+chassisType              = "Differential"
 
 mesh                     = "robots/robox.bam"
-chassis                  = "chassis"
+body                     = "body"
 wheels                   = ["wheel_l", "wheel_r", "wheel_cf", "wheel_cr"]
 casterCranks             = ["crank_cf", "crank_cr"]
 casterWheels             = ["wheel_cf", "wheel_cr"]
 
-chassisSolid             = "Cylinder"
-chassisBody              = "Cylinder"
+bodySolid                = "Cylinder"
+bodyBody                 = "Cylinder"
 wheelSolid               = "Cylinder"
 wheelBody                = "Cylinder"
 crankSolid               = "Box"
 crankBody                = "Box"
 
-chassisMass              = 70
-chassisMassOffset        = [0, 0, -0.6]
+bodyMass                 = 70
+bodyMassOffset           = [0, 0, -0.6]
 wheelMass                = [0.5, 0.5, 0.2, 0.2]
 wheelSuspension          = [0.01, 0.01, 0.1, 0.1]
 crankMass                = [0.2, 0.2]

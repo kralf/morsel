@@ -1,0 +1,29 @@
+from math import pi
+
+type              = "Wheeled"
+chassisType       = "Ackermann"
+
+mesh              = "robots/smartter.bam"
+body              = "body"
+wheels            = ["wheel_fl", "wheel_fr", "wheel_rl", "wheel_rr"]
+
+bodySolid         = "Box"
+bodyBody          = "Box"
+wheelSolid        = "Cylinder"
+wheelBody         = "Cylinder"
+
+bodyMass          = 1000
+bodyMassOffset    = [0, 0, -0.5]
+wheelMass         = [10, 10, 12, 12]
+wheelSuspension   = [0.5, 0.5, 0.5, 0.5]
+
+maxSteeringAngle  = 0.436319*180/pi
+maxSteeringRate   = 180/pi
+
+maxVelocity       = 30/3.6
+maxAcceleration   = 30/3.6
+maxDeceleration   = 300/3.6
+
+steeringForce     = 500
+propulsionForce   = 500
+brakingForce      = 1500

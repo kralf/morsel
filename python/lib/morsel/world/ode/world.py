@@ -57,8 +57,8 @@ class World(Base):
   
   def updatePhysics(self, period):
     contactPoints = self.space.autoCollide()
-    for actor in self.actors:
-      actor.updatePhysics(self.period)
+    for actuator in self.actuators:
+      actuator.updatePhysics(self.period)
     for sensor in self.sensors:
       sensor.updatePhysics(self.period)
     if self.quickStep:
@@ -70,10 +70,11 @@ class World(Base):
 #-------------------------------------------------------------------------------
 
   def updateGraphics(self):
+    for actuator in self.actuators:
+      actuator.updateGraphics()
     for solid in self.solids:
       solid.update()
     for sensor in self.sensors:
       sensor.updateGraphics()
     for view in self.views:
       view.update()
-

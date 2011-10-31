@@ -9,7 +9,7 @@ class Node(panda.NodePath):
   def __init__(self, world, name, parent = None, position = None,
       orientation = None, scale = None, color = None, **kargs):
     panda.NodePath.__init__(self, name)
-
+        
     if not world:
       raise RuntimeError( "World not initialized" )
 
@@ -146,12 +146,6 @@ class Node(panda.NodePath):
     panda.NodePath.setColor(self, *color)
 
   color = property(getColor, setColor)
-
-#-------------------------------------------------------------------------------
-
-  def setTransformFromPath(self, node):
-    self.setPos(node.getPos(self))
-    self.setHpr(node.getHpr(self))
 
 #-------------------------------------------------------------------------------
 

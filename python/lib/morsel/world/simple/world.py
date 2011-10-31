@@ -33,16 +33,16 @@ class World(Base):
 #-------------------------------------------------------------------------------
   
   def updatePhysics(self, period):
-    for actor in self.actors:
-      actor.updatePhysics(self.period)
+    for actuator in self.actuators:
+      actuator.updatePhysics(self.period)
     for sensor in self.sensors:
       sensor.updatePhysics(self.period)
 
 #-------------------------------------------------------------------------------
 
   def updateGraphics(self):
-    for actor in self.actors:
-      actor.updateGraphics()
+    for actuator in self.actuators:
+      actuator.updateGraphics()
     for sensor in self.sensors:
       sensor.updateGraphics()
     for view in self.views:

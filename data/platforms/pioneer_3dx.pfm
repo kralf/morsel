@@ -1,22 +1,21 @@
-from math import pi
-
-type                     = "Differential"
+type                     = "Wheeled"
+chassisType              = "Differential"
 
 mesh                     = "robots/pioneer_3dx.bam"
-chassis                  = "chassis"
+body                     = "body"
 wheels                   = ["wheel_l", "wheel_r", "wheel_c"]
 casterCranks             = ["crank_c"]
 casterWheels             = ["wheel_c"]
 
-chassisSolid             = "Box"
-chassisBody              = "Box"
+bodySolid                = "Box"
+bodyBody                 = "Box"
 wheelSolid               = "Cylinder"
 wheelBody                = "Cylinder"
 crankSolid               = "Box"
 crankBody                = "Box"
 
-chassisMass              = 15
-chassisMassOffset        = [0, 0, -0.1]
+bodyMass                 = 15
+bodyMassOffset           = [0, 0, -0.1]
 wheelMass                = [0.5, 0.5, 0.2]
 wheelSuspension          = [0.01, 0.01, 0.1]
 crankMass                = [0.2]

@@ -13,12 +13,12 @@ class Random(Controller):
     self.delay = delay
     self.range = range
 
-    self.period = [0]*len(platform.command)
+    self.period = [0]*len(actuator.command)
     
 #-------------------------------------------------------------------------------
 
   def updateCommand(self, period):
-    command = self.platform.command
+    command = self.actuator.command
 
     for i in range(len(command)):
       self.period[i] += period
@@ -28,8 +28,8 @@ class Random(Controller):
         sample = uniform(self.range[i][0], self.range[i][1])
 
         if sample < 0:
-          command[i] = -sample*self.platform.limits[i][0]
+          command[i] = -sample*self.actuator.limits[i][0]
         else:
-          command[i] = sample*self.platform.limits[i][1]
+          command[i] = sample*self.actuator.limits[i][1]
       
-    self.platform.command = command
+    self.actuator.command = command

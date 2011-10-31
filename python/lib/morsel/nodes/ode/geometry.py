@@ -48,6 +48,12 @@ class Geometry(Node):
 
 #-------------------------------------------------------------------------------
 
+  def getCollisionsMasks(self):
+    return [self.geometry.getCategoryBits(), self.geometry.getCollideBits()]
+
   def setCollisionMasks(self, collisionMasks):
     self.geometry.setCategoryBits(collisionMasks[0])
     self.geometry.setCollideBits(collisionMasks[1])
+
+  collisionsMasks = property(getCollisionsMasks, setCollisionMasks)
+  

@@ -5,7 +5,7 @@ from morsel.nodes.collider import Collider as Base
 
 class Collider(Base):
   def __init__(self, world, name, parent = None, **kargs):
-    node = panda.CollisionNode(parent.name+"Collider")
+    node = panda.CollisionNode(parent.name+"Collisions")
     self.path = parent.attachNewNode(node)
 
     Base.__init__(self, world, name, parent = parent, **kargs)
@@ -18,7 +18,7 @@ class Collider(Base):
     Base.setCollisionMasks(self, collisionMasks)
     
     self.path.node().setFromCollideMask(collisionMasks[0])
-    self.parent.setCollideMask(collisionMasks[1])
+    self.path.node().setIntoCollideMask(collisionMasks[1])
 
   collisionMasks = property(Base.getCollisionMasks, setCollisionMasks)
 

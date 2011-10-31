@@ -71,7 +71,7 @@ def Scene(name, model = None, *args, **kargs):
 
 #-------------------------------------------------------------------------------
 
-def Actor(name, model, **kargs):
+def Actuator(name, model = None, *args, **kargs):
   actorFile = framework.findFile(model+".acm")
   if actorFile:
     context = {}
@@ -81,11 +81,11 @@ def Actor(name, model, **kargs):
 
     type = parameters["type"]
     del parameters["type"]
-    
-    return Instance("morsel.actors."+globals.world.physics, type,
+
+    return Instance("morsel.actuators."+globals.world.physics, type,
       globals.world, name, **parameters)
   else:
-    raise RuntimeError("Actor file '"+model+".acm' not found")
+    raise RuntimeError("Actuator file '"+model+".acm' not found")
 
 #-------------------------------------------------------------------------------
 
@@ -104,6 +104,24 @@ def Sensor(name, model, **kargs):
       globals.world, name, **parameters)
   else:
     raise RuntimeError("Sensor file '"+model+".sem' not found")
+
+#-------------------------------------------------------------------------------
+
+def Actor(name, model, **kargs):
+  actorFile = framework.findFile(model+".acm")
+  if actorFile:
+    context = {}
+    parameters = {}
+    execfile(actorFile, context, parameters)
+    parameters.update(kargs)
+
+    type = parameters["type"]
+    del parameters["type"]
+
+    return Instance("morsel.actors."+globals.world.physics, type,
+      globals.world, name, **parameters)
+  else:
+    raise RuntimeError("Actor file '"+model+".acm' not found")
 
 #-------------------------------------------------------------------------------
 

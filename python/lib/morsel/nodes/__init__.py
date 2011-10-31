@@ -10,8 +10,9 @@ from mesh import Mesh
 from collider import Collider
 from solid import Solid
 from static import Static
-from actor import Actor
+from actuator import Actuator
 from sensor import Sensor
+from actor import Actor
 from platform import Platform
 from controller import Controller
 from path import Path

@@ -4,7 +4,7 @@ from node import Node
 
 class Mesh(Node):
   def __init__(self, world, name, filename = None, model = None, exclude = [],
-      twoSided = False, **kargs):
+      twoSided = False, parent = None, **kargs):
     Node.__init__(self, world, name, **kargs)
 
     self.filename = filename
@@ -13,13 +13,15 @@ class Mesh(Node):
     if self.filename:
       self.model = loader.loadModel(self.filename)
     else:
-      self.setTransformFromPath(model)
+      self.clearTransform(model)
+      model.clearTransform()
       self.model = model
-      self.model.clearTransform()
       
     if exclude:
       for part in exclude:
         self.model.find("**/"+part).removeNode()
+
+    self.parent = parent
 
 #-------------------------------------------------------------------------------
 

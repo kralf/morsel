@@ -38,7 +38,7 @@ class Keyboard(Controller):
       base.accept(self._keys[i][1]+"-up", self.setKey, [self._keys[i][1], 0])
 
       self.increments.append(      
-        (self.platform.limits[i][1]-self.platform.limits[i][0])/self.delay[i])
+        (self.actuator.limits[i][1]-self.actuator.limits[i][0])/self.delay[i])
 
   def getKeys(self):
     return self._keys
@@ -48,18 +48,18 @@ class Keyboard(Controller):
 #-------------------------------------------------------------------------------
 
   def updateCommand(self, period):
-    command = self.platform.command
+    command = self.actuator.command
 
     for i in range(len(command)):
       if self.keyMap[self.keys[i][0]]:
         command[i] -= self.increments[i]*period
-        command[i] = max(command[i], self.platform.limits[i][0])
+        command[i] = max(command[i], self.actuator.limits[i][0])
       elif self.keyMap[self.keys[i][1]]:
         command[i] += self.increments[i]*period
-        command[i] = min(command[i], self.platform.limits[i][1])
+        command[i] = min(command[i], self.actuator.limits[i][1])
       elif command[i] != 0:
           command[i] -= self.increments[i]*period*command[i]/abs(command[i])
           if abs(command[i]) <= abs(self.increments[i]*period):
             command[i] = 0
 
-    self.platform.command = command
+    self.actuator.command = command

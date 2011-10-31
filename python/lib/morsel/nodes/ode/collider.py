@@ -13,8 +13,7 @@ class Collider(Base):
     Base.setCollisionMasks(self, collisionMasks)
 
     for solid in self.solids:
-      if solid.geometry:
-        solid.setCollisionMasks(collisionMasks[0], collisionMasks[1])
+      solid.setCollisionMasks(collisionMasks)
 
   collisionMasks = property(Base.getCollisionMasks, setCollisionMasks)
 
@@ -22,5 +21,4 @@ class Collider(Base):
 
   def addSolid(self, solid):
     Base.addSolid(self, solid)
-    if solid.geometry:
-      solid.geometry.setCollisionMasks(self.collisionMasks)
+    solid.collisionMasks = self.collisionMasks

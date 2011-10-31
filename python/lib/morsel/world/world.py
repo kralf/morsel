@@ -1,7 +1,6 @@
 from morsel.nodes.scene import Scene
-from morsel.nodes.actor import Actor
+from morsel.nodes.actuator import Actuator
 from morsel.nodes.sensor import Sensor
-from morsel.nodes.platform import Platform
 from morsel.nodes.view import View
 
 #-------------------------------------------------------------------------------
@@ -13,9 +12,8 @@ class World:
     self.physics = physics
     self.scene = None
 
-    self.actors = []
+    self.actuators = []
     self.sensors = []
-    self.platforms = []
     self.views = []
 
     self.period = period
@@ -29,12 +27,10 @@ class World:
   def registerNode(self, node):
     type = node.getPythonTag("type")
     
-    if issubclass(type, Actor):
-      self.actors.append(node)
+    if issubclass(type, Actuator):
+      self.actuators.append(node)
     if issubclass(type, Sensor):
       self.sensors.append(node)
-    if issubclass(type, Platform):
-      self.platforms.append(node)    
     if issubclass(type, View):
       self.views.append(node)
     

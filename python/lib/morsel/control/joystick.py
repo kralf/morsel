@@ -28,15 +28,15 @@ class Joystick(Controller):
   def updateCommand(self, period):
     pygame.event.pump()
 
-    command = [0]*len(self.platform.command)
-    state = self.platform.state
+    command = [0]*len(self.actuator.command)
+    state = self.actuator.state
     
     for i in range(len(command)):
       command[i] = (-self.joystick.get_axis(self.axes[i])*
-        self.platform.limits[i][1])
+        self.actuator.limits[i][1])
       acceleration = (command[i]-state[i])/period
-      maxAcceleration = (self.platform.limits[i][1]-
-        self.platform.limits[i][0])/period
+      maxAcceleration = (self.actuator.limits[i][1]-
+        self.actuator.limits[i][0])/period
       maxDeceleration = maxAcceleration
     
       if state[i] == 0:
@@ -55,4 +55,4 @@ class Joystick(Controller):
         elif acceleration > maxDeceleration:
           command[i] = state[i]+maxDeceleration*period
 
-    self.platform.command = command
+    self.actuator.command = command

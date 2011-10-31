@@ -1,13 +1,11 @@
-from morsel.nodes import Actor
-from morsel.nodes.facade import Mesh, Solid
+from morsel.actors import Inanimate as Base
+from morsel.nodes.facade import Solid
 
 #-------------------------------------------------------------------------------
 
-class Inanimate(Actor):
+class Inanimate(Base):
   def __init__(self, world, name, mesh, solid = None, **kargs):
-    Actor.__init__(self, world, name, **kargs)
+    Base.__init__(self, world, name, mesh, **kargs)
 
-    self.mesh = Mesh(name+"Mesh", mesh, parent = self)
-    self.solid = Solid(name+"Solid", "Empty", parent = self)
-    self.boundingSolid = Solid(name+"Solid", solid, self.mesh,
+    self.body.solid = Solid(name+"Solid", solid, self.body,
       parent = self.solid)

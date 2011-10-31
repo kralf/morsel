@@ -21,13 +21,13 @@ class PurePursuit(Controller):
       self.waypoint = self.getClosestWaypoint()
 
     if self.kidnap:
-      self.platform.setPosition(self.path.positions[self.waypoint], self)
-      self.platform.setOrientation(self.path.orientations[self.waypoint], self)
+      self.actuator.setPosition(self.path.positions[self.waypoint], self)
+      self.actuator.setOrientation(self.path.orientations[self.waypoint], self)
 
 #-------------------------------------------------------------------------------
 
   def getLookAheadDistance(self, position):
-    origin = panda.Point3(*self.platform.getPosition(self))
+    origin = panda.Point3(*self.actuator.getPosition(self))
     lookAhead = panda.Point3(*position)-origin
     
     return lookAhead.length()
@@ -35,8 +35,8 @@ class PurePursuit(Controller):
 #-------------------------------------------------------------------------------
 
   def getLookAheadAngle(self, position):
-    origin = panda.Point3(*self.platform.getPosition(self))
-    heading = panda.Vec3(*self.platform.getHeading(self))
+    origin = panda.Point3(*self.actuator.getPosition(self))
+    heading = panda.Vec3(*self.actuator.getHeading(self))
     lookAhead = panda.Point3(*position)-origin
     lookAhead.normalize()
 
@@ -45,7 +45,7 @@ class PurePursuit(Controller):
 #-------------------------------------------------------------------------------
 
   def getLookAheadThreshold(self):
-    return self.lookAhead*self.platform.translationalVelocity[0]
+    return self.lookAhead*self.actuator.translationalVelocity[0]
 
   lookAheadThreshold = property(getLookAheadThreshold)
 
@@ -63,7 +63,7 @@ class PurePursuit(Controller):
 #-------------------------------------------------------------------------------
 
   def getNextWaypoint(self, waypoint):
-    origin = panda.Point3(*self.platform.getPosition(self))
+    origin = panda.Point3(*self.actuator.getPosition(self))
     for i in range(waypoint, self.path.numWaypoints):
       vector = panda.Vec3(*self.path.positions[i])-origin
       if vector.length() > self.lookAheadThreshold:
@@ -94,7 +94,7 @@ class PurePursuit(Controller):
     if (waypoint > 0) or self.path.cyclic:
       l_t = self.lookAheadThreshold
       if self.getLookAheadDistance(self.path.positions[self.waypoint-1]) < l_t:
-        p_0 = panda.Point3(*self.platform.getPosition(self))
+        p_0 = panda.Point3(*self.actuator.getPosition(self))
         p_1 = panda.Point3(*self.path.positions[waypoint-1])
         p_2 = panda.Point3(*self.path.positions[waypoint])
         
@@ -130,8 +130,8 @@ class PurePursuit(Controller):
     if abs(sin(lookAheadAngle*pi/180)) >= self.epsilon:
       radius = 0.5*(lookAheadDistance/sin(lookAheadAngle*pi/180))
       if abs(radius) >= self.epsilon:
-        rotationalVelocity = (self.platform.translationalVelocity[0]/
+        rotationalVelocity = (self.actuator.translationalVelocity[0]/
           radius*180/pi)
   
-    self.platform.translationalVelocity = [self.velocity, 0, 0]
-    self.platform.rotationalVelocity = [rotationalVelocity, 0, 0]
+    self.actuator.translationalVelocity = [self.velocity, 0, 0]
+    self.actuator.rotationalVelocity = [rotationalVelocity, 0, 0]
