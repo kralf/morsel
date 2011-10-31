@@ -1,4 +1,5 @@
-from morsel.core import *
+from morsel.panda import *
+from morsel.math import *
 from morsel.nodes.controller import Controller
 from morsel.nodes.facade import Path
 

@@ -1,8 +1,7 @@
-from morsel.core import *
+from morsel.panda import *
+from morsel.math import *
 from morsel.actuators import Ackermann as Base
 from morsel.nodes.facade import Solid
-
-from math import *
 
 #-------------------------------------------------------------------------------
 

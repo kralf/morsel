@@ -1,4 +1,4 @@
-from morsel.core import *
+from morsel.panda import *
 from morsel.nodes.ode.solid import Solid
 from morsel.nodes.ode.geometries.plane import Plane as Geometry
 from morsel.nodes.facade import Mesh

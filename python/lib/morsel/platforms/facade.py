@@ -1,4 +1,4 @@
-from morsel.core import *
+from morsel.core import Instance
 from morsel.world import globals
 
 #-------------------------------------------------------------------------------

@@ -1,4 +1,4 @@
-from morsel.core import *
+from morsel.panda import *
 from morsel.morselc import Color
 
 import sys
@@ -11,7 +11,7 @@ class Node(panda.NodePath):
     panda.NodePath.__init__(self, name)
         
     if not world:
-      raise RuntimeError( "World not initialized" )
+      framework.error("World not initialized")
 
     self.type = self.__class__
     self.this = self

@@ -1,4 +1,4 @@
-from morsel.core import *
+from morsel.panda import *
 from morsel.sensors.image_sensor import ImageSensor as Base
 from morsel.nodes.facade import Solid
 

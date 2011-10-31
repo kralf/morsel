@@ -1,4 +1,4 @@
-from morsel.core import *
+from morsel.panda import *
 from morsel.nodes.solid import Solid as Base
 from morsel.nodes.ode.collider import Collider
 from morsel.nodes.ode.geometry import Geometry

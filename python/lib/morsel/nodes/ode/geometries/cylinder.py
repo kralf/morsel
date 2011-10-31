@@ -1,4 +1,4 @@
-from morsel.core import *
+from morsel.panda import *
 from morsel.nodes.ode.geometry import Geometry
 
 #-------------------------------------------------------------------------------

@@ -1,4 +1,4 @@
-from morsel.core import *
+from morsel.panda import *
 from math import pi
 from panda3d.pandac import NodePath
 

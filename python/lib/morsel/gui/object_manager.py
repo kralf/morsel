@@ -1,4 +1,4 @@
-from morsel.core import *
+from morsel.panda import *
 from morsel.world import globals
 from object_selector import ObjectSelector
 

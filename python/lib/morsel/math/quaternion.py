@@ -1,4 +1,6 @@
-from morsel.core import *
+from morsel.panda import *
+
+from math import *
 
 #-------------------------------------------------------------------------------
 

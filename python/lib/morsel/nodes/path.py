@@ -1,4 +1,4 @@
-from morsel.core import *
+from morsel.panda import *
 from node import Node
 from morsel.math import Quaternion
 

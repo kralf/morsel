@@ -3,3 +3,4 @@
 #===============================================================================
 
 from inanimate import Inanimate
+from wheeled import Wheeled

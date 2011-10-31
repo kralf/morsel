@@ -1,4 +1,5 @@
-from morsel.core import *
+from morsel.panda import *
+from morsel.math import *
 from morsel.actuators.differential import Differential as Base
 from morsel.nodes.facade import Solid, Body
 

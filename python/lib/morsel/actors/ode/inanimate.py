@@ -1,4 +1,4 @@
-from morsel.core import *
+from morsel.panda import *
 from morsel.actors import Inanimate as Base
 from morsel.nodes.facade import Solid
 

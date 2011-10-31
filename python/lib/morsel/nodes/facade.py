@@ -1,4 +1,4 @@
-from morsel.core import *
+from morsel.core import Instance
 from morsel.world import globals
 
 import morsel.nodes
@@ -10,7 +10,7 @@ def Mesh(name, filename = None, **kargs):
   if filename:
     meshFile = framework.findFile(filename)
     if not meshFile:
-      raise RuntimeError("Mesh file '"+filename+"' not found")
+      framework.error("Mesh file '"+filename+"' not found")
   else:
     meshFile = None
     
@@ -23,7 +23,7 @@ def Path(name, filename = None, **kargs):
   if filename:
     pathFile = framework.findFile(filename)
     if not pathFile:
-      raise RuntimeError("Path file '"+filename+"' not found")
+      framework.error("Path file '"+filename+"' not found")
   else:
     pathFile = None
 
@@ -67,7 +67,7 @@ def Scene(name, model = None, *args, **kargs):
 
       return scene
     else:
-      raise RuntimeError("Scene file '"+model+".scm' not found")
+      framework.error("Scene file '"+model+".scm' not found")
 
 #-------------------------------------------------------------------------------
 
@@ -85,7 +85,7 @@ def Actuator(name, model = None, *args, **kargs):
     return Instance("morsel.actuators."+globals.world.physics, type,
       globals.world, name, **parameters)
   else:
-    raise RuntimeError("Actuator file '"+model+".acm' not found")
+    framework.error("Actuator file '"+model+".acm' not found")
 
 #-------------------------------------------------------------------------------
 
@@ -103,7 +103,7 @@ def Sensor(name, model, **kargs):
     return Instance("morsel.sensors."+globals.world.physics, type,
       globals.world, name, **parameters)
   else:
-    raise RuntimeError("Sensor file '"+model+".sem' not found")
+    framework.error("Sensor file '"+model+".sem' not found")
 
 #-------------------------------------------------------------------------------
 
@@ -121,7 +121,7 @@ def Actor(name, model, **kargs):
     return Instance("morsel.actors."+globals.world.physics, type,
       globals.world, name, **parameters)
   else:
-    raise RuntimeError("Actor file '"+model+".acm' not found")
+    framework.error("Actor file '"+model+".acm' not found")
 
 #-------------------------------------------------------------------------------
 
@@ -139,7 +139,7 @@ def Platform(name, model, **kargs):
     return Instance("morsel.platforms."+globals.world.physics, type,
       globals.world, name, **parameters)
   else:
-    raise RuntimeError("Platform file '"+model+".pfm' not found")
+    framework.error("Platform file '"+model+".pfm' not found")
 
 #-------------------------------------------------------------------------------
 
@@ -156,7 +156,7 @@ def Controller(model, **kargs):
 
     return Instance("morsel.control", type, globals.world, **parameters)
   else:
-    raise RuntimeError("Contoller file '"+model+".ctl' not found")
+    framework.error("Contoller file '"+model+".ctl' not found")
 
 #-------------------------------------------------------------------------------
 

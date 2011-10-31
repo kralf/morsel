@@ -1,4 +1,4 @@
-from morsel.core import *
+from morsel.panda import *
 from morsel.nodes import Platform
 from morsel.nodes.facade import Mesh
 from morsel.platforms.facade import Actuator

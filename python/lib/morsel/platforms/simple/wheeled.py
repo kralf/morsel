@@ -1,4 +1,4 @@
-from morsel.core import *
+from morsel.panda import *
 from morsel.platforms import Wheeled as Base
 from morsel.nodes.facade import Mesh, Solid
 

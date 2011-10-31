@@ -1,4 +1,5 @@
-from morsel.core import *
+from morsel.panda import *
+from morsel.math import *
 from morsel.world import World as Base
 from morsel.nodes.solid import Solid
 

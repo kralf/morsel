@@ -17,7 +17,7 @@ class Scene(Node):
     if not world.scene:
       world.scene = self
     else:
-      raise RuntimeError("World already has a scene")
+      framework.error("World already has a scene")
 
 #-------------------------------------------------------------------------------
 

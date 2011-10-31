@@ -1,4 +1,4 @@
-from morsel.core import *
+from morsel.panda import *
 from morsel.nodes.ode.body import Body
 from morsel.nodes.facade import Mesh
 
