@@ -18,11 +18,18 @@
  *   59 Temple Place-Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include <string.h>
-
 #include "gzfstream.h"
 
+#include <string.h>
+#include <cstdio>
+
 using namespace std;
+
+/*****************************************************************************/
+/* Statics                                                                   */
+/*****************************************************************************/
+
+size_t gzstreambuf::bufferSize = BUFSIZ;
 
 /*****************************************************************************/
 /* Constructors and Destructor                                               */
@@ -30,6 +37,7 @@ using namespace std;
 
 gzstreambuf::gzstreambuf() :
     opened(0) {
+  buffer = new char[bufferSize];
   setp(buffer, buffer+(bufferSize-1));
   setg(buffer+4, buffer+4, buffer+4);
 }
@@ -63,6 +71,7 @@ gzofstream::gzofstream(const char* name, int mode) :
 
 gzstreambuf::~gzstreambuf() {
   close();
+  delete[] buffer;
 }
 
 gzstreambase::~gzstreambase() {

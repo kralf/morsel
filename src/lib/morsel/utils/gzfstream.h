@@ -51,11 +51,10 @@ public:
   virtual int underflow();
   virtual int sync();
 protected:
-  static const int bufferSize = 47+256;    // size of data buff
-  // totals 512 bytes under g++ for gzifstream at the end.
+  static size_t bufferSize;  // size of data buff
 
   void* file;                // file handle for compressed file
-  char buffer[bufferSize];   // data buffer
+  char* buffer;              // data buffer
   char opened;               // open/close state of stream
   int mode;                  // I/O mode
   size_t size;
