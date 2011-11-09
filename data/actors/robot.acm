@@ -1,0 +1,14 @@
+type              = "Animate"
+actuatorType      = "Accelerator"
+
+mesh              = "misc/robot.bam"
+solid             = "Box"
+body              = "Box"
+mass              = 50
+
+maxVelocity       = [1, 0, 0, 90, 0, 0]
+maxAcceleration   = [1, 0, 0, 90, 0, 0]
+maxDeceleration   = [1, 0, 0, 90, 0, 0]
+
+accelerationForce = [100, 0, 0, 50, 0, 0]
+decelerationForce = [100, 0, 0, 50, 0, 0]

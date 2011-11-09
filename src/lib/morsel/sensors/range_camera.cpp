@@ -1,3 +1,23 @@
+/***************************************************************************
+ *   Copyright (C) 2011 by Ralf Kaestner                                   *
+ *   ralf.kaestner@gmail.com                                               *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ ***************************************************************************/
+
 #include "range_camera.h"
 
 #include "morsel/utils/color.h"
@@ -8,199 +28,133 @@
 
 using namespace std;
 
-//------------------------------------------------------------------------------
+/*****************************************************************************/
+/* Constructors and Destructor                                               */
+/*****************************************************************************/
 
-RangeCamera::RangeCamera(
-  string name,
-  double horizontalAngle,
-  double verticalAngle,
-  double horizontalFOV,
-  double verticalFOV,
-  int horizontalRays,
-  int verticalRays,
-  double minRange,
-  double maxRange,
-  int horizontalResolution,
-  int verticalResolution,
-  bool acquireColor,
-  string acquireLabel )
-  : NodePath( name ),
-    _name( name ),
-    _horizontalAngle( horizontalAngle ),
-    _verticalAngle( verticalAngle ),
-    _horizontalFOV( horizontalFOV ),
-    _verticalFOV( verticalFOV ),
-    _horizontalRays( horizontalRays ),
-    _verticalRays( verticalRays ),
-    _minRange( minRange ),
-    _maxRange( maxRange ),
-    _width( horizontalResolution ),
-    _height( verticalResolution ),
-    _rayCount( horizontalRays * verticalRays ),
-    _rayInfo( new RayInfo[_rayCount] ),
-    _rays( new Ray[_rayCount] ),
-    _acquireColor( acquireColor ),
-    _acquireLabel( acquireLabel )
-{
+RangeCamera::RangeCamera(string name, const LVecBase2f& angles, const
+    LVecBase2f& fov, const LVecBase2f& numRays, const LVecBase2f& rangeLimits,
+    const LVecBase2f& resolution, bool acquireColor, string acquireLabel) :
+  NodePath(name),
+  angles(angles),
+  fov(fov),
+  numRays(numRays),
+  rangeLimits(rangeLimits),
+  resolution(resolution),
+  acquireColor(acquireColor),
+  acquireLabel(acquireLabel),
+  rayInfo(new RayInfo[(size_t)(numRays[0]*numRays[1])]),
+  rays(new Ray[(size_t)(numRays[0]*numRays[1])]) {
 }
 
-//------------------------------------------------------------------------------
-
-RangeCamera::~RangeCamera()
-{
-  delete [] _rayInfo;
-  delete [] _rays;
+RangeCamera::~RangeCamera() {
+  delete[] rayInfo;
+  delete[] rays;
 }
 
-//------------------------------------------------------------------------------
+/*****************************************************************************/
+/* Accessors                                                                 */
+/*****************************************************************************/
 
-Lens &
-RangeCamera::lens()
-{
-  return *_cameraNode->get_lens();
+const Lens& RangeCamera::getLens() const {
+  return *cameraNode->get_lens();
 }
 
-//------------------------------------------------------------------------------
-
-int
-RangeCamera::rayCount()
-{
-  return _rayCount;
+size_t RangeCamera::getNumRays() const {
+  return numRays[0]*numRays[1];
 }
 
-//------------------------------------------------------------------------------
-
-RangeCamera::RayInfo &
-RangeCamera::rayInfo( int index ) {
-  return _rayInfo[index];
+const Texture& RangeCamera::getDepthMap() const {
+  return depthMap;
 }
 
-//------------------------------------------------------------------------------
-
-Ray &
-RangeCamera::ray( int index ) {
-  return _rays[index];
+const Texture& RangeCamera::getColorMap() const {
+  return colorMap;
 }
 
-//------------------------------------------------------------------------------
+const Texture& RangeCamera::getLabelMap() const {
+  return labelMap;
+}
 
-double
-RangeCamera::depth( int column, int row ) {
-  if ( ( column >= 0 ) && ( column < _depthTexels.get_x_size() )  &&
-      ( row >= 0 ) && ( row < _depthTexels.get_y_size() ) )
-    return _maxRange * _minRange / ( _maxRange - _depthTexels.get_gray(
-      column, row ) * ( _maxRange - _minRange ) );
+const RangeCamera::RayInfo& RangeCamera::getRayInfo(int index) const {
+  return rayInfo[index];
+}
+
+const RangeCamera::Ray& RangeCamera::getRay(int index) const {
+  return rays[index];
+}
+
+double RangeCamera::getDepth(int column, int row) const {
+  if ((column >= 0) && (column < depthTexels.get_x_size()) &&
+      (row >= 0) && (row < depthTexels.get_y_size()))
+    return rangeLimits[1]*rangeLimits[0]/(rangeLimits[1]-depthTexels.get_gray(
+      column, row)*(rangeLimits[1]-rangeLimits[0]));
   else
     return -1.0;
 }
 
-//------------------------------------------------------------------------------
-
-Texture &
-RangeCamera::depthMap() {
-  return _depthMap;
+void RangeCamera::setActive(bool active) {
+  cameraNode->set_active(active);
 }
 
-//------------------------------------------------------------------------------
+/*****************************************************************************/
+/* Methods                                                                   */
+/*****************************************************************************/
 
-Texture &
-RangeCamera::colorMap() {
-  return _colorMap;
-}
-
-//------------------------------------------------------------------------------
-
-Texture &
-RangeCamera::labelMap() {
-  return _labelMap;
-}
-
-//------------------------------------------------------------------------------
-
-bool
-RangeCamera::update( double time )
-{
-  _depthMap.store( _depthTexels );
-  if ( _acquireColor )
-    _colorMap.store( _colorTexels );
-  else if ( !_acquireLabel.empty() )
-    _labelMap.store( _labelTexels );
+bool RangeCamera::update(double time) {
+  depthMap.store(depthTexels);
+  if (acquireColor)
+    colorMap.store(colorTexels);
+  else if (!acquireLabel.empty())
+    labelMap.store(labelTexels);
+  
   updateRays();
+  
   return true;
 }
 
-//------------------------------------------------------------------------------
-
-bool
-RangeCamera::inRange( NodePath & node )
-{
-  return true;
+void RangeCamera::showFrustum() {
+  cameraNode->show_frustum();
 }
 
-//------------------------------------------------------------------------------
-
-void
-RangeCamera::setActive( bool active )
-{
-  _cameraNode->set_active( active );
+void RangeCamera::hideFrustum() {
+  cameraNode->hide_frustum();
 }
+                                          
+void RangeCamera::setupCamera(PointerTo<Lens> lens) {
+  depthMap.set_format(Texture::F_depth_component);
+  depthMap.set_component_type(Texture::T_unsigned_short);
+  depthMap.set_minfilter(Texture::FT_nearest);
+  depthMap.set_magfilter(Texture::FT_nearest);
+  colorMap.set_minfilter(Texture::FT_nearest);
+  colorMap.set_magfilter(Texture::FT_nearest);
+  labelMap.set_minfilter(Texture::FT_nearest);
+  labelMap.set_magfilter(Texture::FT_nearest);
 
-//------------------------------------------------------------------------------
-
-void
-RangeCamera::showFrustum()
-{
-  _cameraNode->show_frustum();
-}
-
-//------------------------------------------------------------------------------
-
-void
-RangeCamera::hideFrustum()
-{
-  _cameraNode->hide_frustum();
-}
-
-//------------------------------------------------------------------------------
-// Protected methods
-//------------------------------------------------------------------------------
-
-void
-RangeCamera::setupCamera( PT(Lens) lens )
-{
-  _depthMap.set_format( Texture::F_depth_component );
-  _depthMap.set_component_type( Texture::T_unsigned_short );
-  _depthMap.set_minfilter( Texture::FT_nearest );
-  _depthMap.set_magfilter( Texture::FT_nearest );
-  _colorMap.set_minfilter( Texture::FT_nearest );
-  _colorMap.set_magfilter( Texture::FT_nearest );
-  _labelMap.set_minfilter( Texture::FT_nearest );
-  _labelMap.set_magfilter( Texture::FT_nearest );
-
-  _buffer = getWindow( 0 )->make_texture_buffer( "depthmap", _width, _height,
-    &_depthMap, true );
+  buffer = getWindow(0)->make_texture_buffer("depthmap", resolution[0],
+    resolution[1], &depthMap, true);
   
-  _cameraNode = new Camera( "cam" );
-  _cameraNode->set_camera_mask( BitMask32( 1 ) );
-  _cameraNode->set_scene( getGSG()->get_scene()->get_scene_root() );
-  _cameraNode->set_lens( lens );
+  cameraNode = new Camera("cam");
+  cameraNode->set_camera_mask(BitMask32(1));
+  cameraNode->set_scene(getGSG()->get_scene()->get_scene_root());
+  cameraNode->set_lens(lens);
 
-  _camera = attach_new_node( _cameraNode );
-  _camera.set_light_off( true );
-  _camera.set_material_off( true );
-  _camera.set_color_off( true );
+  camera = attach_new_node(cameraNode);
+  camera.set_light_off(true);
+  camera.set_material_off(true);
+  camera.set_color_off(true);
 
-  PT(DisplayRegion) drd = _buffer->make_display_region();
-  drd->set_sort( 0 );
-  drd->set_camera( _camera );
+  PointerTo<DisplayRegion> drd = buffer->make_display_region();
+  drd->set_sort(0);
+  drd->set_camera(camera);
   
-  if ( _acquireColor ) {
-    _buffer->add_render_texture( &_colorMap, GraphicsOutput::RTM_copy_ram,
-      DrawableRegion::RTP_color );
+  if (acquireColor) {
+    buffer->add_render_texture(&colorMap, GraphicsOutput::RTM_copy_ram,
+      DrawableRegion::RTP_color);
   }
-  else if ( !_acquireLabel.empty() ) {
-    _buffer->add_render_texture( &_labelMap, GraphicsOutput::RTM_copy_ram,
-      DrawableRegion::RTP_color );
+  else if (!acquireLabel.empty()) {
+    buffer->add_render_texture(&labelMap, GraphicsOutput::RTM_copy_ram,
+      DrawableRegion::RTP_color);
     
     ostringstream stream;
     stream << "void vshader(uniform float4x4 mat_modelproj," << endl;
@@ -208,47 +162,43 @@ RangeCamera::setupCamera( PT(Lens) lens )
     stream << "    out float4 l_position : POSITION) {" << endl;
     stream << "  l_position = mul(mat_modelproj, vtx_position);" << endl;
     stream << "}" << endl;
-    stream << "void fshader(uniform float4 " << _acquireLabel << "," << endl;
+    stream << "void fshader(uniform float4 " << acquireLabel << "," << endl;
     stream << "    out float4 o_color : COLOR) {" << endl;
-    stream << "  o_color = " << _acquireLabel << ";" << endl;
+    stream << "  o_color = " << acquireLabel << ";" << endl;
     stream << "}" << endl;
-    _labelShader = Shader::make( stream.str(), Shader::SL_Cg );
+    labelShader = Shader::make(stream.str(), Shader::SL_Cg);
     
-    NodePath shaderAttrib( "shader label" );
-    shaderAttrib.set_shader( _labelShader );
-    shaderAttrib.set_shader_input( _acquireLabel, Color::intToRgb( 0 ) );
-    _cameraNode->set_initial_state( shaderAttrib.get_state() );
-    _buffer->set_clear_color( Color::intToRgb( 0 ) );
+    NodePath shaderAttrib("shader label");
+    shaderAttrib.set_shader(labelShader);
+    shaderAttrib.set_shader_input(acquireLabel, Color::intToRgb(0));
+    cameraNode->set_initial_state(shaderAttrib.get_state());
+    buffer->set_clear_color(Color::intToRgb(0));
   }
 }
 
-void
-RangeCamera::updateRays()
-{
-  for ( int i = 0; i < _rayCount; i++ ) {
-    RayInfo & ri = _rayInfo[i];
-    Ray & ray = _rays[i];
+void RangeCamera::updateRays() {
+  for (int i = 0; i < numRays[0]*numRays[1]; i++) {
+    RayInfo& ri = rayInfo[i];
+    Ray& ray = rays[i];
     
-    int row = round ( ri.row );
-    int column = round ( ri.column );
+    int row = round(ri.row);
+    int column = round(ri.column);
     
-    ray.y = depth( column, row );
-    if ( ray.y < _minRange )
-      ray.y = 0.0;
-    ray.x = ray.y * ri.hTan;
-    ray.z = ray.y * ri.vTan;
-    ray.radius = sqrt( ray.x * ray.x + ray.y * ray.y + ray.z * ray.z );
+    ray.y = getDepth(column, row);
+    ray.x = ray.y*ri.hTan;
+    ray.z = ray.y*ri.vTan;
+    ray.radius = sqrt(ray.x*ray.x+ray.y*ray.y+ray.z*ray.z);
     ray.hAngle = ri.hAngle;
     ray.vAngle = ri.vAngle;
     ray.column = ri.column;
     ray.row = ri.row;
     
-    if ( _acquireColor ) {
-      ray.red = _colorTexels.get_red( column, row );
-      ray.green = _colorTexels.get_green( column, row );
-      ray.blue = _colorTexels.get_blue( column, row );
+    if (acquireColor) {
+      ray.red = colorTexels.get_red(column, row);
+      ray.green = colorTexels.get_green(column, row);
+      ray.blue = colorTexels.get_blue(column, row);
     }
-    else if ( !_acquireLabel.empty() )
-      ray.label = Color::rgbToInt( _labelTexels.get_xel_a(column, row) );
+    else if (!acquireLabel.empty())
+      ray.label = Color::rgbToInt(labelTexels.get_xel_a(column, row));
   }
 }

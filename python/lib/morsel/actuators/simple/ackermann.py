@@ -33,7 +33,8 @@ class Ackermann(Base):
       self.state[1] = -self.maxSteeringAngle
 
     dv = self.command[0]-self.state[0]
-    if dv > -self.maxDeceleration*period and dv < self.maxAcceleration*period:
+    if (dv > -self.maxDeceleration*period) and \
+        (dv < self.maxAcceleration*period):
       self.state[0] = self.command[0]
     else:
       if dv < 0:

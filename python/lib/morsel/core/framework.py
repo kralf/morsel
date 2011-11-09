@@ -16,8 +16,10 @@ import inspect
 
 #-------------------------------------------------------------------------------
 
-class Framework:
+class Framework(object):
   def __init__(self, *argv):
+    object.__init__(self)
+    
     self.arguments = argv[0]
     self.paths = {}
     self.configFiles = ["defaults.cfg"];
@@ -56,33 +58,116 @@ class Framework:
 
 #-------------------------------------------------------------------------------
 
-  def setConfigVariable(self, variable, *values):
-    prc = variable
+  def getConfigVariable(self, variable, types):
+    variable = panda.ConfigVariable(variable)
+    if not isinstance(types, list):
+      types = [types]
 
-    for value in values:
-      if isinstance(value, bool):
-        if value:
-          value = "#t"
-        else:
-          value = "#f"
-      prc += " %s" % (value)
+    values = []
+    for i in range(len(types)):
+      if types[i] == bool:
+        values.append(bool(variable.getBoolWord(i)))
+      elif types[i] == float:
+        values.append(float(variable.getDoubleWord(i)))
+      elif types[i] == int:
+        values.append(int(variable.getIntWord(i)))
+      elif types[i] == str:
+        values.append(str(variable.getStringWord(i)))
 
-    panda.loadPrcFileData("", prc)
+    if len(values) == 1:
+      return values[i]
+    elif not values:
+      return None
+    else:
+      return values
+
+  def setConfigVariable(self, variable, values):
+    variable = panda.ConfigVariable(variable)
+    if not isinstance(values, list):
+      values = [values]
+    
+    for i in range(len(values)):
+      if type(values[i]) == bool:
+        variable.setBoolWord(i, values[i])
+      elif type(values[i]) == float:
+        variable.setDoubleWord(i, values[i])
+      elif type(values[i]) == int:
+        variable.setIntWord(i, values[i])
+      elif type(values[i]) == str:
+        variable.setStringWord(i, values[i])
 
 #-------------------------------------------------------------------------------
 
-  def setFullscreen(self, value):
-    self.setConfigVariable("fullscreen", value)
+  def getFullscreen(self):
+    return self.getConfigVariable("fullscreen", bool)
+
+  def setFullscreen(self, fullscreen):
+    self.setConfigVariable("fullscreen", fullscreen)
+
+    if self.base:
+      properties = panda.WindowProperties(self.base.win.getProperties())
+      properties.setFullscreen(fullscreen)
+      self.base.win.requestProperties(properties)
+
+  fullscreen = property(getFullscreen, setFullscreen)
 
 #-------------------------------------------------------------------------------
 
-  def setWindowSize(self, width, height):
-    self.setConfigVariable("win-size", "%s %s" % (width, height))
+  def getWindowPosition(self):
+    return self.getConfigVariable("win-origin", [float, float])
+
+  def setWindowPosition(self, position):
+    self.setConfigVariable("win-origin", position)
+
+    if self.base:
+      properties = panda.WindowProperties(self.base.win.getProperties())
+      properties.setOrigin(position[0], position[1])
+      self.base.win.requestProperties(properties)
+
+  windowPosition = property(getWindowPosition, setWindowPosition)
 
 #-------------------------------------------------------------------------------
+
+  def getWindowSize(self):
+    return self.getConfigVariable("win-size", [float, float])
+
+  def setWindowSize(self, size):
+    self.setConfigVariable("win-size", size)
+
+    if self.base:
+      properties = panda.WindowProperties(self.base.win.getProperties())
+      properties.setSize(size[0], size[1])
+      self.base.win.requestProperties(properties)
+
+  windowSize = property(getWindowSize, setWindowSize)
+
+#-------------------------------------------------------------------------------
+
+  def getWindowTitle(self):
+    return self.getConfigVariable("window-title", str)
 
   def setWindowTitle(self, title):
     self.setConfigVariable("window-title", title)
+
+    if self.base:
+      properties = panda.WindowProperties(self.base.win.getProperties())
+      properties.setTitle(title)
+      self.base.win.requestProperties(properties)
+
+  windowTitle = property(getWindowTitle, setWindowTitle)
+
+#-------------------------------------------------------------------------------
+
+  def getShowFrameRate(self):
+    return self.getConfigVariable("show-frame-rate-meter", bool)
+
+  def setShowFrameRate(self, show):
+    self.getConfigVariable("show-frame-rate-meter", show)
+
+    if self.base:
+      self.base.setFrameRateMeter(show)
+
+  showFrameRate = property(getShowFrameRate, setShowFrameRate)
 
 #-------------------------------------------------------------------------------
 
@@ -150,3 +235,14 @@ class Framework:
       self.base.run()
     else:
       self.error("Framework.run() may only be called once.")
+
+#-------------------------------------------------------------------------------
+
+  def exitHandler(self, key):
+    exit
+
+#-------------------------------------------------------------------------------
+
+  def pauseHandler(self, key):
+    self.scheduler.togglePause()
+    

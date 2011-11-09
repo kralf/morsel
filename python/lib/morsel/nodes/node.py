@@ -1,4 +1,5 @@
 from morsel.panda import *
+from morsel.math import *
 from morsel.morselc import Color
 
 import sys
@@ -100,6 +101,32 @@ class Node(panda.NodePath):
     self.setOrientation(orientation, self.world.scene)
 
   globalOrientation = property(getGlobalOrientation, setGlobalOrientation)
+
+#-------------------------------------------------------------------------------
+
+  def getQuaternion(self, node = None):
+    if node:
+      return self.getQuat(node)
+    else:
+      return self.getQuat()
+
+  def setQuaternion(self, quaternion, node = None):
+    if node:
+      self.setQuat(node, quaternion)
+    else:
+      self.setQuat(quaternion)
+
+  quaternion = property(getQuaternion, setQuaternion)
+
+#-------------------------------------------------------------------------------
+
+  def getGlobalQuaternion(self):
+    return self.getQuaternion(self.world.scene)
+
+  def setGlobalQuaternion(self, quaternion):
+    self.setQuaternion(quaternion, self.world.scene)
+
+  globalQuaternion = property(getGlobalQuaternion, setGlobalQuaternion)
 
 #-------------------------------------------------------------------------------
 

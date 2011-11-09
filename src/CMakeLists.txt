@@ -1,4 +1,5 @@
 remake_find_package(PythonLibs)
+remake_find_package(ZLIB)
 remake_find_library(panda3d-panda panda.h PACKAGE Panda3d)
 
 remake_find_executable(panda3d-interrogate)

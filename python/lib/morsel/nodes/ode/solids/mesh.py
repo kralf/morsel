@@ -1,5 +1,5 @@
 from morsel.panda import *
-from morsel.nodes.ode.geometries.mesh import Mesh as Geometry
+from morsel.nodes.ode.geometries import Mesh as Geometry
 from morsel.nodes.ode.solid import Solid
 
 #-------------------------------------------------------------------------------

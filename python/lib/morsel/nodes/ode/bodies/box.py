@@ -7,8 +7,6 @@ from morsel.nodes.facade import Mesh
 class Box(Body):
   def __init__(self, world, name, solid, mass = 0, **kargs):
     p_min, p_max = solid.mesh.getTightBounds()
-    p_min = solid.getRelativePoint(solid.mesh.parent, p_min)
-    p_max = solid.getRelativePoint(solid.mesh.parent, p_max)
     
     x = 0.5*(p_min[0]+p_max[0])
     y = 0.5*(p_min[1]+p_max[1])

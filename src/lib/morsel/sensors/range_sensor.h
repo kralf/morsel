@@ -1,5 +1,29 @@
+/***************************************************************************
+ *   Copyright (C) 2011 by Ralf Kaestner                                   *
+ *   ralf.kaestner@gmail.com                                               *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ ***************************************************************************/
+
 #ifndef RANGE_SENSOR_H
 #define RANGE_SENSOR_H
+
+/** Range sensor implementation
+  * @author Ralf Kaestner ETHZ Autonomous Systems Lab.
+  */
 
 #include "morsel/morsel.h"
 #include "morsel/sensors/range_camera.h"
@@ -11,112 +35,73 @@
 #include <cstring>
 #include <cmath>
 
-class RangeSensor : public NodePath
-{
+class RangeSensor :
+  public NodePath {
 public:
-  class Ray {
-  public:
-    double column() { return _column; }
-    double row() { return _row; }
-    int index() { return _index; }
-    double hAngle() { return _hAngle; }
-    double vAngle() { return _vAngle; }
-    double x() { return _x; }
-    double y() { return _y; }
-    double z() { return _z; }
-    double radius() { return _radius; }
-    double red() { return _red; }
-    double green() { return _green; }
-    double blue() { return _blue; }
-    size_t label() { return _label; }
-    double _column;
-    double _row;
-    int _index;
-    double _hAngle;
-    double _vAngle;
-    double _x;
-    double _y;
-    double _z;
-    double _radius;
-    double _red;
-    double _green;
-    double _blue;
-    size_t _label;
+  /** Types and non-static subclasses
+    */
+  struct Ray {
+    double column;
+    double row;
+    int index;
+    double hAngle;
+    double vAngle;
+    bool valid;
+    double x;
+    double y;
+    double z;
+    double radius;
+    double red;
+    double green;
+    double blue;
+    size_t label;
   };
 PUBLISHED:
-  RangeSensor(
-    std::string name,
-    double horizontalMinAngle,
-    double horizontalMaxAngle,
-    double verticalMinAngle,
-    double verticalMaxAngle,
-    double horizontalResolution,
-    double verticalResolution,
-    double minRange,
-    double maxRange,
-    double cameraMaxHorizontalFOV = 60 * M_PI / 180.0,
-    double cameraMaxVerticalFOV = 60 * M_PI / 180.0,
-    int cameraHorizontalResolution = 128,
-    int cameraVerticalResolution = 128,
-    bool sphericalLens = false,
-    bool acquireColor = false,
-    std::string acquireLabel = ""
-  );
-public:
+  /** Constructors
+    */
+  RangeSensor(std::string name, const LVecBase2f& minAngles,
+    const LVecBase2f& maxAngles, const LVecBase2f& resolution,
+    const LVecBase2f& rangeLimits, const LVecBase2f&
+    cameraMaxFOV = LVecBase2f(60.0*M_PI/180.0, 60.0*M_PI/180.0),
+    const LVecBase2f& cameraResolution = LVecBase2f(128, 128),
+    bool spherical = false, bool acquireColor = false,
+    std::string acquireLabel = "");
+
+  /** Destructor
+    */
   virtual ~RangeSensor();
-PUBLISHED:
-  const std::string & name();
-  int cameraCount();
-  RangeCamera & camera( int index );
-  int rayCount();
-  Ray & ray( int index );
-  bool update( double time );
-  double minRange();
-  double maxRange();
-  bool inRange( NodePath & node );
-  double hFov();
-  double vFov();
-  int hRays();
-  int vRays();
-  double rayLength( int index );
+
+  size_t getNumCameras() const;
+  const RangeCamera& getCamera(int index) const;
+  size_t getNumRays() const;
+  const Ray& getRay(int index) const;
+  const LVecBase2f& getRangeLimits() const;
+  const LVecBase2f& getFOV() const;
+  double getRayLength(int index) const;
+  
+  bool update(double time);
   void showFrustums();
   void hideFrustums();
 protected:
-  std::string _name;
-  double      _horizontalMinAngle;
-  double      _horizontalMaxAngle;
-  double      _verticalMinAngle;
-  double      _verticalMaxAngle;
-  double      _horizontalResolution;
-  double      _verticalResolution;
-  double      _minRange;
-  double      _maxRange;
-  double      _horizontalFOV;
-  double      _verticalFOV;
-  int         _horizontalRays;
-  int         _verticalRays;
-  int         _rayCount;
-  double      _cameraMaxHorizontalFOV;
-  double      _cameraMaxVerticalFOV;
-  int         _cameraHorizontalResolution;
-  int         _cameraVerticalResolution;
-  bool        _spherical;
-  bool        _acquireColor;
-  std::string _acquireLabel;
+  LVecBase2f minAngles;
+  LVecBase2f maxAngles;
+  LVecBase2f resolution;
+  LVecBase2f rangeLimits;
+  LVecBase2f fov;
+  LVecBase2f numRays;
+  LVecBase2f cameraMaxFOV;
+  LVecBase2f cameraResolution;
+  bool spherical;
+  bool acquireColor;
+  std::string acquireLabel;
 
-  Ray*        _rays;
-  std::vector<RangeCamera*> _cameras;
+  Ray* rays;
+  std::vector<RangeCamera*> cameras;
 
-  void computeParameters(
-    double minAngle,
-    double maxAngle,
-    int rayCount,
-    double cameraMaxFOV,
-    std::deque<double> & fovs,
-    std::deque<double> & angles,
-    std::deque<int> & rayCounts
-  );
+  void computeParameters(double minAngle, double maxAngle, size_t totalNumRays,
+    double cameraMaxFOV, std::deque<double>& fovs, std::deque<double>& angles,
+    std::deque<size_t>& numRays);
   void setupCameras();
 };
 
-#endif /*RANGE_SENSOR_H*/
+#endif

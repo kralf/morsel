@@ -56,8 +56,8 @@ def Static(name, mesh, **kargs):
 #-------------------------------------------------------------------------------
 
 def Scene(name, model = None, *args, **kargs):
-  scene = Instance("morsel.nodes", "Scene", globals.world, name, *args,
-    **kargs)
+  scene = Instance("morsel.nodes."+globals.world.physics, "Scene",
+    globals.world, name, *args, **kargs)
     
   if model:
     sceneFile = framework.findFile(model+".scm")
@@ -162,6 +162,11 @@ def Controller(model, **kargs):
 
 def View(name, type, *args, **kargs):
   return Instance("morsel.views", type, globals.world, name, *args, **kargs)
+
+#-------------------------------------------------------------------------------
+
+def Output(name, type, *args, **kargs):
+  return Instance("morsel.output", type, globals.world, name, *args, **kargs)
 
 #-------------------------------------------------------------------------------
 

@@ -1,5 +1,29 @@
+/***************************************************************************
+ *   Copyright (C) 2011 by Ralf Kaestner                                   *
+ *   ralf.kaestner@gmail.com                                               *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ ***************************************************************************/
+
 #ifndef RANGE_CAMERA_H
 #define RANGE_CAMERA_H
+
+/** Abstract range camera class
+  * @author Ralf Kaestner ETHZ Autonomous Systems Lab.
+  */
 
 #include "morsel/morsel.h"
 
@@ -11,24 +35,26 @@
 
 #include <string>
 
-struct Ray {
-  double x;
-  double y;
-  double z;
-  double radius;
-  double column;
-  double row;
-  double hAngle;
-  double vAngle;
-  double red;
-  double green;
-  double blue;
-  size_t label;
-};
-
-class RangeCamera : public NodePath
-{
+class RangeCamera :
+  public NodePath {
 public:
+  /** Types and non-static subclasses
+    */
+  struct Ray {
+    double x;
+    double y;
+    double z;
+    double radius;
+    double column;
+    double row;
+    double hAngle;
+    double vAngle;
+    double red;
+    double green;
+    double blue;
+    size_t label;
+  };
+
   struct RayInfo {
     double hAngle;
     double vAngle;
@@ -38,72 +64,57 @@ public:
     double vTan;
   };
 
-  RangeCamera(
-    std::string name,
-    double horizontalAngle,
-    double verticalAngle,
-    double horizontalFOV,
-    double verticalFOV,
-    int horizontalRays,
-    int verticalRays,
-    double minRange,
-    double maxRange,
-    int horizontalResolution = 128,
-    int verticalResolution = 128,
-    bool acquireColor = false,
-    std::string acquireLabel = ""
-  );
+  /** Constructors
+    */
+  RangeCamera(std::string name, const LVecBase2f& angles, const LVecBase2f&
+    fov, const LVecBase2f& numRays, const LVecBase2f& rangeLimits, const
+    LVecBase2f& resolution = LVecBase2f(128, 128), bool acquireColor = false,
+    std::string acquireLabel = "");
+
+  /** Destructor
+    */
   virtual ~RangeCamera();
 
-  Lens & lens();
-  int rayCount();
-  RayInfo & rayInfo( int index );
-  Ray & ray( int index );
-  double depth( int column, int row );
-  Texture & depthMap();
-  Texture & colorMap();
-  Texture & labelMap();
-  bool update( double time );
-  bool inRange( NodePath & node );
-  void setActive( bool active );
+  const Lens& getLens() const;
+  size_t getNumRays() const;
+  const Texture& getDepthMap() const;
+  const Texture& getColorMap() const;
+  const Texture& getLabelMap() const;
+  const RayInfo& getRayInfo(int index) const;
+  const Ray& getRay(int index) const;
+  double getDepth(int column, int row) const;
+  void setActive(bool active);
+
+  bool update(double time);
   void showFrustum();
   void hideFrustum();
 protected:
-  std::string _name;
-  double      _horizontalAngle;
-  double      _verticalAngle;
-  double      _horizontalFOV;
-  double      _verticalFOV;
-  int         _horizontalRays;
-  int         _verticalRays;
-  double      _minRange;
-  double      _maxRange;
-  int         _resolution;
-  bool        _acquireColor;
-  std::string _acquireLabel;
+  LVecBase2f angles;
+  LVecBase2f fov;
+  LVecBase2f numRays;
+  LVecBase2f rangeLimits;
+  LVecBase2f resolution;
+  bool acquireColor;
+  std::string acquireLabel;
 
-  int         _width;
-  int         _height;
-  int         _rayCount;
+  RayInfo* rayInfo;
+  Ray* rays;
 
-  RayInfo *   _rayInfo;
-  Ray     *   _rays;
+  PointerTo<GraphicsOutput> buffer;
+  Texture depthMap;
+  Texture colorMap;
+  Texture labelMap;
+  PNMImage depthTexels;
+  PNMImage colorTexels;
+  PNMImage labelTexels;
+  PointerTo<Camera> cameraNode;
+  NodePath camera;
+  PointerTo<Shader> labelShader;
 
-  PointerTo<GraphicsOutput> _buffer;
-  Texture     _depthMap;
-  Texture     _colorMap;
-  Texture     _labelMap;
-  PNMImage    _depthTexels;
-  PNMImage    _colorTexels;
-  PNMImage    _labelTexels;
-  PointerTo<Camera> _cameraNode;
-  NodePath    _camera;
-  PointerTo<Shader> _labelShader;
-
-  void setupCamera( PT(Lens) lens );
+  void setupCamera(PointerTo<Lens> lens);
   void updateRays();
 
   virtual void setupLens() = 0;
 };
 
-#endif /*RANGE_CAMERA_H*/
+#endif

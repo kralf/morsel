@@ -18,17 +18,17 @@ class Tube(Solid):
     d_min = min(dxy, dxz, dyz)
 
     if d_min == dxy:
-      a = panda.Point3(x, y, p_min[2])
-      b = panda.Point3(x, y, p_max[2])
       radius = 0.5*max(dx, dy)
+      a = panda.Point3(x, y, min(z, p_min[2]+radius))
+      b = panda.Point3(x, y, max(z, p_max[2]-radius))
     elif d_min == dxz:
-      a = panda.Point3(x, p_min[1], z)
-      b = panda.Point3(x, p_max[1], z)
       radius = 0.5*max(dx, dz)
+      a = panda.Point3(x, min(y, p_min[1]+radius), z)
+      b = panda.Point3(x, max(y, p_max[1]-radius), z)
     elif d_min == dyz:
-      a = panda.Point3(p_min[0], y, z)
-      b = panda.Point3(p_max[0], y, z)
       radius = 0.5*max(dy, dz)
+      a = panda.Point3(min(x, p_min[0]+radius), y, z)
+      b = panda.Point3(max(x, p_max[0]-radius), y, z)
       
     geometry = panda.CollisionTube(a, b, radius)
     

@@ -1,6 +1,6 @@
 from morsel.panda import *
 from morsel.nodes.ode.solid import Solid
-from morsel.nodes.ode.geometries.box import Box as Geometry
+from morsel.nodes.ode.geometries import Box as Geometry
 from morsel.nodes.facade import Mesh
 
 #-------------------------------------------------------------------------------
@@ -8,8 +8,6 @@ from morsel.nodes.facade import Mesh
 class Box(Solid):
   def __init__(self, world, name, mesh, parent = None, **kargs):
     p_min, p_max = mesh.getTightBounds()
-    p_min = parent.getRelativePoint(mesh.parent, p_min)
-    p_max = parent.getRelativePoint(mesh.parent, p_max)
     
     x = 0.5*(p_min[0]+p_max[0])
     y = 0.5*(p_min[1]+p_max[1])

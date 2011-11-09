@@ -1,3 +1,23 @@
+/***************************************************************************
+ *   Copyright (C) 2011 by Ralf Kaestner                                   *
+ *   ralf.kaestner@gmail.com                                               *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ ***************************************************************************/
+
 #include "range_sensor.h"
 #include "perspective_range_camera.h"
 #include "spherical_range_camera.h"
@@ -6,332 +26,194 @@
 #include <lvecBase3.h>
 #include <numeric>
 #include <sstream>
+#include <limits>
 
 using namespace std;
 
-//------------------------------------------------------------------------------
+/*****************************************************************************/
+/* Constructors and Destructor                                               */
+/*****************************************************************************/
 
-RangeSensor::RangeSensor(
-  string name,
-  double horizontalMinAngle,
-  double horizontalMaxAngle,
-  double verticalMinAngle,
-  double verticalMaxAngle,
-  double horizontalResolution,
-  double verticalResolution,
-  double minRange,
-  double maxRange,
-  double cameraMaxHorizontalFOV,
-  double cameraMaxVerticalFOV,
-  int cameraHorizontalResolution,
-  int cameraVerticalResolution,
-  bool spherical,
-  bool acquireColor,
-  string acquireLabel )
-  : NodePath( name ),
-    _name( name ),
-    _horizontalMinAngle( horizontalMinAngle ),
-    _horizontalMaxAngle( horizontalMaxAngle ),
-    _verticalMinAngle( verticalMinAngle ),
-    _verticalMaxAngle( verticalMaxAngle ),
-    _horizontalResolution( horizontalResolution ),
-    _verticalResolution( verticalResolution ),
-    _minRange( minRange ),
-    _maxRange( maxRange ),
-    _horizontalFOV( horizontalMaxAngle-horizontalMinAngle ),
-    _verticalFOV( verticalMaxAngle-verticalMinAngle ),
-    _horizontalRays( floor( _horizontalFOV / horizontalResolution ) ),
-    _verticalRays( floor( _verticalFOV / verticalResolution ) ),
-    _rayCount( _horizontalRays * _verticalRays ),
-    _rays( new RangeSensor::Ray[_rayCount] ),
-    _cameraMaxHorizontalFOV( cameraMaxHorizontalFOV ),
-    _cameraMaxVerticalFOV( cameraMaxVerticalFOV ),
-    _cameraHorizontalResolution( cameraHorizontalResolution ),
-    _cameraVerticalResolution( cameraVerticalResolution ),
-    _spherical( spherical ),
-    _acquireColor( acquireColor ),
-    _acquireLabel( acquireLabel )
-{
+RangeSensor::RangeSensor(std::string name, const LVecBase2f& minAngles,
+    const LVecBase2f& maxAngles, const LVecBase2f& resolution, const
+    LVecBase2f& rangeLimits, const LVecBase2f& cameraMaxFOV, const
+    LVecBase2f& cameraResolution, bool spherical, bool acquireColor,
+    std::string acquireLabel) :
+  NodePath(name),
+  minAngles(minAngles),
+  maxAngles(maxAngles),
+  resolution(resolution),
+  rangeLimits(rangeLimits),
+  fov(maxAngles[0]-minAngles[0], maxAngles[1]-minAngles[1]),
+  numRays(floor(fov[0]/resolution[0]), floor(fov[1]/resolution[1])),
+  cameraMaxFOV(cameraMaxFOV),
+  cameraResolution(cameraResolution),
+  spherical(spherical),
+  acquireColor(acquireColor),
+  acquireLabel(acquireLabel),
+  rays(new RangeSensor::Ray[(size_t)(numRays[0]*numRays[1])]) {
   setupCameras();
   getEngine()->render_frame();
 }
 
-//------------------------------------------------------------------------------
-
-RangeSensor::~RangeSensor()
-{
-  delete [] _rays;
-  for ( int i = 0; i < _cameras.size(); i++ )
-    delete _cameras[i];
+RangeSensor::~RangeSensor() {
+  delete[] rays;
+  for (int i = 0; i < cameras.size(); ++i)
+    delete cameras[i];
 }
 
-//------------------------------------------------------------------------------
+/*****************************************************************************/
+/* Accessors                                                                 */
+/*****************************************************************************/
 
-const string &
-RangeSensor::name() {
-  return _name;
+size_t RangeSensor::getNumCameras() const {
+  return cameras.size();
 }
 
-//------------------------------------------------------------------------------
-
-int
-RangeSensor::cameraCount() {
-  return _cameras.size();
+const RangeCamera& RangeSensor::getCamera(int index) const {
+  return *cameras[index];
 }
 
-//------------------------------------------------------------------------------
-
-RangeCamera &
-RangeSensor::camera( int index ) {
-  return *_cameras[index];
+size_t RangeSensor::getNumRays() const {
+  return numRays[0]*numRays[1];
 }
 
-//------------------------------------------------------------------------------
-
-int
-RangeSensor::rayCount()
-{
-  return _rayCount;
+const RangeSensor::Ray& RangeSensor::getRay(int index) const {
+  return rays[index];
 }
 
-//------------------------------------------------------------------------------
-
-RangeSensor::Ray &
-RangeSensor::ray( int index ) {
-  return _rays[index];
+const LVecBase2f& RangeSensor::getRangeLimits() const {
+  return rangeLimits;
 }
 
-//------------------------------------------------------------------------------
+const LVecBase2f& RangeSensor::getFOV() const {
+  return fov;
+}
 
-bool
-RangeSensor::update( double time )
-{
-  for ( int ci = 0; ci < _cameras.size(); ci++ )
-    RangeCamera * c = _cameras[ci];
+double RangeSensor::getRayLength(int index) const {
+  if (index >= (numRays[0]*numRays[1]))
+    return -1.0;
+  else
+    return rays[index].radius;
+}
+
+/*****************************************************************************/
+/* Methods                                                                   */
+/*****************************************************************************/
+
+bool RangeSensor::update(double time) {
   int rayIndex = 0;
-  for ( int ci = 0; ci < _cameras.size(); ci++ ) {
-    RangeCamera * c = _cameras[ci];
-    c->update( time );
-    for ( int ri = 0; ri < c->rayCount(); ri++ ) {
-      ::Ray & ray1 = c->ray( ri );
-      LPoint3f p = get_relative_point( *c,
-        LVecBase3f( ray1.x, ray1.y, ray1.z ) );
-      double r = ray1.radius;
-      if ( r >= _maxRange )
-        r = -1;
-      if ( r <= _minRange )
-        r = -2;
-      RangeSensor::Ray & ray2 = _rays[rayIndex++];
+  
+  for (int ci = 0; ci < cameras.size(); ++ci) {
+    RangeCamera* c = cameras[ci];
+    c->update(time);
+    
+    for (int ri = 0; ri < c->getNumRays(); ++ri) {
+      const RangeCamera::Ray& ray1 = c->getRay(ri);
+      LPoint3f p = get_relative_point(*c, LVecBase3f(ray1.x, ray1.y, ray1.z));
+      Ray& ray2 = rays[rayIndex++];
 
-      ray2._row    = ray1.row;
-      ray2._column = ray1.column;
-      ray2._index  = rayIndex;
-      ray2._hAngle = atan2( p[1], p[0] );
-      ray2._vAngle = atan2( p[2], sqrt( p[0] * p[0] + p[1] * p[1] ) );
-      ray2._x      = p[0];
-      ray2._y      = p[1];
-      ray2._z      = p[2];
-      ray2._radius = r;
-      if ( _acquireColor ) {
-        ray2._red   = ray1.red;
-        ray2._green = ray1.green;
-        ray2._blue  = ray1.blue;
-      } else {
-        ray2._red   = 0;
-        ray2._green = 0;
-        ray2._blue  = 0;
+      ray2.row = ray1.row;
+      ray2.column = ray1.column;
+      ray2.index = rayIndex;
+      ray2.hAngle = atan2(p[1], p[0]);
+      ray2.vAngle = atan2(p[2], sqrt(p[0]*p[0]+p[1]*p[1]));
+      ray2.x = p[0];
+      ray2.y = p[1];
+      ray2.z = p[2];
+      if (ray1.radius >= rangeLimits[1]) {
+        ray2.valid = false;
+        ray2.radius = numeric_limits<double>::infinity();
       }
-      if ( !_acquireLabel.empty() )
-        ray2._label = ray1.label;
+      else if (ray1.radius <= rangeLimits[0]) {
+        ray2.valid = false;
+        ray2.radius = -numeric_limits<double>::infinity();
+      }
       else
-        ray2._label = 0;
+        ray2.valid = true;
+      if (acquireColor) {
+        ray2.red = ray1.red;
+        ray2.green = ray1.green;
+        ray2.blue = ray1.blue;
+      } else {
+        ray2.red = 0;
+        ray2.green = 0;
+        ray2.blue = 0;
+      }
+      if (!acquireLabel.empty())
+        ray2.label = ray1.label;
+      else
+        ray2.label = 0;
     }
   }
+  
   return true;
 }
 
-//------------------------------------------------------------------------------
-
-double
-RangeSensor::minRange()
-{
-  return _minRange;
+void RangeSensor::showFrustums() {
+  for (int i = 0; i < cameras.size(); ++i)
+    cameras[i]->showFrustum();
 }
 
-//------------------------------------------------------------------------------
-
-double
-RangeSensor::maxRange()
-{
-  return _maxRange;
+void RangeSensor::hideFrustums() {
+  for (int i = 0; i < cameras.size(); ++i)
+    cameras[i]->hideFrustum();
 }
 
-//------------------------------------------------------------------------------
-
-bool
-RangeSensor::inRange( NodePath & node )
-{
-  return true;
-}
-
-//------------------------------------------------------------------------------
-
-double
-RangeSensor::hFov()
-{
-  return _horizontalFOV;
-}
-
-//------------------------------------------------------------------------------
-
-double
-RangeSensor::vFov()
-{
-  return _verticalFOV;
-}
-
-//------------------------------------------------------------------------------
-
-int
-RangeSensor::hRays()
-{
-  return _horizontalRays;
-}
-
-//------------------------------------------------------------------------------
-
-int
-RangeSensor::vRays()
-{
-  return _verticalRays;
-}
-
-//------------------------------------------------------------------------------
-
-double
-RangeSensor::rayLength( int index )
-{
-  if(index >= _rayCount) {
-    fprintf(stderr, "morsel->range_sensor->rayLength(...) "
-      "index out of range: %d >= %d. Aborting...\n", index, _rayCount);
-    exit(1);
-  }
-  return _rays[index]._radius;
-}
-
-//------------------------------------------------------------------------------
-
-void
-RangeSensor::showFrustums()
-{
-  for ( int i = 0; i < _cameras.size(); ++i )
-    _cameras[i]->showFrustum();
-}
-
-//------------------------------------------------------------------------------
-
-void
-RangeSensor::hideFrustums()
-{
-  for ( int i = 0; i < _cameras.size(); ++i )
-    _cameras[i]->hideFrustum();
-}
-
-//------------------------------------------------------------------------------
-// Private methods
-//------------------------------------------------------------------------------
-
-void
-RangeSensor::computeParameters(
-  double minAngle,
-  double maxAngle,
-  int rayCount,
-  double cameraMaxFOV,
-  deque<double> & fovs,
-  deque<double> & angles,
-  deque<int> & rayCounts
-)
-{
+void RangeSensor::computeParameters(double minAngle, double maxAngle,
+    size_t totalNumRays, double cameraMaxFOV, std::deque<double>& fovs,
+    std::deque<double>& angles, std::deque<size_t>& numRays) {
   fovs.clear();
   angles.clear();
-  rayCounts.clear();
+  numRays.clear();
   
-  double fov = maxAngle - minAngle;
-  double rayFov = fov / rayCount;
-  int camCount = ceil( fov / cameraMaxFOV );
-  double camFOV = fov / camCount;
+  double fov = maxAngle-minAngle;
+  double rayFOV = fov/totalNumRays;
+  size_t numCameras = ceil(fov/cameraMaxFOV);
+  double cameraFOV = fov/numCameras;
 
-  for ( int i = rayCount; i > 0; ) {
-    int camRayCount = fmin( round( camFOV / rayFov ), i );
-    rayCounts.push_back( camRayCount );
-    fovs.push_back( camRayCount * rayFov );
-    i -= camRayCount;
+  for (int i = totalNumRays; i > 0; ) {
+    size_t cameraNumRays = fmin(round(cameraFOV/rayFOV), i);
+    numRays.push_back(cameraNumRays);
+    fovs.push_back(cameraNumRays*rayFOV);
+    i -= cameraNumRays;
   }
 
   double angle = minAngle;
-  for ( int i = 0; i < rayCounts.size(); i++ ) {
-    angles.push_back( angle + 0.5 * fovs[i] );
+  for (int i = 0; i < numRays.size(); ++i) {
+    angles.push_back(angle+0.5*fovs[i]);
     angle += fovs[i];
   }
 }
 
-//------------------------------------------------------------------------------
+void RangeSensor::setupCameras() {
+  deque<double> hFOVs, vFOVs;
+  deque<double> hAngles, vAngles;
+  deque<size_t> hNumRays, vNumRays;
+  
+  computeParameters(minAngles[0], maxAngles[0], numRays[0], cameraMaxFOV[0],
+    hFOVs, hAngles, hNumRays);
+  computeParameters(minAngles[1], maxAngles[1], numRays[1], cameraMaxFOV[1],
+    vFOVs, vAngles, vNumRays);
 
-void
-RangeSensor::setupCameras()
-{
-  deque<double> hFovs;
-  deque<double> hAngles;
-  deque<int> hRayCounts;
-  computeParameters( _horizontalMinAngle, _horizontalMaxAngle, _horizontalRays,
-    _cameraMaxHorizontalFOV, hFovs, hAngles, hRayCounts );
+  for (int i = 0; i < hFOVs.size(); ++i) {
+    for (int j = 0; j < vFOVs.size(); ++j) {
+      stringstream stream;
+      stream << get_name() << "_" << i << "x" << j;
 
-  deque<double> vFovs;
-  deque<double> vAngles;
-  deque<int> vRayCounts;
-  computeParameters( _verticalMinAngle, _verticalMaxAngle, _verticalRays,
-    _cameraMaxVerticalFOV, vFovs, vAngles, vRayCounts );
-
-  for ( int i = 0; i < hFovs.size(); i++ ) {
-    for ( int j = 0; j < vFovs.size(); j++ ) {
-      stringstream s;
-      s << get_name() << ":" << i << "," << j;
-
-      RangeCamera * c;
-      if ( _spherical )
-        c = new SphericalRangeCamera(
-          s.str(),
-          hAngles[i],
-          vAngles[j],
-          hFovs[i],
-          vFovs[j],
-          hRayCounts[i],
-          vRayCounts[j],
-          _minRange,
-          _maxRange,
-          _cameraHorizontalResolution,
-          _cameraVerticalResolution,
-          _acquireColor,
-          _acquireLabel
-        );
+      RangeCamera* c;
+      if (spherical)
+        c = new SphericalRangeCamera(stream.str(),
+          LVecBase2f(hAngles[i], vAngles[j]), LVecBase2f(hFOVs[i], vFOVs[j]),
+          LVecBase2f(hNumRays[i], vNumRays[j]), rangeLimits, cameraResolution,
+          acquireColor, acquireLabel);
       else
-        c = new PerspectiveRangeCamera(
-          s.str(),
-          hAngles[i],
-          vAngles[j],
-          hFovs[i],
-          vFovs[j],
-          hRayCounts[i],
-          vRayCounts[j],
-          _minRange,
-          _maxRange,
-          _cameraHorizontalResolution,
-          _cameraVerticalResolution,
-          _acquireColor,
-          _acquireLabel
-        );        
-      c->reparent_to( *this );
-      _cameras.push_back( c );
+        c = new PerspectiveRangeCamera(stream.str(),
+          LVecBase2f(hAngles[i], vAngles[j]), LVecBase2f(hFOVs[i], vFOVs[j]),
+          LVecBase2f(hNumRays[i], vNumRays[j]), rangeLimits, cameraResolution,
+          acquireColor, acquireLabel);
+      c->reparent_to(*this);
+      cameras.push_back(c);
     }
   }
 }

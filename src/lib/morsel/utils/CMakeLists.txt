@@ -9,5 +9,5 @@ panda3d_interrogate(
   MODULE morsel
 )
 
-remake_add_library(utils)
+remake_add_library(utils LINK ${ZLIB_LIBRARY})
 remake_add_headers(INSTALL utils)

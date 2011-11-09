@@ -1,3 +1,23 @@
+/***************************************************************************
+ *   Copyright (C) 2011 by Ralf Kaestner                                   *
+ *   ralf.kaestner@gmail.com                                               *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ ***************************************************************************/
+
 #include "perspective_range_camera.h"
 
 #include <perspectiveLens.h>
@@ -7,99 +27,81 @@
 
 using namespace std;
 
-//------------------------------------------------------------------------------
+/*****************************************************************************/
+/* Constructors and Destructor                                               */
+/*****************************************************************************/
 
-PerspectiveRangeCamera::PerspectiveRangeCamera(
-  string name,
-  double horizontalAngle,
-  double verticalAngle,
-  double horizontalFOV,
-  double verticalFOV,
-  int horizontalRays,
-  int verticalRays,
-  double minRange,
-  double maxRange,
-  int horizontalResolution,
-  int verticalResolution,
-  bool acquireColor,
-  string acquireLabel )
-  : RangeCamera( name, horizontalAngle, verticalAngle, horizontalFOV,
-                 verticalFOV, horizontalRays, verticalRays, minRange, maxRange,
-                 horizontalResolution, verticalResolution, acquireColor,
-                 acquireLabel )
-{
+PerspectiveRangeCamera::PerspectiveRangeCamera(string name, const LVecBase2f&
+    angles, const LVecBase2f& fov, const LVecBase2f& numRays, const
+    LVecBase2f& rangeLimits, const LVecBase2f& resolution, bool acquireColor,
+    string acquireLabel) :
+  RangeCamera(name, angles, fov, numRays, rangeLimits, resolution,
+    acquireColor, acquireLabel) {
   setupLens();
   setupRays();
 }
 
-//------------------------------------------------------------------------------
-
-PerspectiveRangeCamera::~PerspectiveRangeCamera()
-{
+PerspectiveRangeCamera::~PerspectiveRangeCamera() {
 }
 
-//------------------------------------------------------------------------------
-// Protected methods
-//------------------------------------------------------------------------------
+/*****************************************************************************/
+/* Methods                                                                   */
+/*****************************************************************************/
 
-void
-PerspectiveRangeCamera::setupLens()
-{
-  PT(Lens) lens = new PerspectiveLens();
-  lens->set_near_far( _minRange, _maxRange );
-  lens->set_fov( _horizontalFOV * 180.0 / M_PI, _verticalFOV * 180.0 / M_PI );
+void PerspectiveRangeCamera::setupLens() {
+  PointerTo<Lens> lens = new PerspectiveLens();
+  lens->set_near_far(rangeLimits[0], rangeLimits[1]);
+  lens->set_fov(fov[0]*180.0/M_PI, fov[1]*180.0/M_PI);
 
-  setupCamera( lens );
+  setupCamera(lens);
 
-  set_hpr( _horizontalAngle * 180.0 / M_PI - 90.0,
-    _verticalAngle * 180.0 / M_PI, 0.0 );
+  set_hpr(angles[0]*180.0/M_PI-90.0, angles[1]*180.0/M_PI, 0.0);
 }
 
-//------------------------------------------------------------------------------
-
-void
-PerspectiveRangeCamera::setupRays()
-{
-  double deltaHAngle = _horizontalFOV;
-  double hAngle = 0.0;
-  if ( _horizontalRays  > 1 ) {
-    deltaHAngle = _horizontalFOV / _horizontalRays;
-    hAngle = 0.5 * ( -_horizontalFOV + deltaHAngle ) ;
+void PerspectiveRangeCamera::setupRays() {
+  LVecBase2f angle;
+  LVecBase2f deltaAngle;
+  
+  deltaAngle[0] = fov[0];
+  angle[0] = 0.0;
+  if (numRays[0] > 1) {
+    deltaAngle[0] = fov[0]/numRays[0];
+    angle[0] = 0.5*(-fov[0]+deltaAngle[0]);
   }
 
-  double deltaVAngle = _verticalFOV;
-  if ( _verticalRays > 1 )
-    deltaVAngle = _verticalFOV / _verticalRays;
+  deltaAngle[1] = fov[1];
+  if (numRays[1] > 1)
+    deltaAngle[1] = fov[1]/numRays[1];
 
   int index = 0;
-  while ( hAngle < 0.5 * _horizontalFOV ) {
-    double vAngle = 0.0;
-    if ( _verticalRays > 1 )
-      vAngle = 0.5 * ( -_verticalFOV + deltaVAngle );
+  while (angle[0] < 0.5*fov[0]) {
+    angle[1] = 0.0;
+    if (numRays[1] > 1)
+      angle[1] = 0.5*(-fov[1]+deltaAngle[1]);
 
-    while ( vAngle < 0.5 * _verticalFOV ) {
+    while (angle[1] < 0.5*fov[1]) {
       LPoint3f point, dist;
-      point[0] = _maxRange * tan( hAngle );
-      point[1] = _maxRange;
-      point[2] = _maxRange * tan( vAngle );
-      _cameraNode->get_lens()->project( point, dist );
+      point[0] = rangeLimits[1]*tan(angle[0]);
+      point[1] = rangeLimits[1];
+      point[2] = rangeLimits[1]*tan(angle[1]);
+      cameraNode->get_lens()->project(point, dist);
 
-      double column = 0.5 * _width * ( 1.0 + dist[0] );
-      double row = 0.5 * _height * ( 1.0 - dist[1] );
+      double column = 0.5*resolution[0]*(1.0+dist[0]);
+      double row = 0.5*resolution[1]*(1.0-dist[1]);
 
       RayInfo ri;
-      ri.row    = row;
+      ri.row = row;
       ri.column = column;
-      ri.hAngle = hAngle;
-      ri.vAngle = vAngle;
-      ri.hTan   = tan( ri.hAngle );
-      ri.vTan   = tan( ri.vAngle );
+      ri.hAngle = angle[0];
+      ri.vAngle = angle[1];
+      ri.hTan = tan(ri.hAngle);
+      ri.vTan = tan(ri.vAngle);
 
-      _rayInfo[index] = ri;
+      rayInfo[index] = ri;
       ++index;
 
-      vAngle += deltaVAngle;
+      angle[1] += deltaAngle[1];
     }
-    hAngle += deltaHAngle;
+    angle[0] += deltaAngle[0];
   }
 }

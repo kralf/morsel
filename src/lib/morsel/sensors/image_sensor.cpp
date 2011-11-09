@@ -1,3 +1,23 @@
+/***************************************************************************
+ *   Copyright (C) 2011 by Ralf Kaestner                                   *
+ *   ralf.kaestner@gmail.com                                               *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ ***************************************************************************/
+
 #include "image_sensor.h"
 
 #include <perspectiveLens.h>
@@ -6,115 +26,72 @@
 
 using namespace std;
 
-//------------------------------------------------------------------------------
+/*****************************************************************************/
+/* Constructors and Destructor                                               */
+/*****************************************************************************/
 
-ImageSensor::ImageSensor(
-  string name,
-  int horizontalResolution,
-  int verticalResolution,
-  double minRange,
-  double maxRange,
-  double filmWidth,
-  double filmHeight,
-  double focalLength )
-  : NodePath( name ),
-    _name( name ),
-    _horizontalResolution( horizontalResolution ),
-    _verticalResolution( verticalResolution ),
-    _minRange( minRange ),
-    _maxRange( maxRange ),
-    _filmWidth( filmWidth ),
-    _filmHeight( filmHeight ),
-    _focalLength( focalLength )
-{
+
+ImageSensor::ImageSensor(std::string name, const LVecBase2f& resolution,
+    const LVecBase2f& rangeLimits, const LVecBase2f& filmSize, double
+    focalLength) :
+  NodePath(name),
+  resolution(resolution),
+  rangeLimits(rangeLimits),
+  filmSize(filmSize),
+  focalLength(focalLength) {
   setupCamera();
 }
 
-//------------------------------------------------------------------------------
-
-ImageSensor::~ImageSensor()
-{
+ImageSensor::~ImageSensor() {
 }
 
-//------------------------------------------------------------------------------
+/*****************************************************************************/
+/* Accessors                                                                 */
+/*****************************************************************************/
 
-const string &
-ImageSensor::name() {
-  return _name;
+const LVecBase2f& ImageSensor::getResolution() const {
+  return resolution;
 }
 
-//------------------------------------------------------------------------------
-
-int
-ImageSensor::horizontalResolution()
-{
-  return _horizontalResolution;
+const Texture& ImageSensor::getColorMap() const {
+  return colorMap;
 }
 
-//------------------------------------------------------------------------------
+/*****************************************************************************/
+/* Methods                                                                   */
+/*****************************************************************************/
 
-int
-ImageSensor::verticalResolution()
-{
-  return _verticalResolution;
-}
-
-//------------------------------------------------------------------------------
-
-PointerTo<Texture>
-ImageSensor::colorMap() {
-  return & _colorMap;
-}
-
-//------------------------------------------------------------------------------
-
-bool
-ImageSensor::update( double time )
-{
-  _colorMap.store( _colorTexels );
+bool ImageSensor::update(double time) {
+  colorMap.store(colorTexels);
   return true;
 }
 
-//------------------------------------------------------------------------------
-
-void
-ImageSensor::showFrustum()
-{
-  _cameraNode->show_frustum();
+void ImageSensor::showFrustum() {
+  cameraNode->show_frustum();
 }
 
-//------------------------------------------------------------------------------
-
-void
-ImageSensor::hideFrustum()
-{
-  _cameraNode->hide_frustum();
+void ImageSensor::hideFrustum() {
+  cameraNode->hide_frustum();
 }
 
-//------------------------------------------------------------------------------
-// Protected methods
-//------------------------------------------------------------------------------
+void ImageSensor::setupCamera() {
+  PointerTo<GraphicsOutput> window = getWindow(0);
+  colorBuffer = window->make_texture_buffer("colormap", resolution[0],
+    resolution[1], &colorMap, true);
 
-void
-ImageSensor::setupCamera()
-{
-  GraphicsOutput * window = getWindow( 0 );
-  _colorBuffer = window->make_texture_buffer( "colormap", _horizontalResolution,
-    _verticalResolution, &_colorMap, true );
+  PointerTo<Lens> lens = new PerspectiveLens();
+  lens->set_near_far(rangeLimits[0], rangeLimits[1]);
+  lens->set_view_vector(1.0, 0.0, 0.0, 0.0, 0.0, 1.0);
+  lens->set_film_size(filmSize[0], filmSize[1]);
+  lens->set_focal_length(focalLength);
 
-  PT(Lens) lens = new PerspectiveLens();
-  lens->set_near_far( _minRange, _maxRange );
-  lens->set_view_vector( 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 );
-  lens->set_film_size( _filmWidth, _filmHeight );
-  lens->set_focal_length( _focalLength );
+  cameraNode = new Camera("cam");
+  cameraNode->set_camera_mask(BitMask32(1));
+  cameraNode->set_scene(getGSG()->get_scene()->get_scene_root());
+  camera = attach_new_node(cameraNode);
+  cameraNode->set_lens(lens);
 
-  _cameraNode = new Camera( "cam" );
-  _cameraNode->set_camera_mask( BitMask32( 1 ) );
-  _cameraNode->set_scene( getGSG()->get_scene()->get_scene_root() );
-  _camera = attach_new_node( _cameraNode );
-  _cameraNode->set_lens( lens );
-
-  PT(DisplayRegion) drc = _colorBuffer->make_display_region();
-  drc->set_sort( 0 );
-  drc->set_camera( _camera );
+  PointerTo<DisplayRegion> drc = colorBuffer->make_display_region();
+  drc->set_sort(0);
+  drc->set_camera(camera);
 }

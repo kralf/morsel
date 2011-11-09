@@ -25,8 +25,8 @@ class World(Base):
     self.space = panda.OdeSimpleSpace()
     self.space.setAutoCollideWorld(self.world)
     self.space.enable()
-    self.collisionGroup = panda.OdeJointGroup()
-    self.space.setAutoCollideJointGroup(self.collisionGroup)
+    self.contacts = panda.OdeJointGroup()
+    self.space.setAutoCollideJointGroup(self.contacts)
   
 #-------------------------------------------------------------------------------
 
@@ -57,7 +57,7 @@ class World(Base):
 #-------------------------------------------------------------------------------
   
   def updatePhysics(self, period):
-    contactPoints = self.space.autoCollide()
+    self.space.autoCollide()
     for actuator in self.actuators:
       actuator.updatePhysics(self.period)
     for sensor in self.sensors:
@@ -66,7 +66,7 @@ class World(Base):
       self.world.quickStep(self.period)
     else:
       self.world.step(self.period)
-    self.collisionGroup.empty()
+    self.contacts.empty()
       
 #-------------------------------------------------------------------------------
 

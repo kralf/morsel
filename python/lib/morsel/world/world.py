@@ -5,7 +5,7 @@ from morsel.nodes.view import View
 
 #-------------------------------------------------------------------------------
 
-class World:
+class World(object):
   def __init__(self, physics, period = 0.01):
     object.__init__(self)
     

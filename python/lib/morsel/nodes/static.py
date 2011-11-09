@@ -9,9 +9,10 @@ class Static(Node):
     Node.__init__(self, world, name, **kargs)
 
     self.collider = Collider(name+"Collider", parent = self,
-      collisionMasks = [STATIC_COLLISIONS_FROM, STATIC_COLLISIONS_INTO])
-    self.solid = None
-    
+      collisionMasks = [STATIC_COLLISIONS_FROM, STATIC_COLLISIONS_INTO])    
     self.mesh = Mesh(name+"Mesh", mesh, exclude = exclude, parent = self)
+    
     if solid:
       self.solid = Solid(name+"Solid", solid, self.mesh, parent = self)
+    else:
+      self.solid = Solid(name+"Solid", "Empty", self.mesh, parent = self)

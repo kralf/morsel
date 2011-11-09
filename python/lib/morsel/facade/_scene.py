@@ -34,9 +34,3 @@ def Frame( object, scale = 0.5 ):
     frame.node().adjustDrawMask( panda.PandaNode.getAllCameraMask(),
       panda.BitMask32( '001' ), panda.BitMask32( '0' ) )
     return frame
-
-#-------------------------------------------------------------------------------
-
-def showFPS( value ):
-    '''Shows the Frames Per Second in the upper right part of the screen.'''
-    base.setFrameRateMeter( value )

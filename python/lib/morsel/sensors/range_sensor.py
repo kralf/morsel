@@ -1,8 +1,9 @@
-from math import pi
-
+from morsel.panda import *
 from morsel.nodes import Sensor
 from morsel.nodes.facade import Mesh
 from morsel.morselc import RangeSensor as CRangeSensor
+
+from math import pi
 
 #-------------------------------------------------------------------------------
 
@@ -29,13 +30,12 @@ class RangeSensor(Sensor):
       self.acquireLabel = ""
 
     self.sensor = CRangeSensor(name,
-      self.fieldOfView[0][0]*pi/180.0, self.fieldOfView[0][1]*pi/180.0,
-      self.fieldOfView[1][0]*pi/180.0, self.fieldOfView[1][1]*pi/180.0,
-      self.resolution[0]*pi/180.0, self.resolution[1]*pi/180.0,
-      self.rangeLimits[0], self.rangeLimits[1],
-      self.cameraMaxFieldOfView[0]*pi/180.0,
-      self.cameraMaxFieldOfView[1]*pi/180.0,
-      self.cameraResolution[0], self.cameraResolution[1],
+      panda.Vec2(self.fieldOfView[0][0], self.fieldOfView[1][0])*pi/180.0,
+      panda.Vec2(self.fieldOfView[0][1], self.fieldOfView[1][1])*pi/180.0,
+      panda.Vec2(*self.resolution)*pi/180.0,
+      panda.Vec2(*self.rangeLimits),
+      panda.Vec2(*self.cameraMaxFieldOfView)*pi/180,
+      panda.Vec2(*self.cameraResolution),
       self.spherical, self.acquireColor, self.acquireLabel)
     self.sensor.reparentTo(self.mesh)
 

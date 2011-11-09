@@ -26,12 +26,13 @@ framework.addMorselPath("ctl", "control")
 framework.addMorselPath("cg", "shaders")
 framework.addMorselPath("glsl", "shaders")
 
-framework.setFullscreen(False)
-framework.setWindowSize(800, 600)
-framework.setWindowTitle("%s version %s.%s.%s" % (MORSEL_NAME,
-  MORSEL_MAJOR_VISION, MORSEL_MINOR_VISION, MORSEL_PATCH))
+framework.fullscreen = False
+framework.windowPosition = [100, 100]
+framework.windowSize = [800, 600]
+framework.windowTitle = "%s version %s.%s.%s" % (MORSEL_NAME,
+  MORSEL_MAJOR_VISION, MORSEL_MINOR_VISION, MORSEL_PATCH)
 
-framework.setConfigVariable("background-color", 0.5, 0.5, 0.8)
+framework.setConfigVariable("background-color", [0.5, 0.5, 0.8])
 framework.setConfigVariable("depth-bits", 16)
 framework.setConfigVariable("direct-gui-edit", True)
 framework.setConfigVariable("basic-shaders-only", False)

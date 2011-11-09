@@ -29,15 +29,16 @@ class Keyboard(Controller):
     self.increments = []
     
     for i in range(len(self._keys)):
-      self.keyMap[self._keys[i][0]] = 0
-      base.accept(self._keys[i][0], self.setKey, [self._keys[i][0], 1])
-      base.accept(self._keys[i][0]+"-up", self.setKey, [self._keys[i][0], 0])
+      if self._keys[i]:
+        self.keyMap[self._keys[i][0]] = 0
+        base.accept(self._keys[i][0], self.setKey, [self._keys[i][0], 1])
+        base.accept(self._keys[i][0]+"-up", self.setKey, [self._keys[i][0], 0])
 
-      self.keyMap[self._keys[i][1]] = 0
-      base.accept(self._keys[i][1], self.setKey, [self._keys[i][1], 1])
-      base.accept(self._keys[i][1]+"-up", self.setKey, [self._keys[i][1], 0])
+        self.keyMap[self._keys[i][1]] = 0
+        base.accept(self._keys[i][1], self.setKey, [self._keys[i][1], 1])
+        base.accept(self._keys[i][1]+"-up", self.setKey, [self._keys[i][1], 0])
 
-      self.increments.append(      
+      self.increments.append(
         (self.actuator.limits[i][1]-self.actuator.limits[i][0])/self.delay[i])
 
   def getKeys(self):
@@ -50,14 +51,15 @@ class Keyboard(Controller):
   def updateCommand(self, period):
     command = self.actuator.command
 
-    for i in range(len(command)):
-      if self.keyMap[self.keys[i][0]]:
-        command[i] -= self.increments[i]*period
-        command[i] = max(command[i], self.actuator.limits[i][0])
-      elif self.keyMap[self.keys[i][1]]:
-        command[i] += self.increments[i]*period
-        command[i] = min(command[i], self.actuator.limits[i][1])
-      elif command[i] != 0:
+    for i in range(len(self.keys)):
+      if self.keys[i]:
+        if self.keyMap[self.keys[i][0]]:
+          command[i] -= self.increments[i]*period
+          command[i] = max(command[i], self.actuator.limits[i][0])
+        elif self.keyMap[self.keys[i][1]]:
+          command[i] += self.increments[i]*period
+          command[i] = min(command[i], self.actuator.limits[i][1])
+        elif command[i] != 0:
           command[i] -= self.increments[i]*period*command[i]/abs(command[i])
           if abs(command[i]) <= abs(self.increments[i]*period):
             command[i] = 0

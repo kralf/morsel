@@ -7,7 +7,7 @@ if __builtin__.__dict__.has_key("scheduler"):
 
 #-------------------------------------------------------------------------------
 
-class Scheduler:
+class Scheduler(object):
   '''Simulation scheduler.
   This class handles the simulation clock and task scheduling. Every simulation
   time task in the should use this class methods instead of the standard taskMgr
@@ -15,6 +15,8 @@ class Scheduler:
   handling, etc.)
   '''
   def __init__(self):
+    object.__init__(self)
+
     self.realTime    = True
     self.skipFrames  = True
     self.pause       = False

@@ -1,3 +1,4 @@
+from morsel.world.globals import *
 from node import Node
 from iterator import Iterator
 from mesh import Mesh
@@ -7,6 +8,7 @@ from actor import Actor
 from sensor import Sensor
 from platform import Platform
 from view import View
+from facade import Collider, Solid
 
 #-------------------------------------------------------------------------------
 
@@ -18,6 +20,10 @@ class Scene(Node):
       world.scene = self
     else:
       framework.error("World already has a scene")
+
+    self.collider = Collider(name+"Collider", parent = self,
+      collisionMasks = [STATIC_COLLISIONS_FROM, STATIC_COLLISIONS_INTO])
+    self.solid = Solid(name+"Solid", "Empty", self, parent = self)
 
 #-------------------------------------------------------------------------------
 
