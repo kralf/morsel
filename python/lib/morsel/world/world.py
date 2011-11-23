@@ -20,7 +20,7 @@ class World(object):
     self.delta = 0
     self.time = 0
     
-    framework.scheduler.addTask("worldUpdate", self.update)
+    framework.scheduler.addTask("WorldUpdate", self.update)
     
 #-------------------------------------------------------------------------------
 

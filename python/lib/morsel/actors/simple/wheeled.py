@@ -8,6 +8,7 @@ class Wheeled(Base):
     mesh = Mesh(name+"Mesh", mesh)
     Base.__init__(self, world, name, mesh, **kargs)
 
-    self.body.solid = Solid(name+"BodySolid", bodySolid, self,
-      parent = self.chassis.solid)
+    if self.body:
+      self.body.solid = Solid(name+"BodySolid", bodySolid, self,
+        parent = self.chassis.solid)
     

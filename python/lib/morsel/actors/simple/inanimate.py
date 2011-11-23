@@ -8,5 +8,5 @@ class Inanimate(Base):
     mesh = Mesh(name+"Mesh", mesh)
     Base.__init__(self, world, name, mesh, **kargs)
 
-    self.mesh.solid = Solid(name+"Solid", solid, self.mesh,
+    self.mesh.solid = Solid(name+"MeshSolid", solid, self.mesh,
       parent = self.solid)

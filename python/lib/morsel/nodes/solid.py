@@ -19,22 +19,22 @@ class Solid(Node):
 
 #-------------------------------------------------------------------------------
 
-  def setPosition(self, position, node = None, recursive = True):
+  def setPosition(self, position, node = None):
     Node.setPosition(self, position, node)
-
-    if recursive:
-      for child in self.getChildren(Solid):
-        child.position = child.position
+    self.updateTransform()
 
   position = property(Node.getPosition, setPosition)
 
 #-------------------------------------------------------------------------------
 
-  def setOrientation(self, orientation, node = None, recursive = True):
+  def setOrientation(self, orientation, node = None):
     Node.setOrientation(self, orientation, node)
-
-    if recursive:
-      for child in self.getChildren(Solid):
-        child.orientation = child.orientation
+    self.updateTransform()
 
   orientation = property(Node.getOrientation, setOrientation)
+
+#-------------------------------------------------------------------------------
+
+  def updateTransform(self):
+    pass
+  

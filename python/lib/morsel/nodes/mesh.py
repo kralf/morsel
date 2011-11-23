@@ -16,7 +16,7 @@ class Mesh(Node):
       self.clearTransform(model)
       model.clearTransform()
       self.model = model
-      
+    
     if exclude:
       for part in exclude:
         self.model.find("**/"+part).removeNode()

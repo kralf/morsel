@@ -26,8 +26,8 @@ class Collider(Base):
 
   def addSolid(self, solid):
     Base.addSolid(self, solid)
-    if solid.geometry:
-      self.path.node().addSolid(solid.geometry)
+    if solid.geometry and solid.geometry.geometry:
+      self.path.node().addSolid(solid.geometry.geometry)
 
 #-------------------------------------------------------------------------------
 

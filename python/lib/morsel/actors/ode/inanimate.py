@@ -10,8 +10,8 @@ class Inanimate(Base):
     mesh = Mesh(name+"Mesh", mesh)
     Base.__init__(self, world, name, mesh, **kargs)
 
-    self.mesh.solid = Solid(name+"Solid", solid, self.mesh, body = body,
+    self.mesh.solid = Solid(name+"MeshSolid", solid, self.mesh, body = body,
       mass = mass, parent = self.solid)
     joint = panda.OdeFixedJoint(world.world)
-    joint.attach(self.mesh.solid.body.body, self.solid.body.body)
+    joint.attach(self.solid.body.body, self.mesh.solid.body.body)
     joint.set()

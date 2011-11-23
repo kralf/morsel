@@ -1,7 +1,7 @@
-from box import Box
+from morsel.nodes.simple.solid import Solid
 
 #-------------------------------------------------------------------------------
 
-class Mesh(Box):
+class Mesh(Solid):
   def __init__(self, world, name, mesh, **kargs):
-    Box.__init__(self, world, name, mesh, **kargs)
+    Solid.__init__(self, world, name, mesh = mesh, geometry = "Box", **kargs)

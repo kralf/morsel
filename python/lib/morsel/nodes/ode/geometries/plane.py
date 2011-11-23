@@ -1,15 +1,28 @@
 from morsel.panda import *
 from morsel.nodes.ode.geometry import Geometry
 from morsel.nodes import Node
+from morsel.nodes.facade import Mesh
 
 #-------------------------------------------------------------------------------
 
 class Plane(Geometry):
-  def __init__(self, world, name, solid, **kargs):
-    coefficients = panda.Vec4(0, 0, 1, 0)
-    geometry = panda.OdePlaneGeom(world.space, coefficients)
+  def __init__(self, world, name, solid, scale = [1, 1, 1], **kargs):
+    d_min = min(scale)
 
-    Geometry.__init__(self, world, name, solid, geometry = geometry, **kargs)
+    if d_min == scale[0]:
+      orientation = [0, 90, 0]
+      scale = [1, 1e3*scale[1], 1e3*scale[2]]
+    elif d_min == scale[1]:
+      orientation = [0, 0, 90]
+      scale = [1e3*scale[0], 1, 1e3*scale[2]]
+    elif d_min == scale[2]:
+      orientation = [0, 0, 0]
+      scale = [1e3*scale[0], 1e3*scale[1], 1]
+      
+    geometry = panda.OdePlaneGeom(world.space, panda.Vec4(0, 0, 1, 0))
+    
+    Geometry.__init__(self, world, name, solid, geometry = geometry,
+      orientation = orientation, scale = scale, **kargs)
 
 #-------------------------------------------------------------------------------
 
@@ -32,4 +45,9 @@ class Plane(Geometry):
     self.geometry.setParams(normal[0], normal[1], normal[2], d)
 
   orientation = property(Geometry.getOrientation, setOrientation)
+
+#-------------------------------------------------------------------------------
+
+  def makeDisplay(self):
+    return Mesh(self.name+"Display", "geometry/plane.bam")
   

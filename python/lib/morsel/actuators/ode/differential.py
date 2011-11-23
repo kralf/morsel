@@ -1,7 +1,7 @@
 from morsel.panda import *
 from morsel.math import *
 from morsel.actuators.differential import Differential as Base
-from morsel.nodes.facade import Solid, Body
+from morsel.nodes.facade import Solid
 
 #-------------------------------------------------------------------------------
 
@@ -81,11 +81,8 @@ class Differential(Base):
       if not self.isCasterWheel(self.wheels[i]):
         self.wheelJoints[i].setParamVel(1, turningRates[i]*pi/180)
 
-    self.state[0] = self.solid.body.body.getLinearVel().project(
-      panda.Quat(self.solid.body.body.getQuaternion()).xform(
-      panda.Vec3(1, 0, 0))).length()
-    self.state[1] = panda.Quat(self.solid.body.body.getQuaternion()).xform(
-      self.solid.body.body.getAngularVel())[2]*180.0/pi
+    self.state[0] = self.solid.body.translationalVelocity[0]
+    self.state[1] = self.solid.body.rotationalVelocity[0]
 
     position = self.solid.body.body.getPosition()
     orientation = panda.Quat(self.solid.body.body.getQuaternion()).getHpr()

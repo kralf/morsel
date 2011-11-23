@@ -31,6 +31,8 @@ class Framework(object):
     self.eventManager = None
     self.objectManager = None
     self.console = None
+
+    self.debug = False
   
 #-------------------------------------------------------------------------------
 
@@ -162,12 +164,35 @@ class Framework(object):
     return self.getConfigVariable("show-frame-rate-meter", bool)
 
   def setShowFrameRate(self, show):
-    self.getConfigVariable("show-frame-rate-meter", show)
+    self.setConfigVariable("show-frame-rate-meter", show)
 
     if self.base:
       self.base.setFrameRateMeter(show)
 
   showFrameRate = property(getShowFrameRate, setShowFrameRate)
+
+#-------------------------------------------------------------------------------
+
+  def getMaxFrameRate(self):
+    mode = self.getConfigVariable("clock-mode", str)
+    if mode == "normal":
+      return None
+    else:
+      return self.getConfigVariable("clock-frame-rate", float)
+
+  def setMaxFrameRate(self, frameRate):
+    if frameRate:
+      self.setConfigVariable("clock-mode", "limited")
+      self.setConfigVariable("clock-frame-rate", frameRate)
+      if self.scheduler:
+        self.scheduler.clock.setMode(panda.ClockObject.MLimited)
+        self.scheduler.clock.setFrameRate(frameRate)
+    else:
+      self.setConfigVariable("clock-mode", "normal")
+      if self.scheduler:
+        self.scheduler.clock.setMode(panda.ClockObject.MNormal)
+
+  maxFrameRate = property(getMaxFrameRate, setMaxFrameRate)
 
 #-------------------------------------------------------------------------------
 
@@ -224,13 +249,14 @@ class Framework(object):
       self.base = ShowBase()
       self.scheduler = Scheduler()
       self.eventManager = EventManager()
+
+      for configFile in self.configFiles:
+        self.loadConfigFile(configFile)
+
       self.console = Console.pandaConsole(Console.INPUT_GUI |
         Console.OUTPUT_PYTHON, inspect.stack()[2][0].f_globals)
       self.console.toggle()
       self.objectManager = ObjectManager()
-
-      for configFile in self.configFiles:
-        self.loadConfigFile(configFile)
 
       self.base.run()
     else:

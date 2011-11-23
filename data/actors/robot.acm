@@ -1,14 +1,21 @@
-type              = "Animate"
-actuatorType      = "Accelerator"
+type              = "Character"
+actuatorType      = "PlanarMotor"
 
 mesh              = "misc/robot.bam"
-solid             = "Box"
-body              = "Box"
-mass              = 50
+body              = "body"
+base              = "base"
+hideBase          = True
 
-maxVelocity       = [1, 0, 0, 90, 0, 0]
-maxAcceleration   = [1, 0, 0, 90, 0, 0]
-maxDeceleration   = [1, 0, 0, 90, 0, 0]
+bodySolid         = "Box"
+bodyBody          = "Box"
+baseSolid         = "Ray"
+baseBody          = "Empty"
 
-accelerationForce = [100, 0, 0, 50, 0, 0]
-decelerationForce = [100, 0, 0, 50, 0, 0]
+bodyMass          = 50
+
+maxVelocity       = [1, 0, 90]
+maxAcceleration   = [1, 0, 90]
+maxDeceleration   = [1, 0, 90]
+
+accelerationForce = [500, 0, 100]
+decelerationForce = [500, 0, 100]

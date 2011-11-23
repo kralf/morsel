@@ -1,7 +1,7 @@
-from tube import Tube
+from morsel.nodes.simple.solid import Solid
 
 #-------------------------------------------------------------------------------
 
-class Cylinder(Tube):
+class Cylinder(Solid):
   def __init__(self, world, name, mesh, **kargs):
-    Tube.__init__(self, world, name, mesh, **kargs)
+    Solid.__init__(self, world, name, mesh = mesh, geometry = "Tube", **kargs)

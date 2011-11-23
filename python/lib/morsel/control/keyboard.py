@@ -6,12 +6,15 @@ from morsel.nodes.controller import Controller
 class Keyboard(Controller):
   def __init__(self, world, name = "Keyboard",
       keys = [("arrow_down","arrow_up"), ("arrow_right", "arrow_left")],
-      delay = [1, 1], **kargs):
+      delay = None, **kargs):
     Controller.__init__(self, world, name = name, **kargs)
 
     self.delay = delay
+    if not self.delay:
+      self.delay = [1]*len(keys)
     self.keys = keys
-    
+
+
 #-------------------------------------------------------------------------------
 
   def setKey(self, key, value):

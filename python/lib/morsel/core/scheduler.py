@@ -4,6 +4,7 @@ from panda3d.pandac import NodePath
 import __builtin__
 if __builtin__.__dict__.has_key("scheduler"):
   raise Exception("Circular reference to scheduling module")
+import cProfile
 
 #-------------------------------------------------------------------------------
 
@@ -17,15 +18,18 @@ class Scheduler(object):
   def __init__(self):
     object.__init__(self)
 
-    self.realTime    = True
-    self.skipFrames  = True
-    self.pause       = False
-    self._time       = 0
-    self.lastTime    = -1
-    self.times       = []
-    self.tasks       = {}
-    self.schedule    = {}
+    self.clock = globalClock
+    self.realTime = True
+    self.skipFrames = True
+    self.pause = False
+    self.time = 0
+    self.lastTime = -1
+    self.times = []
+    self.tasks = {}
+    self.schedule = {}
     self.renderTasks = []
+    self.profile = False
+    
     taskMgr.add(self.dispatcher, "morselDispatcher", -20)
 
 #-------------------------------------------------------------------------------
@@ -63,8 +67,21 @@ class Scheduler(object):
       self.lastTime = task.time
     if not self.pause:
       deltaTime = task.time - self.lastTime
-      self._time += deltaTime
-      self.dispatch()
+      self.time += deltaTime
+
+      if framework.debug and self.profile:
+        profile = cProfile.Profile()
+        profile.runcall(self.dispatch)
+
+        if not hasattr(self, "tick"):
+          self.tick = 0
+        else:
+          self.tick += 1
+
+        profile.dump_stats("Scheduler-%09d.profile" % (self.tick))
+      else:
+        self.dispatch()
+        
       self.lastTime = task.time
     else:
       self.lastTime = -1
@@ -72,10 +89,10 @@ class Scheduler(object):
 
 #-------------------------------------------------------------------------------
 
-  def time(self):
+  def getTime(self):
     ''' Returns the simulator's time.'''
     if self.realTime:
-      return self._time
+      return self.time
     elif len(self.times) > 0:
       return self.times[0]
     else:
@@ -84,31 +101,31 @@ class Scheduler(object):
 #-------------------------------------------------------------------------------
 
   def dispatch(self):
-    currentTime = self.time()
+    currentTime = self.getTime()
     processed = {}
 
     while len(self.times) > 0 and self.times[0] <= currentTime:
-      t = self.times.pop(0)
-      taskList = self.schedule.pop(t)
+      time = self.times.pop(0)
+      taskList = self.schedule.pop(time)
 
       for task in taskList:
         period = task["period"]
         if not self.skipFrames or not processed.has_key(task["name"]) or \
             period == 0:
-          result = task["function"](t)
+          result = self.runTask(task, time)
         else:
           result = True
 
         if result:
           if period > 0:
-            self.scheduleTask(t + period, task)
+            self.scheduleTask(time+period, task)
           elif period == 0:
-            self.scheduleTask(t + result, task)
+            self.scheduleTask(time+result, task)
         else:
           self.removeTask(task["name"])
         processed[task["name"]] = True
     for task in self.renderTasks:
-      result = task["function"](currentTime)
+      result = self.runTask(task, currentTime)
       if not result:
         self.removeTask(task["name"])
 
@@ -117,11 +134,29 @@ class Scheduler(object):
   def scheduleTask(self, time, task):
     if self.schedule.has_key(time):
       self.schedule[time].append(task)
-      self.schedule[time].sort(lambda x, y: x["priority"] - y["priority"]  )
+      self.schedule[time].sort(lambda x, y:x["priority"]-y["priority"]  )
     else:
-      self.schedule[time] = [ task ]
+      self.schedule[time] = [task]
       self.times.append(time)
       self.times.sort()
+
+#-------------------------------------------------------------------------------
+
+  def runTask(self, task, *args, **kargs):
+    if framework.debug and task["profile"]:
+      profile = cProfile.Profile()
+      result = profile.runcall(task["function"], *args, **kargs)
+
+      if not task.has_key("tick"):
+        task["tick"] = 0
+      else:
+        task["tick"] += 1
+
+      profile.dump_stats("%s-%09d.profile" % (task["name"], task["tick"]))
+    else:
+      result = task["function"](*args, **kargs)
+
+    return result
 
 #-------------------------------------------------------------------------------
 
@@ -130,7 +165,8 @@ class Scheduler(object):
 
 #-------------------------------------------------------------------------------
 
-  def addTask(self, name, function, period = None, priority = 0):
+  def addTask(self, name, function, period = None, priority = 0,
+      profile = False):
     ''' Adds a periodic task to the scheduler.
     The name for the task should be unique. If 'period == 0' then the value
     returned by 'function' will be used to reschedule the task.
@@ -140,17 +176,18 @@ class Scheduler(object):
     if self.tasks.has_key(name):
       return False
     else:
-      self.tasks[name]     = {
-        "name"      : name,
-        "function"  : function,
-        "period"    : period,
-        "priority"  : priority
+      self.tasks[name] = {
+        "name": name,
+        "function": function,
+        "period": period,
+        "priority": priority,
+        "profile": profile
       }
       if period != None:
-        self.scheduleTask(self.time() + period, self.tasks[name])
+        self.scheduleTask(self.getTime()+period, self.tasks[name])
       else:
         self.renderTasks.append(self.tasks[name])
-        self.renderTasks.sort(lambda x, y: x["priority"] - y ["priority"])
+        self.renderTasks.sort(lambda x, y:x["priority"]-y["priority"])
 
 #-------------------------------------------------------------------------------
 

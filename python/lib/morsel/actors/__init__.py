@@ -3,5 +3,5 @@
 #===============================================================================
 
 from inanimate import Inanimate
-from animate import Animate
+from character import Character
 from wheeled import Wheeled

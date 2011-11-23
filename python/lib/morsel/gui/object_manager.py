@@ -46,7 +46,7 @@ class ObjectManager(DirectObject.DirectObject):
     self.accept('window-event', self.windowEvent)
     self.objects = {}
     self.camera_poses = {}
-    framework.scheduler.addTask("objectManager", self.update)
+    framework.scheduler.addTask("ObjectManagerUpdate", self.update)
     
 #-------------------------------------------------------------------------------
   def label(self, text, x, y):

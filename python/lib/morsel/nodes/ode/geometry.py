@@ -4,17 +4,31 @@ from morsel.nodes import Node
 #-------------------------------------------------------------------------------
 
 class Geometry(Node):
-  def __init__(self, world, name, solid, geometry, **kargs):
-    self.solid = solid
+  def __init__(self, world, name, solid, geometry = None, **kargs):
     self.geometry = geometry
-
+    self.body = None
+    self.positionOffset = [0, 0, 0]
+    self.orientationOffset = [0, 0, 0]
+    
     Node.__init__(self, world, name, **kargs)
+
+    self.solid = solid
+
+    if framework.debug:
+      self.display = self.makeDisplay()
+      if self.display:
+        self.display.parent = self
+        self.display.color = [1, 1, 1, 0.5]
+        self.display.setTextureOff(1)
+        self.display.setTransparency(panda.TransparencyAttrib.MAlpha)
 
 #-------------------------------------------------------------------------------
 
   def setPosition(self, position, node = None):
     Node.setPosition(self, position, node)
-    self.geometry.setPosition(self.getPos(self.world.scene))
+    
+    if self.geometry:
+      self.geometry.setPosition(self.getPos(self.world.scene))
 
   position = property(Node.getPosition, setPosition)
 
@@ -22,38 +36,84 @@ class Geometry(Node):
 
   def setOrientation(self, orientation, node = None):
     Node.setOrientation(self, orientation, node)
-    self.geometry.setQuaternion(self.getQuat(self.world.scene))
+    
+    if self.geometry:
+      self.geometry.setQuaternion(self.getQuat(self.world.scene))
 
   orientation = property(Node.getOrientation, setOrientation)
 
 #-------------------------------------------------------------------------------
 
-  def getBody(self):
-    return self.geometry.getBody()
-
-  def setBody(self, body):
-    self.geometry.setBody(body)
-
-  body = property(getBody, setBody)
-
-#-------------------------------------------------------------------------------
-
   def getPositionOffset(self):
-    return self.geometry.getOffsetPosition()
+    return self._positionOffset
 
   def setPositionOffset(self, positionOffset):
-    self.geometry.setOffsetPosition(*positionOffset)
+    self._positionOffset = positionOffset
+    if self.geometry and self.body:
+      self.geometry.setOffsetPosition(*self._positionOffset)
 
   positionOffset = property(getPositionOffset, setPositionOffset)
 
 #-------------------------------------------------------------------------------
 
-  def getCollisionsMasks(self):
-    return [self.geometry.getCategoryBits(), self.geometry.getCollideBits()]
+  def getOrientationOffset(self):
+    return self._orientationOffset
+
+  def setOrientationOffset(self, orientationOffset):
+    self._orientationOffset = orientationOffset
+    if self.geometry and self.body:
+      quaternion = panda.Quat()
+      quaternion.setHpr(panda.Vec3(*self._orientationOffset))
+      
+      self.geometry.setOffsetQuaternion(quaternion)
+
+  orientationOffset = property(getOrientationOffset, setOrientationOffset)
+
+#-------------------------------------------------------------------------------
+
+  def getBody(self):
+    return self._body
+
+  def setBody(self, body):
+    self._body = body
+    if self.geometry and self._body:
+      self.geometry.setBody(self._body.body)
+      
+      positionOffset = (panda.Vec3(*self.globalPosition)-
+        panda.Vec3(*self._body.globalPosition))
+      orientationOffset = (panda.Vec3(*self.globalOrientation)-
+        panda.Vec3(*self._body.globalOrientation))
+        
+      self.positionOffset = [positionOffset[0], positionOffset[1],
+        positionOffset[2]]
+      self.orientationOffset = [orientationOffset[0], orientationOffset[1],
+        orientationOffset[2]]
+
+  body = property(getBody, setBody)
+
+#-------------------------------------------------------------------------------
+
+  def getCollisionMasks(self):
+    if self.geometry:
+      return [self.geometry.getCategoryBits(), self.geometry.getCollideBits()]
+    else:
+      return None
 
   def setCollisionMasks(self, collisionMasks):
-    self.geometry.setCategoryBits(collisionMasks[0])
-    self.geometry.setCollideBits(collisionMasks[1])
+    if self.geometry:
+      self.geometry.setCategoryBits(collisionMasks[0])
+      self.geometry.setCollideBits(collisionMasks[1])
 
-  collisionsMasks = property(getCollisionsMasks, setCollisionMasks)
-  
+  collisionMasks = property(getCollisionMasks, setCollisionMasks)
+
+
+#-------------------------------------------------------------------------------
+
+  def updateTransform(self):
+    self.geometry.setPosition(self.getPos(self.world.scene))
+    self.geometry.setQuaternion(self.getQuat(self.world.scene))
+
+#-------------------------------------------------------------------------------
+
+  def makeDisplay(self):
+    return None

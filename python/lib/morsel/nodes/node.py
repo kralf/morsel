@@ -143,9 +143,9 @@ class Node(panda.NodePath):
 
   def getScale(self, node = None):
     if node:
-      scale = panda.NodePath.getScale(node)
+      scale = panda.NodePath.getScale(self, node)
     else:
-      scale = panda.NodePath.getScale()
+      scale = panda.NodePath.getScale(self)
       
     return [scale[0], scale[1], scale[2]]
     
@@ -154,11 +154,46 @@ class Node(panda.NodePath):
       scale = [scale]*3
       
     if node:
-      panda.NodePath.setScale(node, *scale)
+      panda.NodePath.setScale(self, node, *scale)
     else:
       panda.NodePath.setScale(self, *scale)
 
   scale = property(getScale, setScale)
+
+#-------------------------------------------------------------------------------
+
+  def getGlobalScale(self):
+    return self.getScale(self.world.scene)
+
+  def setGlobalScale(self, scale):
+    self.setScale(scale, self.world.scene)
+
+  globalScale = property(getGlobalScale, setGlobalScale)
+
+#-------------------------------------------------------------------------------
+
+  def getBounds(self, node = None):
+    p_min = panda.Point3()
+    p_max = panda.Point3()
+    if not self.calcTightBounds(p_min, p_max):
+      p_min = panda.Point3(*self.position)
+      p_max = panda.Point3(*self.position)
+
+    if not node:
+      node = self
+    p_min = node.getRelativePoint(self.parent, p_min)
+    p_max = node.getRelativePoint(self.parent, p_max)
+
+    return (p_min, p_max)
+
+  bounds = property(getBounds)
+
+#-------------------------------------------------------------------------------
+
+  def getGlobalBounds(self):
+    return self.getBounds(self.world.scene)
+
+  globalBounds = property(getGlobalBounds)
 
 #-------------------------------------------------------------------------------
 
@@ -173,12 +208,6 @@ class Node(panda.NodePath):
     panda.NodePath.setColor(self, *color)
 
   color = property(getColor, setColor)
-
-#-------------------------------------------------------------------------------
-
-  def getRelativePosition(self, node, position):
-    relative = self.getRelativePoint(node, panda.Vec3(*position))
-    return [relative[0], relative[1], relative[2]]
 
 #-------------------------------------------------------------------------------
 
@@ -222,7 +251,12 @@ class Node(panda.NodePath):
 #-------------------------------------------------------------------------------
 
   def getParent(self):
-    return panda.NodePath.getParent(self).getPythonTag("this")
+    parent = panda.NodePath.getParent(self)
+
+    if parent.hasPythonTag("this"):
+      return parent.getPythonTag("this")
+    else:
+      return parent
 
   def setParent(self, parent, transform = False):
     if not parent:

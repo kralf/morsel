@@ -1,18 +1,21 @@
 from morsel.panda import *
 from morsel.math import *
-from morsel.actuators import Accelerator as Base
+from morsel.actuators import PlanarMotor as Base
 from morsel.nodes.facade import Solid
 
 #-------------------------------------------------------------------------------
 
-class Accelerator(Base):
-  def __init__(self, world, name, mesh, solid = None, maxAcceleration = [0]*6,
-      maxDeceleration = [0]*6, **kargs):
+class PlanarMotor(Base):
+  def __init__(self, world, name, mesh, baseSolid = None,
+      maxAcceleration = [0, 0, 0], maxDeceleration = [0, 0, 0], **kargs):
     Base.__init__(self, world, name, mesh, **kargs)
 
     self.maxAcceleration = maxAcceleration
     self.maxDeceleration = maxDeceleration
 
+    self.baseSolid = Solid(name+"BaseSolid", baseSolid, self.base,
+      parent = self.solid)
+        
 #-------------------------------------------------------------------------------
 
   def updatePhysics(self, period):
@@ -27,11 +30,12 @@ class Accelerator(Base):
         else:
           self.state[i] += self.maxAcceleration[i]*period
 
-    dt = panda.Vec3(*self.translationalVelocity)*period
-    dr = panda.Vec3(*self.rotationalVelocity)*period
-    dq = Quaternion()
-    dq.setHpr(dr)
+    dx = self.translationalVelocity[0]*period
+    dy = self.translationalVelocity[1]*period
+    dtheta = self.rotationalVelocity*period
+    dquat = Quaternion()
+    dquat.setHpr(panda.Vec3(dtheta, 0, 0))
 
     self.position = (panda.Vec3(*self.position)+
-      self.parent.getRelativeVector(self, dt))
-    self.quaternion = self.globalQuaternion*dq
+      self.parent.getRelativeVector(self, panda.Vec3(dx, dy, 0)))
+    self.quaternion = self.globalQuaternion*dquat

@@ -1,7 +1,7 @@
 from morsel.panda import *
 from morsel.math import *
 from morsel.actuators.ackermann import Ackermann as Base
-from morsel.nodes.facade import Solid, Body
+from morsel.nodes.facade import Solid
 
 #-------------------------------------------------------------------------------
 
@@ -74,13 +74,7 @@ class Ackermann(Base):
       turningRate = self.command[0]/self.wheelCircumference[i]*360
       self.wheelJoints[i].setParamVel(1, turningRate*pi/180)
 
-    self.state[0] = self.solid.body.body.getLinearVel().project(
-      panda.Quat(self.solid.body.body.getQuaternion()).xform(
-      panda.Vec3(1, 0, 0))).length()
+    self.state[0] = self.solid.body.translationalVelocity[0]
     self.state[1] = -self.getSteeringAngle(self.steeringAngles)
 
-    position = self.solid.position
-    orientation = self.solid.orientation
-
     Base.updatePhysics(self, period)
-    

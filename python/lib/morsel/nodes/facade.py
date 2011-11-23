@@ -44,12 +44,6 @@ def Solid(name, type, *args, **kargs):
 
 #-------------------------------------------------------------------------------
 
-def Body(name, type, *args, **kargs):
-  return Instance("morsel.nodes."+globals.world.physics+".bodies", type,
-    globals.world, name, *args, **kargs)
-
-#-------------------------------------------------------------------------------
-
 def Static(name, mesh, **kargs):
   return Instance("morsel.nodes", "Static", globals.world, name, mesh, **kargs)
 
