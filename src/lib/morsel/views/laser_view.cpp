@@ -89,11 +89,11 @@ void LaserView::setupRendering() {
     c.add_data4f(0.0, 0.0, 0.0, 0.0);
     t.add_data2f(0.0, 0.0);
     for (int ri = 0; ri < sensor.getCamera(ci).getNumRays(); ++ri) {
-      v.add_data3f(sensor.getCamera(ci).getRayInfo(ri).hTan,
-        sensor.getCamera(ci).getRayInfo(ri).vTan, 1.0);
+      v.add_data3f(sensor.getCamera(ci).getRay(ri).hTan,
+        sensor.getCamera(ci).getRay(ri).vTan, 1.0);
       c.add_data4f(color);
-      t.add_data2f(sensor.getCamera(ci).getRayInfo(ri).column/width,
-        1.0-sensor.getCamera(ci).getRayInfo(ri).row/height);
+      t.add_data2f(sensor.getCamera(ci).getRay(ri).column/width,
+        1.0-sensor.getCamera(ci).getRay(ri).row/height);
     }
 
     PointerTo<Geom> geom = 0;

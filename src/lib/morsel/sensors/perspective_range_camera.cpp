@@ -89,15 +89,15 @@ void PerspectiveRangeCamera::setupRays() {
       double column = 0.5*resolution[0]*(1.0+dist[0]);
       double row = 0.5*resolution[1]*(1.0-dist[1]);
 
-      RayInfo ri;
-      ri.row = row;
-      ri.column = column;
-      ri.hAngle = angle[0];
-      ri.vAngle = angle[1];
-      ri.hTan = tan(ri.hAngle);
-      ri.vTan = tan(ri.vAngle);
+      Ray ray;
+      ray.row = round(row);
+      ray.column = round(column);
+      ray.hAngle = angle[0];
+      ray.vAngle = angle[1];
+      ray.hTan = tan(ray.hAngle);
+      ray.vTan = tan(ray.vAngle);
 
-      rayInfo[index] = ri;
+      rays[index] = ray;
       ++index;
 
       angle[1] += deltaAngle[1];

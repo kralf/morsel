@@ -41,19 +41,9 @@ public:
   /** Types and non-static subclasses
     */
   struct Ray {
-    double column;
-    double row;
-    int index;
-    double hAngle;
-    double vAngle;
     bool valid;
-    double x;
-    double y;
-    double z;
-    double radius;
-    double red;
-    double green;
-    double blue;
+    LPoint3f point;
+    Colorf color;
     size_t label;
   };
 PUBLISHED:
@@ -71,13 +61,13 @@ PUBLISHED:
     */
   virtual ~RangeSensor();
 
+  const LVecBase2f& getRangeLimits() const;
+  const LVecBase2f& getFOV() const;
   size_t getNumCameras() const;
   const RangeCamera& getCamera(int index) const;
   size_t getNumRays() const;
   const Ray& getRay(int index) const;
-  const LVecBase2f& getRangeLimits() const;
-  const LVecBase2f& getFOV() const;
-  double getRayLength(int index) const;
+  double getTimestamp() const;
   
   bool update(double time);
   void showFrustums();
@@ -88,20 +78,25 @@ protected:
   LVecBase2f resolution;
   LVecBase2f rangeLimits;
   LVecBase2f fov;
+  LVecBase2f numCameras;
   LVecBase2f numRays;
   LVecBase2f cameraMaxFOV;
   LVecBase2f cameraResolution;
   bool spherical;
   bool acquireColor;
   std::string acquireLabel;
-
-  Ray* rays;
   std::vector<RangeCamera*> cameras;
 
+  double timestamp;
+  mutable double lastTimestamp;
+  mutable std::vector<Ray> rays;
+  
   void computeParameters(double minAngle, double maxAngle, size_t totalNumRays,
     double cameraMaxFOV, std::deque<double>& fovs, std::deque<double>& angles,
     std::deque<size_t>& numRays);
   void setupCameras();
+
+  void updateRays() const;
 };
 
 #endif

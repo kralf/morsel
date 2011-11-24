@@ -48,6 +48,8 @@ PUBLISHED:
 
   const LVecBase2f& getResolution() const;
   const Texture& getColorMap() const;
+  double getTimestamp() const;
+  const PNMImage& getImage() const;
   
   bool update(double time);
   void showFrustum();
@@ -59,10 +61,13 @@ protected:
   double focalLength;
 
   PointerTo<GraphicsOutput> colorBuffer;
-  PNMImage colorTexels;
   Texture colorMap;
   PointerTo<Camera> cameraNode;
   NodePath camera;
+
+  double timestamp;
+  mutable double lastTimestamp;
+  mutable PNMImage colorTexels;
   
   void setupCamera();
 };

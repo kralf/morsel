@@ -51,13 +51,13 @@ RangeSensor::RangeSensor(std::string name, const LVecBase2f& minAngles,
   spherical(spherical),
   acquireColor(acquireColor),
   acquireLabel(acquireLabel),
-  rays(new RangeSensor::Ray[(size_t)(numRays[0]*numRays[1])]) {
+  timestamp(0.0),
+  lastTimestamp(0.0),
+  rays(numRays[0]*numRays[1]) {
   setupCameras();
-  getEngine()->render_frame();
 }
 
 RangeSensor::~RangeSensor() {
-  delete[] rays;
   for (int i = 0; i < cameras.size(); ++i)
     delete cameras[i];
 }
@@ -66,8 +66,16 @@ RangeSensor::~RangeSensor() {
 /* Accessors                                                                 */
 /*****************************************************************************/
 
+const LVecBase2f& RangeSensor::getRangeLimits() const {
+  return rangeLimits;
+}
+
+const LVecBase2f& RangeSensor::getFOV() const {
+  return fov;
+}
+
 size_t RangeSensor::getNumCameras() const {
-  return cameras.size();
+  return numCameras[0]*numCameras[1];
 }
 
 const RangeCamera& RangeSensor::getCamera(int index) const {
@@ -79,22 +87,16 @@ size_t RangeSensor::getNumRays() const {
 }
 
 const RangeSensor::Ray& RangeSensor::getRay(int index) const {
+  if (timestamp > lastTimestamp) {
+    updateRays();
+    lastTimestamp = timestamp;
+  }
+
   return rays[index];
 }
 
-const LVecBase2f& RangeSensor::getRangeLimits() const {
-  return rangeLimits;
-}
-
-const LVecBase2f& RangeSensor::getFOV() const {
-  return fov;
-}
-
-double RangeSensor::getRayLength(int index) const {
-  if (index >= (numRays[0]*numRays[1]))
-    return -1.0;
-  else
-    return rays[index].radius;
+double RangeSensor::getTimestamp() const {
+  return timestamp;
 }
 
 /*****************************************************************************/
@@ -102,50 +104,10 @@ double RangeSensor::getRayLength(int index) const {
 /*****************************************************************************/
 
 bool RangeSensor::update(double time) {
-  int rayIndex = 0;
+  timestamp = time;
   
-  for (int ci = 0; ci < cameras.size(); ++ci) {
-    RangeCamera* c = cameras[ci];
-    c->update(time);
-    
-    for (int ri = 0; ri < c->getNumRays(); ++ri) {
-      const RangeCamera::Ray& ray1 = c->getRay(ri);
-      LPoint3f p = get_relative_point(*c, LVecBase3f(ray1.x, ray1.y, ray1.z));
-      Ray& ray2 = rays[rayIndex++];
-
-      ray2.row = ray1.row;
-      ray2.column = ray1.column;
-      ray2.index = rayIndex;
-      ray2.hAngle = atan2(p[1], p[0]);
-      ray2.vAngle = atan2(p[2], sqrt(p[0]*p[0]+p[1]*p[1]));
-      ray2.x = p[0];
-      ray2.y = p[1];
-      ray2.z = p[2];
-      if (ray1.radius >= rangeLimits[1]) {
-        ray2.valid = false;
-        ray2.radius = numeric_limits<double>::infinity();
-      }
-      else if (ray1.radius <= rangeLimits[0]) {
-        ray2.valid = false;
-        ray2.radius = -numeric_limits<double>::infinity();
-      }
-      else
-        ray2.valid = true;
-      if (acquireColor) {
-        ray2.red = ray1.red;
-        ray2.green = ray1.green;
-        ray2.blue = ray1.blue;
-      } else {
-        ray2.red = 0;
-        ray2.green = 0;
-        ray2.blue = 0;
-      }
-      if (!acquireLabel.empty())
-        ray2.label = ray1.label;
-      else
-        ray2.label = 0;
-    }
-  }
+  for (int i = 0; i < cameras.size(); ++i)
+    cameras[i]->update(time);
   
   return true;
 }
@@ -196,24 +158,71 @@ void RangeSensor::setupCameras() {
   computeParameters(minAngles[1], maxAngles[1], numRays[1], cameraMaxFOV[1],
     vFOVs, vAngles, vNumRays);
 
-  for (int i = 0; i < hFOVs.size(); ++i) {
-    for (int j = 0; j < vFOVs.size(); ++j) {
+  numCameras[0] = hFOVs.size();
+  numCameras[1] = vFOVs.size();
+    
+  for (int i = 0; i < numCameras[1]; ++i) {
+    for (int j = 0; j < numCameras[0]; ++j) {
       stringstream stream;
       stream << get_name() << "_" << i << "x" << j;
 
-      RangeCamera* c;
+      RangeCamera* camera;
       if (spherical)
-        c = new SphericalRangeCamera(stream.str(),
-          LVecBase2f(hAngles[i], vAngles[j]), LVecBase2f(hFOVs[i], vFOVs[j]),
-          LVecBase2f(hNumRays[i], vNumRays[j]), rangeLimits, cameraResolution,
+        camera = new SphericalRangeCamera(stream.str(),
+          LVecBase2f(hAngles[j], vAngles[i]), LVecBase2f(hFOVs[j], vFOVs[i]),
+          LVecBase2f(hNumRays[j], vNumRays[i]), rangeLimits, cameraResolution,
           acquireColor, acquireLabel);
       else
-        c = new PerspectiveRangeCamera(stream.str(),
-          LVecBase2f(hAngles[i], vAngles[j]), LVecBase2f(hFOVs[i], vFOVs[j]),
-          LVecBase2f(hNumRays[i], vNumRays[j]), rangeLimits, cameraResolution,
+        camera = new PerspectiveRangeCamera(stream.str(),
+          LVecBase2f(hAngles[j], vAngles[i]), LVecBase2f(hFOVs[j], vFOVs[i]),
+          LVecBase2f(hNumRays[j], vNumRays[i]), rangeLimits, cameraResolution,
           acquireColor, acquireLabel);
-      c->reparent_to(*this);
-      cameras.push_back(c);
+          
+      camera->reparent_to(*this);
+      cameras.push_back(camera);
+    }
+  }
+}
+
+void RangeSensor::updateRays() const {
+  int c_i = 0;
+  int i_c = 0;
+  for (int i = 0; i < numRays[1]; ++i, ++i_c) {
+    int c_ij = c_i*numCameras[0];
+    if (i_c >= cameras[c_ij]->getNumVerticalRays()) {
+      i_c = 0;
+      ++c_i;
+    }
+    
+    int c_j = 0;
+    int j_c = 0;
+    for (int j = 0; j < numRays[0]; ++j, ++j_c) {
+      int ij = i*numRays[0]+j;
+      c_ij = c_i*numCameras[0]+c_j;
+      if (j_c >= cameras[c_ij]->getNumHorizontalRays()) {
+        j_c = 0;
+        ++c_j;
+      }
+      int ij_c = i_c*cameras[c_ij]->getNumHorizontalRays()+j_c;
+
+      rays[ij].point = get_relative_point(*cameras[c_ij],
+        cameras[c_ij]->getPoint(ij_c));
+
+      double radius = rays[ij].point.length();
+      if ((radius <= rangeLimits[0]) || (radius >= rangeLimits[1]))
+        rays[ij].valid = false;
+      else
+        rays[ij].valid = true;
+
+      if (acquireColor)
+        rays[ij].color = cameras[c_ij]->getColor(ij_c);
+      else
+        rays[ij].color.fill(0.0);
+
+      if (!acquireLabel.empty())
+        rays[ij].label = cameras[c_ij]->getLabel(ij_c);
+      else
+        rays[ij].label = 0;
     }
   }
 }

@@ -63,7 +63,7 @@ class Scheduler(object):
 #-------------------------------------------------------------------------------
 
   def dispatcher(self, task):
-    if self.lastTime == -1:
+    if self.lastTime < 0:
       self.lastTime = task.time
     if not self.pause:
       deltaTime = task.time - self.lastTime
@@ -101,10 +101,9 @@ class Scheduler(object):
 #-------------------------------------------------------------------------------
 
   def dispatch(self):
-    currentTime = self.getTime()
     processed = {}
 
-    while len(self.times) > 0 and self.times[0] <= currentTime:
+    while len(self.times) > 0 and self.times[0] <= self.getTime():
       time = self.times.pop(0)
       taskList = self.schedule.pop(time)
 
@@ -124,8 +123,9 @@ class Scheduler(object):
         else:
           self.removeTask(task["name"])
         processed[task["name"]] = True
+        
     for task in self.renderTasks:
-      result = self.runTask(task, currentTime)
+      result = self.runTask(task, self.clock.getFrameTime())
       if not result:
         self.removeTask(task["name"])
 

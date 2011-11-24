@@ -32,13 +32,14 @@ using namespace std;
 
 RangeSensorLogWriter::RangeSensorLogWriter(string name, NodePath& sensor,
     string filename, bool binary, bool logTimestamps, bool logColors,
-    bool logLabels) :
+    bool logLabels, bool logInvalids) :
   LogWriter(name, binary),
   sensor(static_cast<RangeSensor&>(sensor)),
   filename(filename),
   logTimestamps(logTimestamps),
   logColors(logColors),
-  logLabels(logLabels) {
+  logLabels(logLabels),
+  logInvalids(logInvalids) {
 }
 
 RangeSensorLogWriter::~RangeSensorLogWriter() {
@@ -49,23 +50,27 @@ RangeSensorLogWriter::~RangeSensorLogWriter() {
 /*****************************************************************************/
 
 bool RangeSensorLogWriter::writeData(double time) {
-  open(filename, time);
+  double timestamp = sensor.getTimestamp();
 
-  unsigned int numPoints = sensor.getNumRays();
-  unsigned int numValidPoints = 0;
-  for (int i = 0; i < numPoints; ++i)
-    if (sensor.getRay(i).valid)
-      ++numValidPoints;
+  unsigned int numRays = sensor.getNumRays();
+  if (!logInvalids) {
+    numRays = 0;
+    for (int i = 0; i < sensor.getNumRays(); ++i)
+      if (sensor.getRay(i).valid)
+        ++numRays;
+  }
 
+  open(filename, timestamp);
   if (binary) {
-    (*this) << numValidPoints;
+    (*this) << numRays;
     if (logTimestamps)
-      (*this) << time;
+      (*this) << timestamp;
   }
   else {
-    (*this) << "# Number of points: " << numValidPoints << "\n";
+    (*this) << "# Number of points: " << numRays << "\n";
     if (logTimestamps)
-      (*this) << "# Timestamp: " << timestampToString(time).c_str() << "\n";
+      (*this) << "# Timestamp: " << timestampToString(timestamp).c_str() <<
+        "\n";
     (*this) << "# Point format: x y z";
     if (logColors)
       (*this) << " r g b";
@@ -74,21 +79,21 @@ bool RangeSensorLogWriter::writeData(double time) {
     (*this) << "\n";
   }
 
-  for (int i = 0; i < numPoints; ++i) {
-    const RangeSensor::Ray& ray = sensor.getRay(i);
-    if (ray.valid) {
+  for (int i = 0; i < sensor.getNumRays(); ++i) {
+    RangeSensor::Ray ray = sensor.getRay(i);
+    if (logInvalids || ray.valid) {
       if (binary) {
-        (*this) << ray.x << ray.y << ray.z;
+        (*this) << ray.point[0] << ray.point[1] << ray.point[2];
         if (logColors)
-          (*this) << ray.red << ray.green << ray.blue;
+          (*this) << ray.color[0] << ray.color[1] << ray.color[2];
         if (logLabels)
           (*this) << (unsigned int)ray.label;
       }
       else {
-        if (ray.radius < numeric_limits<double>::infinity())
-          (*this) << ray.x << " " << ray.y << " " << ray.z;
+        (*this) << ray.point[0] << " " << ray.point[1] << " " << ray.point[2];
         if (logColors)
-          (*this) << " " << ray.red << " " << ray.green << " " << ray.blue;
+          (*this) << " " << ray.color[0] << " " << ray.color[1] << " " <<
+            ray.color[2];
         if (logLabels)
           (*this) << " " << ray.label;
         (*this) << "\n";

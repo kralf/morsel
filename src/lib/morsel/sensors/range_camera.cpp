@@ -43,13 +43,14 @@ RangeCamera::RangeCamera(string name, const LVecBase2f& angles, const
   resolution(resolution),
   acquireColor(acquireColor),
   acquireLabel(acquireLabel),
-  rayInfo(new RayInfo[(size_t)(numRays[0]*numRays[1])]),
-  rays(new Ray[(size_t)(numRays[0]*numRays[1])]) {
+  rays(numRays[0]*numRays[1]),
+  timestamp(0.0),
+  lastDepthTimestamp(0.0),
+  lastColorTimestamp(0.0),
+  lastLabelTimestamp(0.0) {
 }
 
 RangeCamera::~RangeCamera() {
-  delete[] rayInfo;
-  delete[] rays;
 }
 
 /*****************************************************************************/
@@ -58,10 +59,6 @@ RangeCamera::~RangeCamera() {
 
 const Lens& RangeCamera::getLens() const {
   return *cameraNode->get_lens();
-}
-
-size_t RangeCamera::getNumRays() const {
-  return numRays[0]*numRays[1];
 }
 
 const Texture& RangeCamera::getDepthMap() const {
@@ -76,21 +73,75 @@ const Texture& RangeCamera::getLabelMap() const {
   return labelMap;
 }
 
-const RangeCamera::RayInfo& RangeCamera::getRayInfo(int index) const {
-  return rayInfo[index];
+size_t RangeCamera::getNumRays() const {
+  return numRays[0]*numRays[1];
+}
+
+size_t RangeCamera::getNumHorizontalRays() const {
+  return numRays[0];
+}
+
+size_t RangeCamera::getNumVerticalRays() const {
+  return numRays[1];
 }
 
 const RangeCamera::Ray& RangeCamera::getRay(int index) const {
   return rays[index];
 }
 
-double RangeCamera::getDepth(int column, int row) const {
-  if ((column >= 0) && (column < depthTexels.get_x_size()) &&
-      (row >= 0) && (row < depthTexels.get_y_size()))
-    return rangeLimits[1]*rangeLimits[0]/(rangeLimits[1]-depthTexels.get_gray(
-      column, row)*(rangeLimits[1]-rangeLimits[0]));
-  else
-    return -1.0;
+double RangeCamera::getTimestamp() const {
+  return timestamp;
+}
+
+double RangeCamera::getDepth(int index) const {
+  const Ray& ray = rays[index];
+  
+  if (timestamp > lastDepthTimestamp) {
+    depthMap.store(depthTexels);
+    lastDepthTimestamp = timestamp;
+  }
+  
+  return rangeLimits[1]*rangeLimits[0]/(rangeLimits[1]-depthTexels.get_gray(
+    ray.column, ray.row)*(rangeLimits[1]-rangeLimits[0]));
+}
+
+LPoint3f RangeCamera::getPoint(int index) const {
+  const Ray& ray = rays[index];
+  LPoint3f point;
+
+  point[1] = getDepth(index);
+  point[0] = point[1]*ray.hTan;
+  point[2] = point[1]*ray.vTan;
+
+  return point;
+}
+
+Colorf RangeCamera::getColor(int index) const {
+  const Ray& ray = rays[index];
+  Colorf color;
+  
+  if (timestamp > lastColorTimestamp) {
+    colorMap.store(colorTexels);
+    lastColorTimestamp = timestamp;
+  }
+  
+  color[0] = colorTexels.get_red(ray.column, ray.row);
+  color[1] = colorTexels.get_green(ray.column, ray.row);
+  color[2] = colorTexels.get_blue(ray.column, ray.row);
+  color[3] = 1.0;
+
+  return color;
+}
+
+size_t RangeCamera::getLabel(int index) const {
+  const Ray& ray = rays[index];
+  
+  if (timestamp > lastLabelTimestamp) {
+    labelMap.store(labelTexels);
+    lastLabelTimestamp = timestamp;
+  }
+
+  return Color::rgbToInt(labelTexels.get_xel_a(ray.column, ray.row));
 }
 
 void RangeCamera::setActive(bool active) {
@@ -102,14 +153,7 @@ void RangeCamera::setActive(bool active) {
 /*****************************************************************************/
 
 bool RangeCamera::update(double time) {
-  depthMap.store(depthTexels);
-  if (acquireColor)
-    colorMap.store(colorTexels);
-  else if (!acquireLabel.empty())
-    labelMap.store(labelTexels);
-  
-  updateRays();
-  
+  timestamp = time;
   return true;
 }
 
@@ -173,32 +217,5 @@ void RangeCamera::setupCamera(PointerTo<Lens> lens) {
     shaderAttrib.set_shader_input(acquireLabel, Color::intToRgb(0));
     cameraNode->set_initial_state(shaderAttrib.get_state());
     buffer->set_clear_color(Color::intToRgb(0));
-  }
-}
-
-void RangeCamera::updateRays() {
-  for (int i = 0; i < numRays[0]*numRays[1]; i++) {
-    RayInfo& ri = rayInfo[i];
-    Ray& ray = rays[i];
-    
-    int row = round(ri.row);
-    int column = round(ri.column);
-    
-    ray.y = getDepth(column, row);
-    ray.x = ray.y*ri.hTan;
-    ray.z = ray.y*ri.vTan;
-    ray.radius = sqrt(ray.x*ray.x+ray.y*ray.y+ray.z*ray.z);
-    ray.hAngle = ri.hAngle;
-    ray.vAngle = ri.vAngle;
-    ray.column = ri.column;
-    ray.row = ri.row;
-    
-    if (acquireColor) {
-      ray.red = colorTexels.get_red(column, row);
-      ray.green = colorTexels.get_green(column, row);
-      ray.blue = colorTexels.get_blue(column, row);
-    }
-    else if (!acquireLabel.empty())
-      ray.label = Color::rgbToInt(labelTexels.get_xel_a(column, row));
   }
 }

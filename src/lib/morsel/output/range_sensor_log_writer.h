@@ -36,7 +36,7 @@ PUBLISHED:
     */
   RangeSensorLogWriter(std::string name, NodePath& sensor, std::string
     filename, bool binary = true, bool logTimestamps = true, bool
-    logColors = false, bool logLabels = false);
+    logColors = false, bool logLabels = false, bool logInvalids = false);
   
   /** Destructor
     */
@@ -49,6 +49,7 @@ protected:
   bool logTimestamps;
   bool logColors;
   bool logLabels;
+  bool logInvalids;
 };
 
 #endif

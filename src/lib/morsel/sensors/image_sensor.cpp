@@ -30,7 +30,6 @@ using namespace std;
 /* Constructors and Destructor                                               */
 /*****************************************************************************/
 
-
 ImageSensor::ImageSensor(std::string name, const LVecBase2f& resolution,
     const LVecBase2f& rangeLimits, const LVecBase2f& filmSize, double
     focalLength) :
@@ -38,7 +37,9 @@ ImageSensor::ImageSensor(std::string name, const LVecBase2f& resolution,
   resolution(resolution),
   rangeLimits(rangeLimits),
   filmSize(filmSize),
-  focalLength(focalLength) {
+  focalLength(focalLength),
+  timestamp(0.0),
+  lastTimestamp(0.0) {
   setupCamera();
 }
 
@@ -57,12 +58,25 @@ const Texture& ImageSensor::getColorMap() const {
   return colorMap;
 }
 
+double ImageSensor::getTimestamp() const {
+  return timestamp;
+}
+
+const PNMImage& ImageSensor::getImage() const {
+  if (timestamp > lastTimestamp) {
+    colorMap.store(colorTexels);
+    lastTimestamp = timestamp;
+  }
+  
+  return colorTexels;
+}
+
 /*****************************************************************************/
 /* Methods                                                                   */
 /*****************************************************************************/
 
 bool ImageSensor::update(double time) {
-  colorMap.store(colorTexels);
+  timestamp = time;
   return true;
 }
 

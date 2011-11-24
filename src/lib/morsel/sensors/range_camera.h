@@ -41,27 +41,12 @@ public:
   /** Types and non-static subclasses
     */
   struct Ray {
-    double x;
-    double y;
-    double z;
-    double radius;
-    double column;
-    double row;
     double hAngle;
     double vAngle;
-    double red;
-    double green;
-    double blue;
-    size_t label;
-  };
-
-  struct RayInfo {
-    double hAngle;
-    double vAngle;
-    double row;
-    double column;
     double hTan;
     double vTan;
+    int row;
+    int column;
   };
 
   /** Constructors
@@ -76,13 +61,18 @@ public:
   virtual ~RangeCamera();
 
   const Lens& getLens() const;
-  size_t getNumRays() const;
   const Texture& getDepthMap() const;
   const Texture& getColorMap() const;
   const Texture& getLabelMap() const;
-  const RayInfo& getRayInfo(int index) const;
+  size_t getNumRays() const;
+  size_t getNumHorizontalRays() const;
+  size_t getNumVerticalRays() const;
   const Ray& getRay(int index) const;
-  double getDepth(int column, int row) const;
+  double getTimestamp() const;
+  double getDepth(int index) const;
+  LPoint3f getPoint(int index) const;
+  Colorf getColor(int index) const;
+  size_t getLabel(int index) const;
   void setActive(bool active);
 
   bool update(double time);
@@ -96,23 +86,25 @@ protected:
   LVecBase2f resolution;
   bool acquireColor;
   std::string acquireLabel;
-
-  RayInfo* rayInfo;
-  Ray* rays;
+  std::vector<Ray> rays;
 
   PointerTo<GraphicsOutput> buffer;
   Texture depthMap;
   Texture colorMap;
   Texture labelMap;
-  PNMImage depthTexels;
-  PNMImage colorTexels;
-  PNMImage labelTexels;
   PointerTo<Camera> cameraNode;
   NodePath camera;
   PointerTo<Shader> labelShader;
 
+  double timestamp;
+  mutable double lastDepthTimestamp;
+  mutable PNMImage depthTexels;
+  mutable double lastColorTimestamp;
+  mutable PNMImage colorTexels;
+  mutable double lastLabelTimestamp;
+  mutable PNMImage labelTexels;
+  
   void setupCamera(PointerTo<Lens> lens);
-  void updateRays();
 
   virtual void setupLens() = 0;
 };
