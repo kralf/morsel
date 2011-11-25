@@ -1,0 +1,6 @@
+type  = "Inanimate"
+
+mesh  = "characters/doctor.bam"
+solid = "Box"
+body  = "Box"
+mass  = 80
