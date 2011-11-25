@@ -1,1 +1,1 @@
-remake_add_configurations(*.cfg)
+remake_add_configurations(*.conf)

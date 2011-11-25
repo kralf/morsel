@@ -1,7 +1,7 @@
 type              = "Wheeled"
 chassisType       = "Ackermann"
 
-mesh              = "robots/smartter.bam"
+mesh              = "platforms/smartter.bam"
 body              = "body"
 wheels            = ["wheel_fl", "wheel_fr", "wheel_rl", "wheel_rr"]
 

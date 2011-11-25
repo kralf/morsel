@@ -1,7 +1,7 @@
 type                     = "Wheeled"
 chassisType              = "Differential"
 
-mesh                     = "robots/robox.bam"
+mesh                     = "platforms/robox.bam"
 body                     = "body"
 wheels                   = ["wheel_l", "wheel_r", "wheel_cf", "wheel_cr"]
 casterCranks             = ["crank_cf", "crank_cr"]

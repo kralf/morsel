@@ -22,7 +22,7 @@ class Framework(object):
     
     self.arguments = argv[0]
     self.paths = {}
-    self.configFiles = ["defaults.cfg"];
+    self.configFiles = ["defaults.conf"];
     for argument in self.arguments[1:]:
       self.configFiles.append(argument)
       

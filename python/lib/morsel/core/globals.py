@@ -11,7 +11,7 @@ if not __builtin__.__dict__.has_key("framework"):
 
 #-------------------------------------------------------------------------------
 
-framework.addMorselPath("cfg", MORSEL_CONFIGURATION_PATH)
+framework.addMorselPath("conf", MORSEL_CONFIGURATION_PATH)
 framework.addMorselPath("bam", "models")
 framework.addMorselPath("egg", "models")
 framework.addMorselPath("trk", "tracks")

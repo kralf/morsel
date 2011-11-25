@@ -1,7 +1,7 @@
 type                     = "Wheeled"
 chassisType              = "Differential"
 
-mesh                     = "robots/pioneer_3dx.bam"
+mesh                     = "platforms/pioneer_3dx.bam"
 body                     = "body"
 wheels                   = ["wheel_l", "wheel_r", "wheel_c"]
 casterCranks             = ["crank_c"]

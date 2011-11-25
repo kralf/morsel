@@ -1,7 +1,7 @@
 type                     = "Wheeled"
 chassisType              = "Differential"
 
-mesh                     = "robots/biba.bam"
+mesh                     = "platforms/biba.bam"
 body                     = "body"
 wheels                   = ["wheel_l", "wheel_r", "wheel_c"]
 casterCranks             = ["crank_c"]
