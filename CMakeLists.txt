@@ -8,8 +8,9 @@ remake_project(
   VERSION 1.3
   RELEASE beta
   SUMMARY "MObile Robot Simulator."
+  AUTHOR "Ralf Kaestner"
   AUTHOR "Dizan Vasquez"
-  CONTACT "vasquez@mavt.ethz.ch"
+  CONTACT "ralf.kaestner@gmail.com"
   HOME "http://aslforge.ethz.ch/projects/morsel"
   LICENSE "GNU General Public License (GPL)"
   INSTALL /usr
@@ -26,6 +27,11 @@ remake_doc(
 
 remake_pack_deb(
   panda3d
+)
+remake_pack_deb(
+  COMPONENT dev
+  DESCRIPTION "development headers"
+  morsel panda3d-dev
 )
 remake_pack_deb(
   COMPONENT python
