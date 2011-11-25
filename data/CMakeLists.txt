@@ -6,7 +6,6 @@ remake_add_files(
   *.acm
   *.sem
   *.ctl
-  *.trk
   *.pth
   *.cg *.glsl
   RECURSE
