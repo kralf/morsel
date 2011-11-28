@@ -23,6 +23,7 @@ class Scheduler(object):
     self.skipFrames = True
     self.pause = False
     self.time = 0
+    self.frameTime = 0
     self.lastTime = -1
     self.times = []
     self.tasks = {}
@@ -65,10 +66,12 @@ class Scheduler(object):
   def dispatcher(self, task):
     if self.lastTime < 0:
       self.lastTime = task.time
+      
     if not self.pause:
-      deltaTime = task.time - self.lastTime
-      self.time += deltaTime
-
+      self.time += task.time-self.lastTime
+      self.frameTime = self.time-(self.clock.getLongTime()-
+        self.clock.getFrameTime())
+      
       if framework.debug and self.profile:
         profile = cProfile.Profile()
         profile.runcall(self.dispatch)
@@ -85,6 +88,7 @@ class Scheduler(object):
       self.lastTime = task.time
     else:
       self.lastTime = -1
+      
     return Task.cont
 
 #-------------------------------------------------------------------------------
@@ -97,6 +101,12 @@ class Scheduler(object):
       return self.times[0]
     else:
       return 0
+
+#-------------------------------------------------------------------------------
+
+  def getFrameTime(self):
+    ''' Returns the simulator's frame time.'''
+    return self.frameTime
 
 #-------------------------------------------------------------------------------
 
@@ -125,7 +135,7 @@ class Scheduler(object):
         processed[task["name"]] = True
         
     for task in self.renderTasks:
-      result = self.runTask(task, self.clock.getFrameTime())
+      result = self.runTask(task, self.getFrameTime())
       if not result:
         self.removeTask(task["name"])
 
