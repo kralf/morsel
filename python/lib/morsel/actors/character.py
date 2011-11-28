@@ -6,7 +6,7 @@ from morsel.nodes.facade import Mesh
 
 class Character(Actor):
   def __init__(self, world, name, mesh, actuatorType = None, body = None,
-      **kargs):
+      bodyAnimation = None, **kargs):
     self.motor = Actuator(name+"Motor", actuatorType, mesh, **kargs)
     self.body = None
 
@@ -15,7 +15,8 @@ class Character(Actor):
     if body:
       bodyModel = mesh.find("**/"+body)
       if not bodyModel.isEmpty():
-        self.body = Mesh(name+"Body", model = bodyModel, parent = self)
+        self.body = Mesh(name+"Body", model = bodyModel,
+          animation = bodyAnimation, parent = self)
       else:
         framework.error("Body model '"+body+"' not found")
       

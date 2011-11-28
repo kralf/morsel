@@ -9,5 +9,5 @@ class View(Node):
 
 #-------------------------------------------------------------------------------
 
-  def update(self):
+  def updateGraphics(self):
     pass

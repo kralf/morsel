@@ -71,11 +71,13 @@ class World(Base):
 #-------------------------------------------------------------------------------
 
   def updateGraphics(self):
+    for animation in self.animations:
+      animation.updateGraphics()
     for actuator in self.actuators:
       actuator.updateGraphics()
     for solid in self.solids:
-      solid.update()
+      solid.updateGraphics()
     for sensor in self.sensors:
       sensor.updateGraphics()
     for view in self.views:
-      view.update()
+      view.updateGraphics()

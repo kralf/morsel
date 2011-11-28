@@ -19,6 +19,11 @@ def Mesh(name, filename = None, **kargs):
 
 #-------------------------------------------------------------------------------
 
+def Light(name, type, *args, **kargs):
+  return Instance("morsel.light", type, globals.world, name, *args, **kargs)
+
+#-------------------------------------------------------------------------------
+
 def Path(name, filename = None, **kargs):
   if filename:
     pathFile = framework.findFile(filename)

@@ -3,10 +3,12 @@
 #===============================================================================
 
 from node import Node
+from light import Light
 from collection import Collection
 from iterator import Iterator
 from scene import Scene
 from mesh import Mesh
+from animation import Animation
 from collider import Collider
 from solid import Solid
 from static import Static

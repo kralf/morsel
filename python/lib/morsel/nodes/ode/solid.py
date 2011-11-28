@@ -101,7 +101,7 @@ class Solid(Base):
 
 #-------------------------------------------------------------------------------
 
-  def update(self):
+  def updateGraphics(self):
     if self.body:
       transform = panda.TransformState.makePos(self.body.body.getPosition())
       transform = transform.setQuat(panda.Quat(self.body.body.getQuaternion()))

@@ -22,5 +22,5 @@ class LaserView(View):
 
 #-------------------------------------------------------------------------------
 
-  def update(self):
+  def updateGraphics(self):
     self.view.update(self.world.time)
