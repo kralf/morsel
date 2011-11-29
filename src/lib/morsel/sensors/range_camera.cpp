@@ -175,12 +175,12 @@ void RangeCamera::setupCamera(PointerTo<Lens> lens) {
   labelMap.set_minfilter(Texture::FT_nearest);
   labelMap.set_magfilter(Texture::FT_nearest);
 
-  buffer = getWindow(0)->make_texture_buffer("depthmap", resolution[0],
-    resolution[1], &depthMap, true);
+  buffer = Morsel::getWindow(0)->make_texture_buffer("depthmap",
+    resolution[0], resolution[1], &depthMap, true);
   
   cameraNode = new Camera("cam");
   cameraNode->set_camera_mask(BitMask32(1));
-  cameraNode->set_scene(getGSG()->get_scene()->get_scene_root());
+  cameraNode->set_scene(Morsel::getGSG()->get_scene()->get_scene_root());
   cameraNode->set_lens(lens);
 
   camera = attach_new_node(cameraNode);

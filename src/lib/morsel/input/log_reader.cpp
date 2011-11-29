@@ -18,8 +18,9 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "log_writer.h"
+#include "log_reader.h"
 
+#include "morsel/morsel.h"
 #include "morsel/utils/timestamp.h"
 
 #include <stdexcept>
@@ -30,13 +31,13 @@ using namespace std;
 /* Constructors and Destructor                                               */
 /*****************************************************************************/
 
-LogWriter::LogWriter(string name, bool binary, string placeholder) :
+LogReader::LogReader(string name, bool binary, string placeholder) :
   NodePath(name),
   binary(binary),
   placeholder(placeholder) {
 }
 
-LogWriter::~LogWriter() {
+LogReader::~LogReader() {
   close();
 }
 
@@ -44,20 +45,20 @@ LogWriter::~LogWriter() {
 /* Accessors                                                                 */
 /*****************************************************************************/
 
-const string& LogWriter::getLogFilename() const {
+const string& LogReader::getLogFilename() const {
   return logFilename;
 }
 
-ostream& LogWriter::getStream() {
+istream& LogReader::getStream() {
   if (logFile.is_open())
     return logFile;
   else if (logFileGz.is_open())
     return logFileGz;
   else
-    throw runtime_error("Bad log writer stream");
+    throw runtime_error("Bad log reader stream");
 }
 
-bool LogWriter::isOpen() const {
+bool LogReader::isOpen() const {
   return logFile.is_open() || logFileGz.is_open();
 }
 
@@ -65,12 +66,12 @@ bool LogWriter::isOpen() const {
 /* Methods                                                                   */
 /*****************************************************************************/
 
-bool LogWriter::open(string filename) {
+bool LogReader::open(string filename) {
   close();
 
   logFilename = filename;
   string suffixGz = ".gz";
-  ios_base::openmode mode = ios::out;
+  ios_base::openmode mode = ios::in;
   if (binary)
     mode |= ios::binary;
   
@@ -80,7 +81,7 @@ bool LogWriter::open(string filename) {
     logFile.open(filename.c_str(), mode);
 
   if (logFile.is_open() || logFileGz.is_open()) {
-    writeHeader();
+    readHeader();
     return true;
   }
   else {
@@ -89,7 +90,7 @@ bool LogWriter::open(string filename) {
   }
 }
 
-bool LogWriter::open(string filename, double timestamp) {
+bool LogReader::open(string filename, double timestamp) {
   int pos = filename.find(placeholder);
   if (pos != string::npos)
     filename.replace(pos, placeholder.length(),
@@ -101,7 +102,7 @@ bool LogWriter::open(string filename, double timestamp) {
     return isOpen();
 }
 
-void LogWriter::close() {
+void LogReader::close() {
   if (logFile.is_open())
     logFile.close();
   else if (logFileGz.is_open())
@@ -110,115 +111,138 @@ void LogWriter::close() {
   logFilename.clear();
 }
 
-void LogWriter::flush() {
-  if (logFile.is_open())
-    logFile.flush();
-  else if (logFileGz.is_open())
-    logFileGz.flush();
-}
-
-LogWriter& LogWriter::operator<<(char value) {
+LogReader& LogReader::operator>>(char& value) {
   if (binary)
-    getStream().write((const char*)&value, sizeof(value));
+    getStream().read((char*)&value, sizeof(value));
   else
-    getStream() << value;
+    getStream() >> value;
 
   return *this;
 }
 
-LogWriter& LogWriter::operator<<(bool value) {
+LogReader& LogReader::operator>>(bool& value) {
   if (!binary) {
-    if (value)
-      getStream() << "true";
-    else
-      getStream() << "false";
+    string buffer;
+    (*this) >> buffer;
+
+    value = (buffer == "true");
   }
   else
-    getStream().write((const char*)&value, sizeof(value));
+    getStream().read((char*)&value, sizeof(value));
 
   return *this;
 }
 
-LogWriter& LogWriter::operator<<(unsigned char value) {
+LogReader& LogReader::operator>>(unsigned char& value) {
   if (binary)
-    getStream().write((const char*)&value, sizeof(value));
+    getStream().read((char*)&value, sizeof(value));
   else
-    getStream() << value;
+    getStream() >> value;
 
   return *this;
 }
 
-LogWriter& LogWriter::operator<<(int value) {
+LogReader& LogReader::operator>>(int& value) {
   if (binary)
-    getStream().write((const char*)&value, sizeof(value));
+    getStream().read((char*)&value, sizeof(value));
   else
-    getStream() << value;
+    getStream() >> value;
 
   return *this;
 }
 
-LogWriter& LogWriter::operator<<(unsigned int value) {
+LogReader& LogReader::operator>>(unsigned int& value) {
   if (binary)
-    getStream().write((const char*)&value, sizeof(value));
+    getStream().read((char*)&value, sizeof(value));
   else
-    getStream() << value;
+    getStream() >> value;
 
   return *this;
 }
 
-LogWriter& LogWriter::operator<<(long value) {
+LogReader& LogReader::operator>>(long& value) {
   if (binary)
-    getStream().write((const char*)&value, sizeof(value));
+    getStream().read((char*)&value, sizeof(value));
   else
-    getStream() << value;
+    getStream() >> value;
 
   return *this;
 }
 
-LogWriter& LogWriter::operator<<(unsigned long value) {
+LogReader& LogReader::operator>>(unsigned long& value) {
   if (binary)
-    getStream().write((const char*)&value, sizeof(value));
+    getStream().read((char*)&value, sizeof(value));
   else
-    getStream() << value;
+    getStream() >> value;
 
   return *this;
 }
 
-LogWriter& LogWriter::operator<<(float value) {
+LogReader& LogReader::operator>>(float& value) {
   if (binary)
-    getStream().write((const char*)&value, sizeof(value));
+    getStream().read((char*)&value, sizeof(value));
   else
-    getStream() << value;
+    getStream() >> value;
 
   return *this;
 }
 
-LogWriter& LogWriter::operator<<(double value) {
+LogReader& LogReader::operator>>(double& value) {
   if (binary)
-    getStream().write((const char*)&value, sizeof(value));
+    getStream().read((char*)&value, sizeof(value));
   else
-    getStream() << value;
+    getStream() >> value;
 
   return *this;
 }
 
-LogWriter& LogWriter::operator<<(const char* value) {
-  return LogWriter::operator<<(string(value));
-}
+LogReader& LogReader::operator>>(string& value) {
+  char c;
 
-LogWriter& LogWriter::operator<<(const string& value) {
-  if (binary)
-    getStream().write(value.c_str(), value.length()+1);
-  else
-    getStream() << value.c_str();
+  value.clear();
+  if (binary) {
+    while (getStream().read(&c, 1) && (c != '\0'))
+      value.push_back(c);
+  }
+  else {
+    while ((getStream().peek() != ' ') && (getStream().peek() != '\n')) {
+      if (getStream().read(&c, 1))
+        value.push_back(c);
+      else
+        break;
+    }
+  }
 
   return *this;
 }
 
-void LogWriter::writeHeader() {
-  if (!binary)
-    (*this) << "# File version: " << Morsel::getFullName() << "\n";
-  else
-    (*this) << Morsel::getName() << Morsel::getMajorVersion() <<
-      Morsel::getMinorVersion() << Morsel::getPatchVersion();
+LogReader& LogReader::skip(const string& value) {
+  size_t size = value.size();
+  char buffer[size+1];
+  buffer[size] = '\0';
+  
+  if (!getStream().read(buffer, size) || (value != buffer))
+    throw runtime_error("Bad log file format");
+
+  return *this;
+}
+
+void LogReader::readHeader() {  
+  if (!binary) {
+    string version;
+    
+    skip("# File version: ").skip(Morsel::getName()).skip(" ");
+    (*this) >> version;
+    skip("\n");
+  }
+  else {
+    string name;
+    unsigned int major, minor, patch;
+    
+    (*this) >> name;
+    if (name != Morsel::getName())
+      throw runtime_error("Bad log file format");
+
+    (*this) >> major >> minor >> patch;
+  }
 }

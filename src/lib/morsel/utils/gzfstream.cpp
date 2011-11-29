@@ -147,7 +147,7 @@ gzstreambuf* gzstreambuf::open(const char* name, int open_mode) {
   unsigned int size_buffer = 0;
   FILE* gzfile = fopen(name, "r");
   fseek(gzfile, -sizeof(size_buffer), SEEK_END);
-  fread(&size_buffer, sizeof(size_buffer), 1, gzfile);
+  size_t numRead = fread(&size_buffer, sizeof(size_buffer), 1, gzfile);
   fclose(gzfile);
   size = size_buffer;
 

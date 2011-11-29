@@ -21,8 +21,7 @@
 #include "range_sensor_log_writer.h"
 
 #include "morsel/sensors/range_sensor.h"
-
-#include <limits>
+#include "morsel/utils/timestamp.h"
 
 using namespace std;
 
@@ -49,7 +48,26 @@ RangeSensorLogWriter::~RangeSensorLogWriter() {
 /* Methods                                                                   */
 /*****************************************************************************/
 
-bool RangeSensorLogWriter::writeData(double time) {
+void RangeSensorLogWriter::writeHeader() {
+  LogWriter::writeHeader();
+  
+  if (!binary) {
+    (*this) << "# Timestamps: " << logTimestamps << "\n";
+    (*this) << "# Colors: " << logColors << "\n";
+    (*this) << "# Labels: " << logLabels << "\n";
+    (*this) << "# Ivalids: " << logInvalids << "\n";
+    (*this) << "# Point format: x y z";
+    if (logColors)
+      (*this) << " r g b";
+    if (logLabels)
+      (*this) << " label";
+    (*this) << "\n";
+  }
+  else
+    (*this) << logTimestamps << logColors << logLabels << logInvalids;
+}
+
+void RangeSensorLogWriter::writeData(double time) {
   double timestamp = sensor.getTimestamp();
 
   unsigned int numRays = sensor.getNumRays();
@@ -69,14 +87,8 @@ bool RangeSensorLogWriter::writeData(double time) {
   else {
     (*this) << "# Number of points: " << numRays << "\n";
     if (logTimestamps)
-      (*this) << "# Timestamp: " << timestampToString(timestamp).c_str() <<
+      (*this) << "# Timestamp: " << Timestamp::toString(timestamp).c_str() <<
         "\n";
-    (*this) << "# Point format: x y z";
-    if (logColors)
-      (*this) << " r g b";
-    if (logLabels)
-      (*this) << " label";
-    (*this) << "\n";
   }
 
   for (int i = 0; i < sensor.getNumRays(); ++i) {
@@ -100,4 +112,6 @@ bool RangeSensorLogWriter::writeData(double time) {
       }
     }
   }
+
+  flush();
 }

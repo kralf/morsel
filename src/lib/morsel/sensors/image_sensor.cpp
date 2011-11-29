@@ -89,7 +89,7 @@ void ImageSensor::hideFrustum() {
 }
 
 void ImageSensor::setupCamera() {
-  PointerTo<GraphicsOutput> window = getWindow(0);
+  PointerTo<GraphicsOutput> window = Morsel::getWindow(0);
   colorBuffer = window->make_texture_buffer("colormap", resolution[0],
     resolution[1], &colorMap, true);
 
@@ -101,7 +101,7 @@ void ImageSensor::setupCamera() {
 
   cameraNode = new Camera("cam");
   cameraNode->set_camera_mask(BitMask32(1));
-  cameraNode->set_scene(getGSG()->get_scene()->get_scene_root());
+  cameraNode->set_scene(Morsel::getGSG()->get_scene()->get_scene_root());
   camera = attach_new_node(cameraNode);
   cameraNode->set_lens(lens);
 

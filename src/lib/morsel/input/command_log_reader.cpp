@@ -18,12 +18,9 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "image_view.h"
-#include "morsel/sensors/image_sensor.h"
+#include "command_log_reader.h"
 
-#include <pandaFramework.h>
-#include <orthographicLens.h>
-#include <cardMaker.h>
+#include <stdexcept>
 
 using namespace std;
 
@@ -31,58 +28,79 @@ using namespace std;
 /* Constructors and Destructor                                               */
 /*****************************************************************************/
 
-ImageView::ImageView(string name, NodePath& sensor) :
-  NodePath(name),
-  sensor(static_cast<ImageSensor&>(sensor)) {
-  setupRendering();
+CommandLogReader::CommandLogReader(string name, PyObject* actuator,
+    string filename, bool binary) :
+  LogReader(name, binary),
+  actuator(actuator),
+  filename(filename),
+  hasTimestamps(false) {
+  Py_XINCREF(actuator);
 }
 
-ImageView::~ImageView() {
+CommandLogReader::~CommandLogReader() {
+  Py_XDECREF(actuator);
 }
 
 /*****************************************************************************/
 /* Methods                                                                   */
 /*****************************************************************************/
 
-bool ImageView::update(double time) {
-  return true;
+void CommandLogReader::readHeader() {
+  LogReader::readHeader();
+
+  if (!binary) {    
+    skip("# Timestamps: ") >> hasTimestamps;
+    skip("\n# Command format: c_0 [c_1 [...]]\n");
+  }
+  else
+    (*this) << hasTimestamps;
 }
 
-void ImageView::setupRendering() {
-  PointerTo<GraphicsOutput> window = Morsel::getWindow(0);
-  PointerTo<GraphicsEngine> engine = Morsel::getEngine();
+void CommandLogReader::readData(double time) {
+  unsigned int numValues;
 
-  FrameBufferProperties fbProps = FrameBufferProperties::get_default();
-  WindowProperties winProps = WindowProperties::get_default();
-  winProps.set_size(sensor.getResolution()[0], sensor.getResolution()[1]);
-  winProps.set_title(get_name());
-  int flags = GraphicsPipe::BF_require_window |
-    GraphicsPipe::BF_fb_props_optional;
+  open(filename, time);
+  if (getStream().eof())
+    return;
+  
+  try {
+    if (binary)
+      (*this) >> numValues;
+    else
+      skip("# Number of values: ") >> numValues;
+      skip("\n");
+  }
+  catch (runtime_error& error) {
+    return;
+  }
+  
+  if (hasTimestamps) {
+    if (!binary) {
+      string buffer;
+      
+      skip("# Timestamp: ") >> buffer;
+      skip("\n");
+    }
+    else
+      (*this) >> time;
+  }
 
-  window = engine->make_output(window->get_pipe(), "window", 0, fbProps,
-    winProps, flags, window->get_gsg());
+  PyObject* command = PyList_New(numValues);
+  Py_XINCREF(command);
+  
+  for (int i = 0; i < numValues; ++i) {
+    double f_i;
+    (*this) >> f_i;
+    
+    PyObject* p_i = PyFloat_FromDouble(f_i);
+    Py_XINCREF(p_i);
+    PyList_SetItem(command, i, p_i);
+    Py_XDECREF(p_i);
+  }
 
-  sceneNode = new PandaNode("scene");
-  scene = attach_new_node(sceneNode);
+  if (!binary)
+    skip("\n");
 
-  cameraNode = new Camera("cam");
-  cameraNode->set_camera_mask(BitMask32(1));
-  cameraNode->set_scene(scene);
-  camera = scene.attach_new_node(cameraNode);
-
-  PointerTo<Lens> lens = new OrthographicLens();
-  lens->set_film_size(2.0, 2.0);
-  lens->set_near_far(-1.0, 1.0);
-  cameraNode->set_lens(lens);
-
-  scene.set_depth_test(false);
-  scene.set_depth_write(false);
-
-  PointerTo<DisplayRegion> drc = window->make_display_region();
-  drc->set_camera(camera);
-
-  CardMaker cm("card");
-  cm.set_frame(-1.0, 1.0, -1.0, 1.0);
-  card = scene.attach_new_node(cm.generate());
-  card.set_texture((Texture*)&sensor.getColorMap());
+  PyObject_SetAttrString(actuator, "command", command);
+  Py_XDECREF(command);
 }

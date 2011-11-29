@@ -18,10 +18,10 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef LOG_WRITER_H
-#define LOG_WRITER_H
+#ifndef LOG_READER_H
+#define LOG_READER_H
 
-/** Abstract log writer definition
+/** Abstract log reader definition
   * @author Ralf Kaestner ETHZ Autonomous Systems Lab.
   */
 
@@ -31,48 +31,48 @@
 
 #include <nodePath.h>
 
-class LogWriter :
+class LogReader :
   public NodePath {
 PUBLISHED:
   /** Constructors
     */
-  LogWriter(std::string name, bool binary = true, std::string
+  LogReader(std::string name, bool binary = true, std::string
     placeholder = "%");
   
   /** Destructor
     */
-  virtual ~LogWriter();
+  virtual ~LogReader();
 
   const std::string& getLogFilename() const;
-  std::ostream& getStream();
+  std::istream& getStream();
   bool isOpen() const;
 
   bool open(std::string filename);
   bool open(std::string filename, double timestamp);
   void close();
-  void flush();
 public:
-  LogWriter& operator<<(char value);
-  LogWriter& operator<<(bool value);
-  LogWriter& operator<<(unsigned char value);
-  LogWriter& operator<<(int value);
-  LogWriter& operator<<(unsigned int value);
-  LogWriter& operator<<(long value);
-  LogWriter& operator<<(unsigned long value);
-  LogWriter& operator<<(float value);
-  LogWriter& operator<<(double value);
-  LogWriter& operator<<(const char* value);
-  LogWriter& operator<<(const std::string& value);
+  LogReader& operator>>(char& value);
+  LogReader& operator>>(bool& value);
+  LogReader& operator>>(unsigned char& value);
+  LogReader& operator>>(int& value);
+  LogReader& operator>>(unsigned int& value);
+  LogReader& operator>>(long& value);
+  LogReader& operator>>(unsigned long& value);
+  LogReader& operator>>(float& value);
+  LogReader& operator>>(double& value);
+  LogReader& operator>>(std::string& value);
 
-  virtual void writeHeader();
-  virtual void writeData(double time) = 0;
+  LogReader& skip(const std::string& value);
+
+  virtual void readHeader();
+  virtual void readData(double time) = 0;
 protected:
   std::string logFilename;
   bool binary;
   std::string placeholder;
   
-  std::ofstream logFile;
-  gzofstream logFileGz;
+  std::ifstream logFile;
+  gzifstream logFileGz;
 };
 
 #endif

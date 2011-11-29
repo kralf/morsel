@@ -18,11 +18,9 @@
 *  59 Temple Place-Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "morsel.h"
+#include "timestamp.h"
 
-#include "morsel/config.h"
-
-#include <pandaFramework.h>
+#include <ctime>
 
 using namespace std;
 
@@ -30,40 +28,17 @@ using namespace std;
 /* Methods                                                                   */
 /*****************************************************************************/
 
-string Morsel::getName() {
-  return PROJECT_NAME;
-}
+string Timestamp::toString(double timestamp) {
+  char date[1024];
+  char usecs[256];
 
-unsigned int Morsel::getMajorVersion() {
-  return PROJECT_MAJOR;
-}
+  time_t local = timestamp;
+  struct tm* time = localtime(&local);
 
-unsigned int Morsel::getMinorVersion() {
-  return PROJECT_MINOR;
-}
-
-unsigned int Morsel::getPatchVersion() {
-  return PROJECT_PATCH;
-}
-
-string Morsel::getFullName() {
-  stringstream stream;
-  
-  stream << PROJECT_NAME << " " << PROJECT_MAJOR << "." <<
-    PROJECT_MINOR << "." << PROJECT_PATCH;
+  strftime(date, sizeof(date), "%Y-%m-%d-%H%M%S", time);
+  sprintf(usecs, "%06d", (int)((timestamp-(int)timestamp)*1e6));
+  ostringstream stream;
+  stream << date << "-" << usecs;
 
   return stream.str();
-}
-
-GraphicsStateGuardian* Morsel::getGSG() {
-  return static_cast<GraphicsStateGuardian*>(
-    GraphicsStateGuardianBase::get_default_gsg());
-}
-
-GraphicsEngine* Morsel::getEngine() {
-  return getGSG()->get_engine();
-}
-
-GraphicsOutput* Morsel::getWindow(int index) {
-  return getEngine()->get_window(index);
 }

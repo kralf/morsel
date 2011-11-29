@@ -18,61 +18,33 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef LOG_WRITER_H
-#define LOG_WRITER_H
+#ifndef COMMAND_LOG_WRITER_H
+#define COMMAND_LOG_WRITER_H
 
-/** Abstract log writer definition
+/** Command log writer
   * @author Ralf Kaestner ETHZ Autonomous Systems Lab.
   */
 
-#include "morsel/morsel.h"
+#include "morsel/output/log_writer.h"
 
-#include "morsel/utils/gzfstream.h"
-
-#include <nodePath.h>
-
-class LogWriter :
-  public NodePath {
+class CommandLogWriter :
+  public LogWriter {
 PUBLISHED:
   /** Constructors
     */
-  LogWriter(std::string name, bool binary = true, std::string
-    placeholder = "%");
+  CommandLogWriter(std::string name, PyObject* actuator, std::string
+    filename, bool binary = true, bool logTimestamps = true);
   
   /** Destructor
     */
-  virtual ~LogWriter();
-
-  const std::string& getLogFilename() const;
-  std::ostream& getStream();
-  bool isOpen() const;
-
-  bool open(std::string filename);
-  bool open(std::string filename, double timestamp);
-  void close();
-  void flush();
-public:
-  LogWriter& operator<<(char value);
-  LogWriter& operator<<(bool value);
-  LogWriter& operator<<(unsigned char value);
-  LogWriter& operator<<(int value);
-  LogWriter& operator<<(unsigned int value);
-  LogWriter& operator<<(long value);
-  LogWriter& operator<<(unsigned long value);
-  LogWriter& operator<<(float value);
-  LogWriter& operator<<(double value);
-  LogWriter& operator<<(const char* value);
-  LogWriter& operator<<(const std::string& value);
+  virtual ~CommandLogWriter();
 
   virtual void writeHeader();
-  virtual void writeData(double time) = 0;
+  virtual void writeData(double time);
 protected:
-  std::string logFilename;
-  bool binary;
-  std::string placeholder;
-  
-  std::ofstream logFile;
-  gzofstream logFileGz;
+  PyObject* actuator;
+  std::string filename;
+  bool logTimestamps;
 };
 
 #endif

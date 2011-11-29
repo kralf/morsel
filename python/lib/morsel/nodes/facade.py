@@ -164,6 +164,11 @@ def View(name, type, *args, **kargs):
 
 #-------------------------------------------------------------------------------
 
+def Input(name, type, *args, **kargs):
+  return Instance("morsel.input", type, globals.world, name, *args, **kargs)
+
+#-------------------------------------------------------------------------------
+
 def Output(name, type, *args, **kargs):
   return Instance("morsel.output", type, globals.world, name, *args, **kargs)
 

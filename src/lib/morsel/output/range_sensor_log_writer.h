@@ -42,7 +42,8 @@ PUBLISHED:
     */
   virtual ~RangeSensorLogWriter();
 
-  virtual bool writeData(double time);
+  virtual void writeHeader();
+  virtual void writeData(double time);
 protected:
   RangeSensor& sensor;
   std::string filename;

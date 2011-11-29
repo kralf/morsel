@@ -18,12 +18,11 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "image_view.h"
-#include "morsel/sensors/image_sensor.h"
+#include "command_log_writer.h"
 
-#include <pandaFramework.h>
-#include <orthographicLens.h>
-#include <cardMaker.h>
+#include "morsel/utils/timestamp.h"
+
+#include <stdexcept>
 
 using namespace std;
 
@@ -31,58 +30,80 @@ using namespace std;
 /* Constructors and Destructor                                               */
 /*****************************************************************************/
 
-ImageView::ImageView(string name, NodePath& sensor) :
-  NodePath(name),
-  sensor(static_cast<ImageSensor&>(sensor)) {
-  setupRendering();
+CommandLogWriter::CommandLogWriter(string name, PyObject* actuator,
+    string filename, bool binary, bool logTimestamps) :
+  LogWriter(name, binary),
+  actuator(actuator),
+  filename(filename),
+  logTimestamps(logTimestamps) {
+  Py_XINCREF(actuator);
 }
 
-ImageView::~ImageView() {
+CommandLogWriter::~CommandLogWriter() {
+  Py_XDECREF(actuator);
 }
 
 /*****************************************************************************/
 /* Methods                                                                   */
 /*****************************************************************************/
 
-bool ImageView::update(double time) {
-  return true;
+void CommandLogWriter::writeHeader() {
+  LogWriter::writeHeader();
+  
+  if (!binary) {
+    (*this) << "# Timestamps: " << logTimestamps << "\n";
+    (*this) << "# Command format: c_0 [c_1 [...]]\n";
+  }
+  else 
+    (*this) << logTimestamps;
 }
 
-void ImageView::setupRendering() {
-  PointerTo<GraphicsOutput> window = Morsel::getWindow(0);
-  PointerTo<GraphicsEngine> engine = Morsel::getEngine();
+void CommandLogWriter::writeData(double time) {
+  PyObject* command = PyObject_GetAttrString(actuator, "command");
 
-  FrameBufferProperties fbProps = FrameBufferProperties::get_default();
-  WindowProperties winProps = WindowProperties::get_default();
-  winProps.set_size(sensor.getResolution()[0], sensor.getResolution()[1]);
-  winProps.set_title(get_name());
-  int flags = GraphicsPipe::BF_require_window |
-    GraphicsPipe::BF_fb_props_optional;
+  if (!command)
+    throw runtime_error("Python object has no command attribute");
+  
+  Py_XINCREF(command);
+  unsigned int numValues = PyList_Size(command);
 
-  window = engine->make_output(window->get_pipe(), "window", 0, fbProps,
-    winProps, flags, window->get_gsg());
+  open(filename, time);
+  if (binary) {
+    (*this) << numValues;
+    if (logTimestamps)
+      (*this) << time;
+  }
+  else {
+    (*this) << "# Number of values: " << numValues << "\n";
+    if (logTimestamps)
+      (*this) << "# Timestamp: " << Timestamp::toString(time).c_str() << "\n";
+  }
+  
+  for (int i = 0; i < numValues; ++i) {
+    PyObject* p_i = PyList_GetItem(command, i);
+    Py_XINCREF(p_i);
 
-  sceneNode = new PandaNode("scene");
-  scene = attach_new_node(sceneNode);
+    PyObject* f_i = PyNumber_Float(p_i);
+    if (!f_i)
+      throw runtime_error("Python value is not of numeric type");
+      
+    Py_XINCREF(f_i);
 
-  cameraNode = new Camera("cam");
-  cameraNode->set_camera_mask(BitMask32(1));
-  cameraNode->set_scene(scene);
-  camera = scene.attach_new_node(cameraNode);
+    if (binary)
+      (*this) << PyFloat_AsDouble(f_i);
+    else {
+      if (i)
+        (*this) << " ";
+      (*this) << PyFloat_AsDouble(f_i);
+    }
 
-  PointerTo<Lens> lens = new OrthographicLens();
-  lens->set_film_size(2.0, 2.0);
-  lens->set_near_far(-1.0, 1.0);
-  cameraNode->set_lens(lens);
+    Py_XDECREF(f_i);
+    Py_XDECREF(p_i);
+  }
+  
+  if (!binary)
+    (*this) << "\n";
+  flush();
 
-  scene.set_depth_test(false);
-  scene.set_depth_write(false);
-
-  PointerTo<DisplayRegion> drc = window->make_display_region();
-  drc->set_camera(camera);
-
-  CardMaker cm("card");
-  cm.set_frame(-1.0, 1.0, -1.0, 1.0);
-  card = scene.attach_new_node(cm.generate());
-  card.set_texture((Texture*)&sensor.getColorMap());
+  Py_XDECREF(command);
 }

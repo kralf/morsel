@@ -20,4 +20,5 @@ from platform import Platform
 from controller import Controller
 from path import Path
 from view import View
+from input import Input
 from output import Output

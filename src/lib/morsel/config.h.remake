@@ -18,61 +18,25 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef LOG_WRITER_H
-#define LOG_WRITER_H
+#ifndef CONFIG_H
+#define CONFIG_H
 
-/** Abstract log writer definition
-  * @author Ralf Kaestner ETHZ Autonomous Systems Lab.
-  */
+#define PROJECT_NAME "${REMAKE_PROJECT_NAME}"
+#define PROJECT_MAJOR ${REMAKE_PROJECT_MAJOR}
+#define PROJECT_MINOR ${REMAKE_PROJECT_MINOR}
+#define PROJECT_PATCH ${REMAKE_PROJECT_PATCH}
+#define PROJECT_RELEASE "${REMAKE_PROJECT_RELEASE}"
 
-#include "morsel/morsel.h"
+#define PROJECT_SUMMARY "${REMAKE_PROJECT_SUMMARY}"
+#define PROJECT_AUTHOR "${REMAKE_PROJECT_AUTHOR}"
+#define PROJECT_CONTACT "${REMAKE_PROJECT_CONTACT}"
+#define PROJECT_HOME "${REMAKE_PROJECT_HOME}"
 
-#include "morsel/utils/gzfstream.h"
+#define PROJECT_LICENSE "${REMAKE_PROJECT_LICENSE}"
+#define PROJECT_LICENSE_TEXT "${REMAKE_PROJECT_LICENSE_TEXT}"
 
-#include <nodePath.h>
-
-class LogWriter :
-  public NodePath {
-PUBLISHED:
-  /** Constructors
-    */
-  LogWriter(std::string name, bool binary = true, std::string
-    placeholder = "%");
-  
-  /** Destructor
-    */
-  virtual ~LogWriter();
-
-  const std::string& getLogFilename() const;
-  std::ostream& getStream();
-  bool isOpen() const;
-
-  bool open(std::string filename);
-  bool open(std::string filename, double timestamp);
-  void close();
-  void flush();
-public:
-  LogWriter& operator<<(char value);
-  LogWriter& operator<<(bool value);
-  LogWriter& operator<<(unsigned char value);
-  LogWriter& operator<<(int value);
-  LogWriter& operator<<(unsigned int value);
-  LogWriter& operator<<(long value);
-  LogWriter& operator<<(unsigned long value);
-  LogWriter& operator<<(float value);
-  LogWriter& operator<<(double value);
-  LogWriter& operator<<(const char* value);
-  LogWriter& operator<<(const std::string& value);
-
-  virtual void writeHeader();
-  virtual void writeData(double time) = 0;
-protected:
-  std::string logFilename;
-  bool binary;
-  std::string placeholder;
-  
-  std::ofstream logFile;
-  gzofstream logFileGz;
-};
+#define PROJECT_BUILD_SYSTEM "${REMAKE_PROJECT_BUILD_SYSTEM}"
+#define PROJECT_BUILD_ARCH "${REMAKE_PROJECT_BUILD_ARCH}"
+#define PROJECT_BUILD_TYPE "${REMAKE_PROJECT_BUILD_TYPE}"
 
 #endif

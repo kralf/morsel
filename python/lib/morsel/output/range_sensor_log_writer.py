@@ -4,7 +4,7 @@ from morsel.morselc import RangeSensorLogWriter as CRangeSensorLogWriter
 #-------------------------------------------------------------------------------
 
 class RangeSensorLogWriter(Output):
-  def __init__(self, world, name, sensor, filename, binary = True,
+  def __init__(self, world, name, filename, sensor, binary = True,
       logTimestamps = True, logColors = False, logLabels = False,
       logInvalids = False, **kargs):
     Output.__init__(self, world, name, sensor, **kargs)
@@ -16,9 +16,9 @@ class RangeSensorLogWriter(Output):
     self.logLabels = logLabels
     self.logInvalids = logInvalids
 
-    self.output = CRangeSensorLogWriter(name, self.sensor.sensor,
-      self.filename, self.binary, self.logTimestamps, self.logColors,
-      self.logLabels, self.logInvalids)
+    self.output = CRangeSensorLogWriter(name, sensor.sensor, self.filename,
+      self.binary, self.logTimestamps, self.logColors, self.logLabels,
+      self.logInvalids)
     self.output.reparentTo(self)
 
 #-------------------------------------------------------------------------------
