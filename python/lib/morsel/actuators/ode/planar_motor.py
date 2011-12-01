@@ -15,8 +15,8 @@ class PlanarMotor(Base):
     self.decelerationForce = decelerationForce
     self.epsilon = epsilon
 
-    self.baseSolid = Solid(name+"BaseSolid", baseSolid, self.base,
-      body = baseBody, mass = baseMass, parent = self.solid)
+    self.baseSolid = Solid(name = name+"BaseSolid", type = baseSolid,
+      mesh = self.base, body = baseBody, mass = baseMass, parent = self.solid)
     self.baseSolid.geometry.geometry.collide(self.collide)
     
     joint = panda.OdeFixedJoint(world.world)

@@ -29,13 +29,13 @@ class Solid(Base):
       scale = [0, 0, 0]
 
     if body:
-      self.body = Body(name+"Body", body, self, mass = mass,
+      self.body = Body(name = name+"Body", type = body, solid = self,
         position = [position[0]+massOffset[0], position[1]+massOffset[1],
-        position[2]+massOffset[2]], scale = scale, parent = self)
+        position[2]+massOffset[2]], mass = mass, scale = scale, parent = self)
 
     if geometry:
-      self.geometry = Geometry(name+"Geometry", geometry, self,
-        position = position, scale = scale, parent = self)
+      self.geometry = Geometry(name = name+"Geometry", type = geometry,
+        solid = self, position = position, scale = scale, parent = self)
       self.geometry.collisionMasks = self.collider.collisionMasks
 
     if self.geometry and self.body:

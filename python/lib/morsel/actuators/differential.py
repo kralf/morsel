@@ -31,7 +31,7 @@ class Differential(WheelChassis):
     for i in range(self.numCasters):
       crankModel = mesh.find("**/"+casterCranks[i])
       if not crankModel.isEmpty():
-        crank = Mesh(name+"Crank", model = crankModel, parent = self)
+        crank = Mesh(name = name+"Crank", model = crankModel, parent = self)
 
         wheel = self.wheels[wheels.index(casterWheels[i])]
         self.casterWheels.append(wheel)

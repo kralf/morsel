@@ -7,4 +7,5 @@ class RangeSensor(Base):
   def __init__(self, world, name, mesh, solid = None, **kargs):
     Base.__init__(self, world, name, mesh, **kargs)
 
-    self.solid = Solid(name+"Solid", solid, self.mesh, parent = self)
+    self.solid = Solid(name = name+"Solid", type = solid, mesh = self.mesh,
+      parent = self)

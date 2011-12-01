@@ -10,12 +10,13 @@ class Actuator(Node):
     
     Node.__init__(self, world, name, **kargs)
 
-    self.collider = Collider(name+"Collider", parent = self,
+    self.collider = Collider(name = name+"Collider", parent = self,
       collisionMasks = [ACTUATOR_COLLISIONS_FROM, ACTUATOR_COLLISIONS_INTO])
     if solid:
       self.solid = solid
     else:
-      self.solid = Solid(name+"Solid", "Empty", self, parent = self)
+      self.solid = Solid(name = name+"Solid", type = "Empty", mesh = self,
+        parent = self)
 
     self.limits = limits
     self.command = [0]*len(limits)

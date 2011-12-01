@@ -22,9 +22,10 @@ class Scene(Node):
     else:
       framework.error("World already has a scene")
 
-    self.collider = Collider(name+"Collider", parent = self,
+    self.collider = Collider(name = name+"Collider", parent = self,
       collisionMasks = [STATIC_COLLISIONS_FROM, STATIC_COLLISIONS_INTO])
-    self.solid = Solid(name+"Solid", "Empty", self, parent = self)
+    self.solid = Solid(name = name+"Solid", type = "Empty", mesh = self,
+      parent = self)
 
 #-------------------------------------------------------------------------------
 

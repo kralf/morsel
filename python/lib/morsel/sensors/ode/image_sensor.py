@@ -9,8 +9,8 @@ class ImageSensor(Base):
       **kargs):
     Base.__init__(self, world, name, mesh, **kargs)
 
-    self.solid = Solid(name+"Solid", solid, self.mesh, body = body,
-      mass = mass, parent = self.parent.solid)
+    self.solid = Solid(name = name+"Solid", type = solid, mesh = self.mesh,
+      body = body, mass = mass, parent = self.parent.solid)
     joint = panda.OdeFixedJoint(world.world)
     joint.attach(self.parent.solid.body.body, self.solid.body.body)
     joint.set()

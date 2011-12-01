@@ -21,8 +21,9 @@ class Ackermann(Base):
     self.wheelSolids = []
     self.wheelJoints = []
     for i in range(self.numWheels):
-      solid = Solid(name+"WheelSolid", wheelSolid, self.wheels[i],
-        body = wheelBody, mass = wheelMass[i], parent = self.solid)
+      solid = Solid(name = name+"WheelSolid", type = wheelSolid,
+        mesh = self.wheels[i], body = wheelBody, mass = wheelMass[i],
+        parent = self.solid)
 
       joint = panda.OdeHinge2Joint(world.world)
       joint.attach(self.solid.body.body, solid.body.body)

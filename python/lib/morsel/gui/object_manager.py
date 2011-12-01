@@ -1,5 +1,4 @@
 from morsel.panda import *
-from morsel.world import globals
 from object_selector import ObjectSelector
 
 from panda3d.direct.gui.DirectGui import DirectFrame, DGG
@@ -126,7 +125,7 @@ class ObjectManager(DirectObject.DirectObject):
     
     i = 0
     selected = 0
-    for mesh in globals.world.scene.meshes:
+    for mesh in framework.world.scene.meshes:
       self.objects[mesh.getName()] = mesh
       items.append(mesh.getName())
       if mesh == base.camera.getParent():

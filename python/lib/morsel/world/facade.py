@@ -1,11 +1,8 @@
-from morsel.core import Instance
-from morsel.world import globals
+from morsel.world import *
 
 #-------------------------------------------------------------------------------
 
-def World(physics, *args, **kargs):
-  if globals.world == None:
-    globals.world = Instance("morsel.world."+physics, "World", *args, **kargs)
-    return globals.world
-  else:
-    framework.error("World already initialized")
+def World(physics, **kargs):
+  framework.world = framework.createInstance("world."+physics,
+    type = "World", **kargs)
+  return framework.world

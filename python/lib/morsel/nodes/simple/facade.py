@@ -1,8 +1,7 @@
-from morsel.core import Instance
-from morsel.world import globals
+from morsel.nodes.simple import *
 
 #-------------------------------------------------------------------------------
 
-def Geometry(name, type, *args, **kargs):
-  return Instance("morsel.nodes.simple.geometries", type, globals.world, name,
-    *args, **kargs)
+def Geometry(**kargs):
+  return framework.createInstance("nodes.simple.geometries",
+    world = framework.world, **kargs)

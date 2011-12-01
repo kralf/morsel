@@ -13,8 +13,8 @@ class PlanarMotor(Base):
     self.maxAcceleration = maxAcceleration
     self.maxDeceleration = maxDeceleration
 
-    self.baseSolid = Solid(name+"BaseSolid", baseSolid, self.base,
-      parent = self.solid)
+    self.baseSolid = Solid(name = name+"BaseSolid", type = baseSolid,
+      mesh = self.base, parent = self.solid)
         
 #-------------------------------------------------------------------------------
 

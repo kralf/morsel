@@ -8,7 +8,7 @@ class Sensor(Node):
   def __init__(self, world, name, **kargs):
     Node.__init__(self, world, name, **kargs)
 
-    self.collider = Collider(name+"Collider", parent = self,
+    self.collider = Collider(name = name+"Collider", parent = self,
       collisionMasks = [SENSOR_COLLISIONS_FROM, SENSOR_COLLISIONS_INTO])
 
 #-------------------------------------------------------------------------------

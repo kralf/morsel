@@ -17,8 +17,9 @@ class Differential(Base):
     self.crankSolids = []
     self.crankJoints = []
     for i in range(self.numCasters):
-      solid = Solid(name+"CrankSolid", crankSolid, self.casterCranks[i],
-        body = crankBody, mass = crankMass[i], parent = self.solid)
+      solid = Solid(name = name+"CrankSolid", type = crankSolid,
+        mesh = self.casterCranks[i], body = crankBody, mass = crankMass[i],
+        parent = self.solid)
 
       joint = panda.OdeHingeJoint(world.world)
       joint.attach(self.solid.body.body, solid.body.body)
@@ -36,8 +37,9 @@ class Differential(Base):
     self.wheelSolids = []
     self.wheelJoints = []
     for i in range(self.numWheels):
-      solid = Solid(name+"WheelSolid", wheelSolid, self.wheels[i],
-        body = wheelBody, mass = wheelMass[i], parent = self.solid)
+      solid = Solid(name = name+"WheelSolid", type = wheelSolid,
+        mesh = self.wheels[i], body = wheelBody, mass = wheelMass[i],
+        parent = self.solid)
 
       joint = panda.OdeHinge2Joint(world.world)
       if self.isCasterWheel(self.wheels[i]):

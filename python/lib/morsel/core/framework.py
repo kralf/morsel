@@ -3,15 +3,18 @@ from panda3d.direct.showbase.ShowBase import ShowBase
 
 from scheduler import Scheduler
 from event_manager import EventManager
+from package import Package
+
 from morsel.console import interactive_console as Console
 from morsel.gui.object_manager import ObjectManager
-
 from morsel.config import *
 from morsel.facade import *
+
 from math import *
 from os import *
 from os.path import *
 
+import __builtin__
 import inspect
 
 #-------------------------------------------------------------------------------
@@ -19,8 +22,9 @@ import inspect
 class Framework(object):
   def __init__(self, *argv):
     object.__init__(self)
-    
+
     self.arguments = argv[0]
+    self.packages = {}
     self.paths = {}
     self.configFiles = ["defaults.conf"];
     for argument in self.arguments[1:]:
@@ -31,33 +35,38 @@ class Framework(object):
     self.eventManager = None
     self.objectManager = None
     self.console = None
+    self.world = None
 
     self.debug = False
   
 #-------------------------------------------------------------------------------
 
-  def getHomeDir(self):
-    return os.environ["HOME"]
-
-  homeDir = property(getHomeDir)
-
-#-------------------------------------------------------------------------------
-
-  def getMorselSystem(self):
+  def getSystemDir(self, package = "morsel"):
     try:
-      return os.environ["MORSEL_HOME"]
+      return os.environ[self.packages[package].homeVar]
     except KeyError:
-      return MORSEL_FILE_PATH
+      return self.packages[package].systemDir
 
-  morselSystem = property(getMorselSystem)
+  systemDir = property(getSystemDir)
 
 #-------------------------------------------------------------------------------
 
-  def getMorselUser(self):
-    return self.homeDir+"/.morsel"
+  def getUserDir(self, package = "morsel"):
+    return self.packages[package].userDir
 
-  morselUser = property(getMorselUser)
+  userDir = property(getUserDir)
 
+#-------------------------------------------------------------------------------
+
+  def getWorld(self):
+    return self._world
+
+  def setWorld(self, world):
+    if not self._world:
+      self._world = world
+    else:
+      self.error("Word already initialized")
+      
 #-------------------------------------------------------------------------------
 
   def getConfigVariable(self, variable, types):
@@ -196,19 +205,17 @@ class Framework(object):
 
 #-------------------------------------------------------------------------------
 
+  def include(self, package, path = None, module = None):
+    self.packages[package] = Package(package, path, module)
+
+#-------------------------------------------------------------------------------
+
   def addPath(self, extension, path):
     if not self.paths.has_key(extension):
       self.paths[extension] = []
 
     if not path in self.paths[extension]:
       self.paths[extension].append(path)
-
-#-------------------------------------------------------------------------------
-
-  def addMorselPath(self, extension, path):
-    self.addPath(extension, os.path.join(".", path))
-    self.addPath(extension, os.path.join(self.morselUser, path))
-    self.addPath(extension, os.path.join(self.morselSystem, path))
 
 #-------------------------------------------------------------------------------
 
@@ -221,14 +228,33 @@ class Framework(object):
     if os.path.exists(filename):
       return os.path.abspath(filename)
 
+    for package in self.packages:
+      resultPath = self.findPackageFile(filename, package)
+      if resultPath:
+        return resultPath
+
+    return None
+
+#-------------------------------------------------------------------------------
+
+  def findPackageFile(self, filename, package = "morsel"):
+    if os.path.exists(filename):
+      return os.path.abspath(filename)
+
     name, extension = os.path.splitext(filename)
     extension = extension[1:]
 
     if self.paths.has_key(extension):
       for path in self.paths[extension]:
-        resultPath = os.path.join(path, filename)
-        if os.path.exists(resultPath):
-          return os.path.abspath(resultPath)
+        if not os.path.isabs(path):
+          for dir in [self.getUserDir(package), self.getSystemDir(package)]:
+            resultPath = os.path.join(dir, path, filename)
+            if os.path.exists(resultPath):
+              return os.path.abspath(resultPath)
+        else:
+          resultPath = os.path.join(path, package, filename)
+          if os.path.exists(resultPath):
+            return os.path.abspath(resultPath)
 
     return None
 
@@ -242,6 +268,52 @@ class Framework(object):
     else:
       self.error("Configuration file '" + filename + "' not found.")
     
+#-------------------------------------------------------------------------------
+
+  def executeFile(self, filename, **kargs):
+    filePath = self.findFile(filename)
+    
+    if filePath:
+      context = inspect.stack()[1][0].f_globals
+      parameters = {}
+      execfile(filePath, context, parameters)
+      parameters.update(kargs)
+
+      return parameters
+    else:
+      self.error("File '"+filename+"' not found")
+
+#-------------------------------------------------------------------------------
+
+  def createInstance(self, module, type, **kargs):
+    for package in self.packages:
+      try:
+        module = __import__(self.packages[package].module+"."+module,
+          __builtin__.globals(), __builtin__.locals(), [type])
+      except ImportError:
+        pass
+      else:
+        instance = getattr(module, type)
+        return instance(**kargs)
+
+    self.error("Failed to import module "+module)
+
+#-------------------------------------------------------------------------------
+
+  def loadInstance(self, module, filename = None, **kargs):
+    if filename:
+      parameters = self.executeFile(filename, **kargs)
+    else:
+      parameters = kargs
+
+    if parameters.has_key("type"):
+      type = parameters["type"]
+      del parameters["type"]
+
+      return self.createInstance(module, type, **parameters)
+    else:
+      self.error("Missing type parameter")
+
 #-------------------------------------------------------------------------------
 
   def run(self):

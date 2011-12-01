@@ -14,12 +14,13 @@ class Actuated(Node):
       self.parent = self.actuator
       self.collider = self.actuator.collider
       self.collider.collisionMasks = collisionMasks
-      self.solid = Solid(name+"Solid", "Empty", self,
+      self.solid = Solid(name = name+"Solid", type = "Empty", mesh = self,
         parent = self.actuator.solid)
     else:
-      self.collider = Collider(name+"Collider", parent = self,
+      self.collider = Collider(name = name+"Collider", parent = self,
         collisionMasks = collisionMasks)
-      self.solid = Solid(name+"Solid", "Empty", self, parent = self)
+      self.solid = Solid(name = name+"Solid", type = "Empty", mesh = self,
+        parent = self)
       
 #-------------------------------------------------------------------------------
 

@@ -20,7 +20,7 @@ class PlanarMotor(Actuator):
     if base:
       baseModel = mesh.find("**/"+base)
     if not baseModel.isEmpty():
-      self.base = Mesh(name+"Mesh", model = baseModel, parent = self)
+      self.base = Mesh(name = name+"Mesh", model = baseModel, parent = self)
       if self.hideBase:
         self.base.hide()
     else:

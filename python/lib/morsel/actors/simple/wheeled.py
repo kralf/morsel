@@ -5,10 +5,10 @@ from morsel.nodes.facade import Mesh, Solid
 
 class Wheeled(Base):
   def __init__(self, world, name, mesh, bodySolid = None, **kargs):
-    mesh = Mesh(name+"Mesh", mesh)
+    mesh = Mesh(name = name+"Mesh", filename = mesh)
     Base.__init__(self, world, name, mesh, **kargs)
 
     if self.body:
-      self.body.solid = Solid(name+"BodySolid", bodySolid, self,
-        parent = self.chassis.solid)
+      self.body.solid = Solid(name = name+"BodySolid", type = bodySolid,
+        mesh = self, parent = self.chassis.solid)
     

@@ -26,6 +26,6 @@ class Solid(Base):
       scale = [0, 0, 0]
 
     if geometry:
-      self.geometry = Geometry(name+"Geometry", geometry, self,
-        position = position, scale = scale, parent = self)
+      self.geometry = Geometry(name = name+"Geometry", type = geometry,
+        solid = self, position = position, scale = scale, parent = self)
       parent.collider.addSolid(self)

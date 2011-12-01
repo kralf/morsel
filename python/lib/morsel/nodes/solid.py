@@ -8,7 +8,8 @@ class Solid(Node):
   def __init__(self, world, name, mesh = None, parent = None, **kargs):
     if not isinstance(parent, Solid):
       if not parent.collider:
-        parent.collider = Collider(parent.name+"Collider", parent = parent)
+        parent.collider = Collider(name = parent.name+"Collider",
+          parent = parent)
       Node.__init__(self, world, name, parent = parent.collider, **kargs)
     else:
       Node.__init__(self, world, name, parent = parent, **kargs)

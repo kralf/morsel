@@ -1,5 +1,4 @@
 from morsel.panda import *
-from morsel.world import globals
 
 from panda3d.direct.gui.DirectGui import DirectOptionMenu
 from panda3d.direct.showbase import DirectObject
@@ -29,7 +28,7 @@ class ObjectSelector(DirectObject.DirectObject):
     mat.invertInPlace()
     key = base.camera.getParent().getName()
     self.camera_poses[key] = mat
-    base.camera.reparentTo(globals.world.meshes[item])
+    base.camera.reparentTo(framework.world.meshes[item])
     if self.camera_poses.has_key(item):
       mat = self.camera_poses[item]
       base.mouseInterfaceNode.setMat(mat)
@@ -50,7 +49,7 @@ class ObjectSelector(DirectObject.DirectObject):
       del items[:]
       i = 0
       selected = 0
-      for k, v in globals.world.meshes.iteritems():
+      for k, v in framework.world.meshes.iteritems():
         items.append(k)
         if k == base.camera.getParent().getName():
           selected = i

@@ -16,8 +16,8 @@ class Ackermann(Base):
 
     self.wheelSolids = []
     for wheel in self.wheels:
-      self.wheelSolids.append(Solid(name+"WheelSolid", wheelSolid, wheel,
-        parent = self.solid))
+      self.wheelSolids.append(Solid(name = name+"WheelSolid",
+        type = wheelSolid, mesh = wheel, parent = self.solid))
 
 #-------------------------------------------------------------------------------
 

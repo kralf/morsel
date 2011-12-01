@@ -1,14 +1,13 @@
-from morsel.core import Instance
-from morsel.world import globals
+from morsel.nodes.ode import *
 
 #-------------------------------------------------------------------------------
 
-def Body(name, type, *args, **kargs):
-  return Instance("morsel.nodes.ode.bodies", type, globals.world, name,
-    *args, **kargs)
+def Body(**kargs):
+  return framework.createInstance("nodes.ode.bodies",
+    world = framework.world, **kargs)
 
 #-------------------------------------------------------------------------------
 
-def Geometry(name, type, *args, **kargs):
-  return Instance("morsel.nodes.ode.geometries", type, globals.world, name,
-    *args, **kargs)
+def Geometry(**kargs):
+  return framework.createInstance("nodes.ode.geometries",
+    world = framework.world, **kargs)

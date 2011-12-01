@@ -15,7 +15,7 @@ class RangeSensor(Sensor):
       **kargs):
     Sensor.__init__(self, world, name, **kargs)
 
-    self.mesh = Mesh(name+"Mesh", mesh, parent = self)
+    self.mesh = Mesh(name = name+"Mesh", filename = mesh, parent = self)
     
     self.fieldOfView = fieldOfView
     self.resolution = resolution

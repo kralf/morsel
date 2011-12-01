@@ -15,12 +15,12 @@ class Differential(Base):
 
     self.crankSolids = []
     for crank in self.casterCranks:
-      self.crankSolids.append(Solid(name+"CrankSolid", crankSolid, crank,
-        parent = self.solid))        
+      self.crankSolids.append(Solid(name = name+"CrankSolid",
+        type = crankSolid, mesh = crank, parent = self.solid))
     self.wheelSolids = []
     for wheel in self.wheels:
-      self.wheelSolids.append(Solid(name+"WheelSolid", wheelSolid, wheel,
-        parent = self.solid))
+      self.wheelSolids.append(Solid(name = name+"WheelSolid",
+        type = wheelSolid, mesh = wheel, parent = self.solid))
 
 #-------------------------------------------------------------------------------
 

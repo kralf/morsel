@@ -22,7 +22,8 @@ class WheelChassis(Actuator):
     for wheel in wheels:
       wheelModel = mesh.find("**/"+wheel)
       if not wheelModel.isEmpty():
-        wheel = Mesh(name+"WheelMesh", model = wheelModel, parent = self)
+        wheel = Mesh(name = name+"WheelMesh", model = wheelModel,
+          parent = self)
 
         p0, p1 = wheel.bounds
         dx = abs(p1[0]-p0[0])
