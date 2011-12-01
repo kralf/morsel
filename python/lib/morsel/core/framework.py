@@ -288,15 +288,17 @@ class Framework(object):
   def createInstance(self, module, type, **kargs):
     for package in self.packages:
       try:
-        module = __import__(self.packages[package].module+"."+module,
+        imported = __import__(self.packages[package].module+"."+module,
           __builtin__.globals(), __builtin__.locals(), [type])
+        instance = getattr(imported, type)
       except ImportError:
         pass
+      except AttributeError:
+        pass
       else:
-        instance = getattr(module, type)
         return instance(**kargs)
 
-    self.error("Failed to import module "+module)
+    self.error("Failed to import "+type+" from module "+module)
 
 #-------------------------------------------------------------------------------
 
