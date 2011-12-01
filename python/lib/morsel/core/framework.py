@@ -205,8 +205,8 @@ class Framework(object):
 
 #-------------------------------------------------------------------------------
 
-  def include(self, package, path = None, module = None):
-    self.packages[package] = Package(package, path, module)
+  def include(self, package, **kargs):
+    self.packages[package] = Package(package, **kargs)
 
 #-------------------------------------------------------------------------------
 
