@@ -10,7 +10,6 @@ remake_include(
   ${PYTHON_INCLUDE_PATH}
   ${PANDA3D_PANDA_HEADERS}
   lib
-  ${CMAKE_CURRENT_BINARY_DIR}/lib
 )
 remake_add_directories(lib)
 remake_add_directories(metalib)
