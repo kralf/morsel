@@ -66,6 +66,14 @@ RangeSensor::~RangeSensor() {
 /* Accessors                                                                 */
 /*****************************************************************************/
 
+const LVecBase2f& RangeSensor::getMinAngles() const {
+  return minAngles;
+}
+
+const LVecBase2f& RangeSensor::getMaxAngles() const {
+  return maxAngles;
+}
+
 const LVecBase2f& RangeSensor::getResolution() const {
   return resolution;
 }
