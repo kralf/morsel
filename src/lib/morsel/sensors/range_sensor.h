@@ -61,6 +61,7 @@ PUBLISHED:
     */
   virtual ~RangeSensor();
 
+  const LVecBase2f& getResolution() const;
   const LVecBase2f& getRangeLimits() const;
   const LVecBase2f& getFOV() const;
   size_t getNumCameras() const;

@@ -66,6 +66,10 @@ RangeSensor::~RangeSensor() {
 /* Accessors                                                                 */
 /*****************************************************************************/
 
+const LVecBase2f& RangeSensor::getResolution() const {
+  return resolution;
+}
+
 const LVecBase2f& RangeSensor::getRangeLimits() const {
   return rangeLimits;
 }
