@@ -1,0 +1,13 @@
+type             = "RangeSensor"
+
+mesh             = "sensors/sick_lms100.bam"
+solid            = "Box"
+body             = "Box"
+mass             = 1.5
+
+fieldOfView      = [(-135.25, 135.25), (-0.25, 0.25)]
+resolution       = [0.5, 0.5]
+rangeLimits      = [0.5, 20]
+
+cameraResolution = [128, 128]
+spherical        = True
