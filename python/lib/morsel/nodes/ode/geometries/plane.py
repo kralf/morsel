@@ -49,5 +49,5 @@ class Plane(Geometry):
 #-------------------------------------------------------------------------------
 
   def makeDisplay(self):
-    return Mesh(self.name+"Display", "geometry/plane.bam")
+    return Mesh(name = self.name+"Display", filename = "geometry/plane.bam")
   

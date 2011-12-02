@@ -10,4 +10,5 @@ class Empty(Geometry):
 #-------------------------------------------------------------------------------
 
   def makeDisplay(self):
-    return Mesh(self.name+"Display", "symbols/zup_axis.bam", scale = [0.1]*3)
+    return Mesh(name = self.name+"Display", filename = "symbols/zup_axis.bam",
+      scale = [0.1]*3)

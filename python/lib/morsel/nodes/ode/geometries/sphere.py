@@ -15,4 +15,4 @@ class Sphere(Geometry):
 #-------------------------------------------------------------------------------
 
   def makeDisplay(self):
-    return Mesh(self.name+"Display", "geometry/sphere.bam")
+    return Mesh(name = self.name+"Display", filename = "geometry/sphere.bam")

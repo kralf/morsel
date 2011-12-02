@@ -34,4 +34,4 @@ class Cylinder(Geometry):
 #-------------------------------------------------------------------------------
 
   def makeDisplay(self):
-    return Mesh(self.name+"Display", "geometry/cylinder.bam")
+    return Mesh(name = self.name+"Display", filename = "geometry/cylinder.bam")

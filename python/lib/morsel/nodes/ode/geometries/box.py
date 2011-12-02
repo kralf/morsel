@@ -14,4 +14,4 @@ class Box(Geometry):
 #-------------------------------------------------------------------------------
 
   def makeDisplay(self):
-    return Mesh(self.name+"Display", "geometry/cube.bam")
+    return Mesh(name = self.name+"Display", filename = "geometry/cube.bam")

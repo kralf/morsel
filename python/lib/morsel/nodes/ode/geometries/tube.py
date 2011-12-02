@@ -40,12 +40,13 @@ class Tube(Geometry):
     length = self.geometry.getLength()
     
     if length > 0:
-      Mesh(self.name+"DisplayCylinder", "geometry/cylinder.bam",
+      Mesh(name = self.name+"DisplayCylinder",
+        filename = "geometry/cylinder.bam",
         scale = [1, 1, length/self.scale[2]], parent = display)
-    Mesh(self.name+"DisplayCap", "geometry/sphere.bam",
+    Mesh(name = self.name+"DisplayCap", filename = "geometry/sphere.bam",
       position = [0, 0, -0.5*length/self.scale[2]],
       scale = [1, 1, 2*radius/self.scale[2]], parent = display)
-    Mesh(self.name+"DisplayCap", "geometry/sphere.bam",
+    Mesh(name = self.name+"DisplayCap", filename = "geometry/sphere.bam",
       position = [0, 0, 0.5*length/self.scale[2]],
       scale = [1, 1, 2*radius/self.scale[2]], parent = display)
 
