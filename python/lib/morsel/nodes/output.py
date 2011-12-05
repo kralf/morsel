@@ -14,13 +14,12 @@ class Output(Node):
 #-------------------------------------------------------------------------------
 
   def update(self, time):
-    if self.time and self.source:
-      self.outputData(time-self.time)
+    if self.source:
+      self.outputData(time)
 
-    self.time = time
     return True
 
 #-------------------------------------------------------------------------------
 
-  def outputData(self, period):
+  def outputData(self, time):
     pass

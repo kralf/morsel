@@ -19,5 +19,5 @@ class CommandLogReader(Input):
 
 #-------------------------------------------------------------------------------
 
-  def inputData(self, period):
-    self.input.readData(self.world.time)
+  def inputData(self, time):
+    self.input.readData(time)

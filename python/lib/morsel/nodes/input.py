@@ -14,13 +14,12 @@ class Input(Node):
 #-------------------------------------------------------------------------------
 
   def update(self, time):
-    if self.time and self.destination:
-      self.inputData(time-self.time)
+    if self.destination:
+      self.inputData(time)
 
-    self.time = time
     return True
 
 #-------------------------------------------------------------------------------
 
-  def inputData(self, period):
+  def inputData(self, time):
     pass

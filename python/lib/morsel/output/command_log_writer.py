@@ -21,5 +21,5 @@ class CommandLogWriter(Output):
 
 #-------------------------------------------------------------------------------
 
-  def outputData(self, period):
-    self.output.writeData(self.world.time)
+  def outputData(self, time):
+    self.output.writeData(time)
