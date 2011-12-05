@@ -37,11 +37,11 @@ class Body(Node):
 
   def getTranslationalVelocity(self, node = None):
     if node:
-      dt = node.getRelativeVector(self.world.scene, self.body.getLinearVel())
+      tv = node.getRelativeVector(self.world.scene, self.body.getLinearVel())
     else:
-      dt = self.getRelativeVector(self.world.scene, self.body.getLinearVel())
+      tv = self.getRelativeVector(self.world.scene, self.body.getLinearVel())
 
-    return [dt[0], dt[1], dt[2]]
+    return [tv[0], tv[1], tv[2]]
 
   def setTranslationalVelocity(self, translationalVelocity, node = None):
     if node:
@@ -58,21 +58,23 @@ class Body(Node):
 
   def getRotationalVelocity(self, node = None):
     if node:
-      dr = node.getRelativeVector(self.world.scene,
+      rv = node.getRelativeVector(self.world.scene,
         self.body.getAngularVel()*180/pi)
     else:
-      dr = self.getRelativeVector(self.world.scene,
-        self.body.getLinearVel()*180/pi)
+      rv = self.getRelativeVector(self.world.scene,
+        self.body.getAngularVel()*180/pi)
 
-    return [dr[0], dr[1], dr[2]]
+    return [rv[2], rv[1], rv[0]]
 
   def setRotationalVelocity(self, rotationalVelocity, node = None):
+    rv = [rotationalVelocity[2], rotationalVelocity[1], rotationalVelocity[0]]
+    
     if node:
       self.body.setAngularVel(self.world.scene.getRelativeVector(node,
-        panda.Vec3(*rotationalVelocity))*pi/180)
+        panda.Vec3(*rv))*pi/180)
     else:
       self.body.setAngularVel(self.world.scene.getRelativeVector(self,
-        panda.Vec3(*rotationalVelocity))*pi/180)
+        panda.Vec3(*rv))*pi/180)
 
   rotationalVelocity = property(getRotationalVelocity, setRotationalVelocity)
 
