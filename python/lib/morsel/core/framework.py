@@ -8,7 +8,6 @@ from package import Package
 from morsel.console import interactive_console as Console
 from morsel.gui.object_manager import ObjectManager
 from morsel.config import *
-from morsel.facade import *
 
 from math import *
 from os import *
@@ -207,6 +206,16 @@ class Framework(object):
 
   def include(self, package, **kargs):
     self.packages[package] = Package(package, **kargs)
+    
+    try:
+      facade = __import__(self.packages[package].module+".facade",
+        __builtin__.globals(), __builtin__.locals(), ["*"])
+    except ImportError:
+      pass
+    else:
+      for expression in dir(facade):
+        if not __builtin__.__dict__.has_key(expression):
+          __builtin__.__dict__[expression] = getattr(facade, expression)
 
 #-------------------------------------------------------------------------------
 
@@ -262,6 +271,7 @@ class Framework(object):
 
   def loadConfigFile(self, filename):
     configFile = self.findFile(filename)
+    
     if configFile:
       context = inspect.stack()[1][0].f_globals
       execfile(configFile, context)
