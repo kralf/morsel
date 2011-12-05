@@ -9,15 +9,17 @@ class CommandLogReader(Input):
     if platform:
       actuator = platform.actuator
       
-    Input.__init__(self, world, name, actuator, **kargs)
+    Input.__init__(self, world, name, **kargs)
 
+    self.actuator = actuator
     self.filename = filename
     self.binary = binary
 
-    self.input = CCommandLogReader(name, actuator, self.filename, self.binary)
-    self.input.reparentTo(self)
+    self.reader = CCommandLogReader(name, self.actuator, self.filename,
+      self.binary)
+    self.reader.reparentTo(self)
 
 #-------------------------------------------------------------------------------
 
   def inputData(self, time):
-    self.input.readData(time)
+    self.reader.readData(time)

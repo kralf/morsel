@@ -7,8 +7,9 @@ class RangeSensorLogWriter(Output):
   def __init__(self, world, name, filename, sensor, binary = True,
       logTimestamps = True, logColors = False, logLabels = False,
       logInvalids = False, **kargs):
-    Output.__init__(self, world, name, sensor, **kargs)
+    Output.__init__(self, world, name, **kargs)
 
+    self.sensor = sensor
     self.filename = filename
     self.binary = binary
     self.logTimestamps = logTimestamps
@@ -16,12 +17,12 @@ class RangeSensorLogWriter(Output):
     self.logLabels = logLabels
     self.logInvalids = logInvalids
 
-    self.output = CRangeSensorLogWriter(name, sensor.sensor, self.filename,
-      self.binary, self.logTimestamps, self.logColors, self.logLabels,
-      self.logInvalids)
-    self.output.reparentTo(self)
+    self.writer = CRangeSensorLogWriter(name, self.sensor.sensor,
+      self.filename, self.binary, self.logTimestamps, self.logColors,
+      self.logLabels, self.logInvalids)
+    self.writer.reparentTo(self)
 
 #-------------------------------------------------------------------------------
 
   def outputData(self, time):
-    self.output.writeData(time)
+    self.writer.writeData(time)

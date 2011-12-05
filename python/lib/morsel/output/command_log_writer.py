@@ -8,18 +8,19 @@ class CommandLogWriter(Output):
       binary = True, logTimestamps = True, **kargs):
     if platform:
       actuator = platform.actuator
-      
-    Output.__init__(self, world, name, actuator, **kargs)
 
+    Output.__init__(self, world, name, **kargs)
+
+    self.actuator = actuator
     self.filename = filename
     self.binary = binary
     self.logTimestamps = logTimestamps
 
-    self.output = CCommandLogWriter(name, actuator, self.filename,
+    self.writer = CCommandLogWriter(name, self.actuator, self.filename,
       self.binary, self.logTimestamps)
-    self.output.reparentTo(self)
+    self.writer.reparentTo(self)
 
 #-------------------------------------------------------------------------------
 
   def outputData(self, time):
-    self.output.writeData(time)
+    self.writer.writeData(time)
