@@ -18,7 +18,7 @@ class LaserView(View):
 
     self.view = CLaserView(name, self.sensor.sensor, panda.Vec4(*self.color),
       self.showPoints, self.showLines, self.showColors, self.showLabels)
-    self.view.reparentTo(self.sensor.mesh)
+    self.view.reparentTo(self.sensor)
 
 #-------------------------------------------------------------------------------
 

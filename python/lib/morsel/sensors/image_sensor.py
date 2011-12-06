@@ -20,7 +20,7 @@ class ImageSensor(Sensor):
 
     self.sensor = CImageSensor(name, panda.Vec2(*resolution),
       panda.Vec2(*rangeLimits), panda.Vec2(*filmSize), focalLength)
-    self.sensor.reparentTo(self.mesh)
+    self.sensor.reparentTo(self)
 
 #-------------------------------------------------------------------------------
 

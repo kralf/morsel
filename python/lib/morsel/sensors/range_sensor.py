@@ -37,7 +37,7 @@ class RangeSensor(Sensor):
       panda.Vec2(*self.cameraMaxFieldOfView)*pi/180,
       panda.Vec2(*self.cameraResolution),
       self.spherical, self.acquireColor, self.acquireLabel)
-    self.sensor.reparentTo(self.mesh)
+    self.sensor.reparentTo(self)
 
 #-------------------------------------------------------------------------------
 

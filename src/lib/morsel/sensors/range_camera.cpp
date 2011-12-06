@@ -170,14 +170,10 @@ void RangeCamera::setupCamera(PointerTo<Lens> lens) {
   depthMap.set_component_type(Texture::T_unsigned_short);
   depthMap.set_minfilter(Texture::FT_nearest);
   depthMap.set_magfilter(Texture::FT_nearest);
-  colorMap.set_minfilter(Texture::FT_nearest);
-  colorMap.set_magfilter(Texture::FT_nearest);
-  labelMap.set_minfilter(Texture::FT_nearest);
-  labelMap.set_magfilter(Texture::FT_nearest);
 
   buffer = Morsel::getWindow(0)->make_texture_buffer("depthmap",
     resolution[0], resolution[1], &depthMap, true);
-  
+
   cameraNode = new Camera("cam");
   cameraNode->set_camera_mask(BitMask32(1));
   cameraNode->set_scene(Morsel::getGSG()->get_scene()->get_scene_root());
@@ -187,16 +183,21 @@ void RangeCamera::setupCamera(PointerTo<Lens> lens) {
   camera.set_light_off(true);
   camera.set_material_off(true);
   camera.set_color_off(true);
+  camera.set_transparency(TransparencyAttrib::M_none);
 
   PointerTo<DisplayRegion> drd = buffer->make_display_region();
   drd->set_sort(0);
   drd->set_camera(camera);
   
   if (acquireColor) {
+    colorMap.set_minfilter(Texture::FT_nearest);
+    colorMap.set_magfilter(Texture::FT_nearest);
     buffer->add_render_texture(&colorMap, GraphicsOutput::RTM_copy_ram,
       DrawableRegion::RTP_color);
   }
   else if (!acquireLabel.empty()) {
+    labelMap.set_minfilter(Texture::FT_nearest);
+    labelMap.set_magfilter(Texture::FT_nearest);
     buffer->add_render_texture(&labelMap, GraphicsOutput::RTM_copy_ram,
       DrawableRegion::RTP_color);
     

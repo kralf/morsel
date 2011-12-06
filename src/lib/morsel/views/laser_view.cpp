@@ -173,7 +173,11 @@ void LaserView::setupRendering() {
   stream << "}" << endl;
   
   pointShader = Shader::make(stream.str(), Shader::SL_Cg);
-  set_shader(pointShader);
-  set_shader_input("range_limits", LVecBase4f(sensor.getRangeLimits()[0],
-    sensor.getRangeLimits()[1], 0.0, 0.0));
+  if (!pointShader->get_error_flag()) {
+    set_shader(pointShader);
+    set_shader_input("range_limits", LVecBase4f(sensor.getRangeLimits()[0],
+      sensor.getRangeLimits()[1], 0.0, 0.0));
+  }
+  else
+    hide();
 }
