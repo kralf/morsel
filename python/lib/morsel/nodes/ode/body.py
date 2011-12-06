@@ -36,20 +36,20 @@ class Body(Node):
 #-------------------------------------------------------------------------------
 
   def getTranslationalVelocity(self, node = None):
-    if node:
-      tv = node.getRelativeVector(self.world.scene, self.body.getLinearVel())
-    else:
-      tv = self.getRelativeVector(self.world.scene, self.body.getLinearVel())
-
+    if not node:
+      node = self
+      
+    tv = self.world.scene.getQuaternion(node).xform(
+      self.body.getLinearVel())
+    
     return [tv[0], tv[1], tv[2]]
 
   def setTranslationalVelocity(self, translationalVelocity, node = None):
-    if node:
-      self.body.setLinearVel(self.world.scene.getRelativeVector(node,
-        panda.Vec3(*translationalVelocity)))
-    else:
-      self.body.setLinearVel(self.world.scene.getRelativeVector(self,
-        panda.Vec3(*translationalVelocity)))
+    if not node:
+      node = self
+      
+    self.body.setLinearVel(node.getQuaternion(self.world.scene).xform(
+      panda.Vec3(*translationalVelocity)))
 
   translationalVelocity = property(getTranslationalVelocity,
     setTranslationalVelocity)
@@ -57,24 +57,22 @@ class Body(Node):
 #-------------------------------------------------------------------------------
 
   def getRotationalVelocity(self, node = None):
-    if node:
-      rv = node.getRelativeVector(self.world.scene,
-        self.body.getAngularVel()*180/pi)
-    else:
-      rv = self.getRelativeVector(self.world.scene,
-        self.body.getAngularVel()*180/pi)
+    if not node:
+      node = self
+      
+    rv = self.world.scene.getQuaternion(node).xform(
+      self.body.getAngularVel()*180/pi)
 
     return [rv[2], rv[1], rv[0]]
 
   def setRotationalVelocity(self, rotationalVelocity, node = None):
+    if not node:
+      node = self
+      
     rv = [rotationalVelocity[2], rotationalVelocity[1], rotationalVelocity[0]]
     
-    if node:
-      self.body.setAngularVel(self.world.scene.getRelativeVector(node,
-        panda.Vec3(*rv))*pi/180)
-    else:
-      self.body.setAngularVel(self.world.scene.getRelativeVector(self,
-        panda.Vec3(*rv))*pi/180)
+    self.body.setAngularVel(node.getQuaternion(self.world.scene).xform(
+      panda.Vec3(*rv))*pi/180)
 
   rotationalVelocity = property(getRotationalVelocity, setRotationalVelocity)
 

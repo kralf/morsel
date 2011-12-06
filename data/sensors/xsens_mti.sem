@@ -1,0 +1,6 @@
+type             = "InertialSensor"
+
+mesh             = "sensors/xsens_mti.bam"
+solid            = "Box"
+body             = "Box"
+mass             = 0.05
