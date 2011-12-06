@@ -204,16 +204,17 @@ void RangeSensor::updateRays() const {
     if (i_c >= cameras[c_ij]->getNumVerticalRays()) {
       i_c = 0;
       ++c_i;
+      c_ij += numCameras[0];
     }
     
     int c_j = 0;
     int j_c = 0;
     for (int j = 0; j < numRays[0]; ++j, ++j_c) {
       int ij = i*numRays[0]+j;
-      c_ij = c_i*numCameras[0]+c_j;
       if (j_c >= cameras[c_ij]->getNumHorizontalRays()) {
         j_c = 0;
         ++c_j;
+        ++c_ij;
       }
       int ij_c = i_c*cameras[c_ij]->getNumHorizontalRays()+j_c;
 
