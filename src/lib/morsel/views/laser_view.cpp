@@ -171,8 +171,7 @@ void LaserView::setupRendering() {
   stream << "    out float4 o_color : COLOR) {" << endl;
   stream << "  o_color = l_color;" << endl;
   stream << "}" << endl;
-  
-  pointShader = Shader::make(stream.str(), Shader::SL_Cg);
+
   pointShader = Shader::make(stream.str(), Shader::SL_Cg);
   set_shader(pointShader);
   set_shader_input("range_limits", LVecBase4f(sensor.getRangeLimits()[0],
