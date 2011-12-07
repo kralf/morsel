@@ -172,7 +172,37 @@ void LaserView::setupRendering() {
   stream << "  o_color = l_color;" << endl;
   stream << "}" << endl;
 
-  pointShader = Shader::make(stream.str(), Shader::SL_Cg);
+  ostringstream vstream;
+  vstream << "uniform vec4 range_limits;" << endl;
+  vstream << "uniform sampler2D p3d_Texture0;" << endl;
+  vstream << "void main() {" << endl;
+  vstream << "  vec4 position = vec4(0.0, 0.0, 0.0, 1.0);" << endl;
+  vstream << "  vec4 color = gl_Color;" << endl;
+  vstream << "  if (gl_Vertex[2] > 0.0) {" << endl;
+  vstream << "    float d = texture2D(p3d_Texture0, gl_MultiTexCoord0.st).r;"
+    << endl;
+  vstream << "    float r = range_limits[1]*range_limits[0]/" << endl;
+  vstream << "      (range_limits[1]-d*" << endl;
+  vstream << "      (range_limits[1]-range_limits[0]));" << endl;
+  vstream << "    if ((r > range_limits[0]) &&" << endl;
+  vstream << "        (r < range_limits[1])) {" <<endl;
+  vstream << "      position = vec4(r*gl_Vertex[0]," << endl;
+  vstream << "         r, r*gl_Vertex[1], 1.0);" << endl;
+  vstream << "      color[3] = 1.0-r/range_limits[1];" << endl;
+  vstream << "    }" << endl;
+  vstream << "    else color[3] = 0.0;" << endl;
+  vstream << "  }" << endl;
+  vstream << "  gl_Position = gl_ModelViewProjectionMatrix*position;" << endl;
+  vstream << "  gl_FrontColor = color;" << endl;
+  vstream << "}" << endl;
+  
+  ostringstream fstream;
+  fstream << "void main() {" << endl;
+  fstream << "  gl_FragColor = gl_Color;" << endl;
+  fstream << "}" << endl;
+  
+//   pointShader = Shader::make(stream.str(), Shader::SL_Cg);
+  pointShader = Shader::make(Shader::SL_GLSL, vstream.str(), fstream.str());
   set_shader(pointShader);
   set_shader_input("range_limits", LVecBase4f(sensor.getRangeLimits()[0],
     sensor.getRangeLimits()[1], 0.0, 0.0));
