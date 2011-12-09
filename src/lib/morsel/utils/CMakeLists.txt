@@ -5,7 +5,6 @@ panda3d_interrogate_include(
 panda3d_interrogate(
   utils
   COMMAND ${PANDA3D_INTERROGATE_EXECUTABLE}
-  SOURCES ${REMAKE_PROJECT_SOURCE_DIR}/lib
   MODULE morsel
 )
 

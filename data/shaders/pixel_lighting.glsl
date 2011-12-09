@@ -1,6 +1,18 @@
+//GLSL
+
 varying vec3 vertex;
 varying vec3 normal;
 
+#ifdef BUILDING_VSHADER
+void main() {
+  vertex = vec3(gl_ModelViewMatrix*gl_Vertex);
+  normal = normalize(gl_NormalMatrix*gl_Normal);
+
+  gl_Position = ftransform();
+}
+#endif
+
+#ifdef BUILDING_FSHADER
 const vec4 ambientBlack = vec4(0.0, 0.0, 0.0, 0.0);
 const vec4 diffuseBlack = vec4(0.0, 0.0, 0.0, 0.0);
 const vec4 specularBlack = vec4(0.0, 0.0, 0.0, 0.0);
@@ -12,7 +24,7 @@ float attenuation(in int i, in float dist) {
 }
 
 void directionalLight(in int i, in vec3 n, in float shininess,
-  inout vec4 ambient, inout vec4 diffuse, inout vec4 specular) {
+    inout vec4 ambient, inout vec4 diffuse, inout vec4 specular) {
   vec3 l = normalize(gl_LightSource[i].position.xyz);
   
   float ndotl = dot(n, l);
@@ -30,7 +42,7 @@ void directionalLight(in int i, in vec3 n, in float shininess,
 }
 
 void pointLight(in int i, in vec3 n, in vec3 v, in float shininess,
-  inout vec4 ambient, inout vec4 diffuse, inout vec4 specular) {
+    inout vec4 ambient, inout vec4 diffuse, inout vec4 specular) {
   vec3 d = gl_LightSource[i].position.xyz-v;
   vec3 l = normalize(d);
   
@@ -53,7 +65,7 @@ void pointLight(in int i, in vec3 n, in vec3 v, in float shininess,
 }
 
 void spotLight(in int i, in vec3 n, in vec3 v, in float shininess,
-  inout vec4 ambient, inout vec4 diffuse, inout vec4 specular) {
+    inout vec4 ambient, inout vec4 diffuse, inout vec4 specular) {
   vec3 d = gl_LightSource[i].position.xyz-v;
   vec3 l = normalize(d);
 
@@ -81,8 +93,8 @@ void spotLight(in int i, in vec3 n, in vec3 v, in float shininess,
   ambient += gl_LightSource[i].ambient*att;
 }
 
-void light(in vec3 n, in vec3 v, in float shininess,
-  inout vec4 ambient, inout vec4 diffuse, inout vec4 specular) {
+void light(in vec3 n, in vec3 v, in float shininess, inout vec4 ambient,
+    inout vec4 diffuse, inout vec4 specular) {
   for (int i = 0; i < gl_MaxLights; ++i) {
     if (gl_LightSource[i].position.w == 0.0)
       directionalLight(i, n, shininess, ambient, diffuse, specular);
@@ -106,3 +118,4 @@ void main() {
     diffuse*gl_FrontMaterial.diffuse+
     specular*gl_FrontMaterial.specular;
 }
+#endif

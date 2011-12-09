@@ -18,32 +18,46 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef PERPSECTIVE_RANGE_CAMERA_H
-#define PERPSECTIVE_RANGE_CAMERA_H
+#ifndef SHADER_PROGRAM_H
+#define SHADER_PROGRAM_H
 
-/** Perspective range camera implementation
+/** Shader program implementation
   * @author Ralf Kaestner ETHZ Autonomous Systems Lab.
   */
 
-#include "morsel/sensors/range_camera.h"
+#include "morsel/morsel.h"
 
-class PerspectiveRangeCamera :
-  public RangeCamera {
-public:
+#include <map>
+
+#include <shader.h>
+
+class ShaderProgram {
+PUBLISHED:
   /** Constructors
     */
-  PerspectiveRangeCamera(const std::string& name, const ShaderProgram&
-    program, const LVecBase2f& angles, const LVecBase2f& fov, const
-    LVecBase2f& numRays, const LVecBase2f& rangeLimits, const LVecBase2f&
-    resolution = LVecBase2f(128, 128), bool acquireColor = false,
-    std::string acquireLabel = "");
-    
+  ShaderProgram(std::string filename = "");
+  ShaderProgram(const ShaderProgram& src);
+
   /** Destructor
     */
-  virtual ~PerspectiveRangeCamera();
+  virtual ~ShaderProgram();
+
+  const std::string& getFilename() const;
+  std::string getLanguage() const;
+  bool isEmpty() const;
+  
+  bool load(std::string filename);
+  PointerTo<Shader> make();
+  void define(std::string variable, std::string value = "");
+  void undefine(std::string variable);
 protected:
-  virtual void setupLens();
-  virtual void setupRays();
+  std::string filename;
+  std::string text;
+  
+  std::map<std::string, std::string> definitions;
+
+  void preprocess(std::string& text);
+  size_t preprocessConditionals(std::string& text, size_t pos = 0);
 };
 
 #endif

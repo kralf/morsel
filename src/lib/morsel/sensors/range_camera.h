@@ -27,6 +27,8 @@
 
 #include "morsel/morsel.h"
 
+#include "morsel/utils/shader_program.h"
+
 #include <nodePath.h>
 #include <pnmImage.h>
 #include <texture.h>
@@ -51,10 +53,11 @@ public:
 
   /** Constructors
     */
-  RangeCamera(std::string name, const LVecBase2f& angles, const LVecBase2f&
-    fov, const LVecBase2f& numRays, const LVecBase2f& rangeLimits, const
-    LVecBase2f& resolution = LVecBase2f(128, 128), bool acquireColor = false,
-    std::string acquireLabel = "");
+  RangeCamera(const std::string& name, const ShaderProgram& program, const
+    LVecBase2f& angles, const LVecBase2f& fov, const LVecBase2f& numRays,
+    const LVecBase2f& rangeLimits, const LVecBase2f& resolution =
+    LVecBase2f(128, 128), bool acquireColor = false, std::string
+    acquireLabel = "");
 
   /** Destructor
     */
@@ -73,12 +76,14 @@ public:
   LPoint3f getPoint(int index) const;
   Colorf getColor(int index) const;
   size_t getLabel(int index) const;
+  Colorf getLabelColor(int index) const;
   void setActive(bool active);
 
   bool update(double time);
   void showFrustum();
   void hideFrustum();
 protected:
+  ShaderProgram program;
   LVecBase2f angles;
   LVecBase2f fov;
   LVecBase2f numRays;
@@ -94,7 +99,7 @@ protected:
   Texture labelMap;
   PointerTo<Camera> cameraNode;
   NodePath camera;
-  PointerTo<Shader> labelShader;
+  PointerTo<Shader> shader;
 
   double timestamp;
   mutable double lastDepthTimestamp;

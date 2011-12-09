@@ -27,6 +27,8 @@
 
 #include "morsel/morsel.h"
 
+#include "morsel/utils/shader_program.h"
+
 #include <nodePath.h>
 
 class RangeSensor;
@@ -36,9 +38,9 @@ class LaserView :
 PUBLISHED:
   /** Constructors
     */
-  LaserView(std::string name, NodePath& sensor, const Colorf& color,
-    bool showPoints = true, bool showLines = false, bool showColors = false,
-    bool showLabels = false);
+  LaserView(std::string name, NodePath& sensor, ShaderProgram& program,
+    const Colorf& color, bool showPoints = true, bool showLines = false,
+    bool showColors = false, bool showLabels = false);
 
   /** Destructor
     */
@@ -52,12 +54,15 @@ protected:
   bool showLines;
   bool showColors;
   bool showLabels;
-  PointerTo<Shader> pointShader;
+  PointerTo<Shader> shader;
 
-  std::vector<GeomNode*> nodes;
+  std::vector<PandaNode*> nodes;
   std::vector<GeomVertexData*> geomData;
   
-  void setupRendering();
+  void setupGeometries();
+  void setupShader(ShaderProgram& program);
+
+  void updateGeometries();
 };
 
 #endif

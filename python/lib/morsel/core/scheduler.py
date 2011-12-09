@@ -22,8 +22,8 @@ class Scheduler(object):
     self.realTime = True
     self.skipFrames = True
     self.pause = False
-    self.time = 0
-    self.frameTime = 0
+    self.time = self.clock.getLongTime()
+    self.frameTime = None
     self.lastTime = -1
     self.times = []
     self.tasks = {}

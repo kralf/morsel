@@ -1,0 +1,40 @@
+//Cg
+
+void vshader(uniform float4x4 mat_modelproj,
+    uniform float4 rangeLimits,
+    uniform sampler2D tex_0 : TEXUNIT0,
+#ifdef HAVE_COLOR
+    uniform sampler2D tex_1 : TEXUNIT1,
+#endif
+    in float4 vtx_position : POSITION,
+    in float4 vtx_color : COLOR,
+    in float2 vtx_texcoord0 : TEXCOORD0,
+    out float4 l_position : POSITION,
+    out float4 l_color : COLOR) {
+  l_position = float4(0.0, 0.0, 0.0, 1.0);
+  l_color = vtx_color;
+
+  if (vtx_position[2] > 0.0) {
+    float depth = tex2D(tex_0, vtx_texcoord0).r;
+    float range = rangeLimits[1]*rangeLimits[0]/(rangeLimits[1]-
+      depth*(rangeLimits[1]-rangeLimits[0]));
+
+    if ((range > rangeLimits[0]) && (range < rangeLimits[1])) {
+      l_position = float4(range*vtx_position[0], range,
+        range*vtx_position[1], 1.0);
+#ifdef HAVE_COLOR
+      l_color = tex2D(tex_1, vtx_texcoord0);
+#endif
+      l_color[3] = 1.0-range/rangeLimits[1];
+    }
+    else
+      l_color[3] = 0.0;
+  }
+
+  l_position = mul(mat_modelproj, l_position);
+}
+
+void fshader(in float4 l_color : COLOR,
+    out float4 o_color : COLOR) {
+  o_color = l_color;
+}

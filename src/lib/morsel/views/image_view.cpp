@@ -59,13 +59,13 @@ void ImageView::setupRendering() {
   int flags = GraphicsPipe::BF_require_window |
     GraphicsPipe::BF_fb_props_optional;
 
-  window = engine->make_output(window->get_pipe(), "window", 0, fbProps,
+  window = engine->make_output(window->get_pipe(), "Window", 0, fbProps,
     winProps, flags, window->get_gsg());
 
-  sceneNode = new PandaNode("scene");
+  sceneNode = new PandaNode("Scene");
   scene = attach_new_node(sceneNode);
 
-  cameraNode = new Camera("cam");
+  cameraNode = new Camera("Camera");
   cameraNode->set_camera_mask(BitMask32(1));
   cameraNode->set_scene(scene);
   camera = scene.attach_new_node(cameraNode);

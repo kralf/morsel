@@ -31,11 +31,11 @@ using namespace std;
 /* Constructors and Destructor                                               */
 /*****************************************************************************/
 
-PerspectiveRangeCamera::PerspectiveRangeCamera(string name, const LVecBase2f&
-    angles, const LVecBase2f& fov, const LVecBase2f& numRays, const
-    LVecBase2f& rangeLimits, const LVecBase2f& resolution, bool acquireColor,
-    string acquireLabel) :
-  RangeCamera(name, angles, fov, numRays, rangeLimits, resolution,
+PerspectiveRangeCamera::PerspectiveRangeCamera(const string& name, const
+    ShaderProgram& program, const LVecBase2f& angles, const LVecBase2f& fov,
+    const LVecBase2f& numRays, const LVecBase2f& rangeLimits, const
+    LVecBase2f& resolution, bool acquireColor, string acquireLabel) :
+  RangeCamera(name, program, angles, fov, numRays, rangeLimits, resolution,
     acquireColor, acquireLabel) {
   setupLens();
   setupRays();

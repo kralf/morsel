@@ -2,5 +2,4 @@
 # Submodules
 #===============================================================================
 
-from player   import *
-from recorder import *
+from shader_program import ShaderProgram

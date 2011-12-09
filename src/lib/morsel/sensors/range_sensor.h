@@ -26,6 +26,7 @@
   */
 
 #include "morsel/morsel.h"
+
 #include "morsel/sensors/range_camera.h"
 
 #include <nodePath.h>
@@ -49,13 +50,12 @@ public:
 PUBLISHED:
   /** Constructors
     */
-  RangeSensor(std::string name, const LVecBase2f& minAngles,
-    const LVecBase2f& maxAngles, const LVecBase2f& resolution,
-    const LVecBase2f& rangeLimits, const LVecBase2f&
-    cameraMaxFOV = LVecBase2f(60.0*M_PI/180.0, 60.0*M_PI/180.0),
-    const LVecBase2f& cameraResolution = LVecBase2f(128, 128),
-    bool spherical = false, bool acquireColor = false,
-    std::string acquireLabel = "");
+  RangeSensor(std::string name, ShaderProgram& program, const LVecBase2f&
+    minAngles, const LVecBase2f& maxAngles, const LVecBase2f& resolution,
+    const LVecBase2f& rangeLimits, const LVecBase2f& cameraMaxFOV =
+    LVecBase2f(60.0*M_PI/180.0, 60.0*M_PI/180.0), const LVecBase2f&
+    cameraResolution = LVecBase2f(128, 128), bool spherical = false, bool
+    acquireColor = false, std::string acquireLabel = "");
 
   /** Destructor
     */
@@ -66,6 +66,8 @@ PUBLISHED:
   const LVecBase2f& getResolution() const;
   const LVecBase2f& getRangeLimits() const;
   const LVecBase2f& getFOV() const;
+  bool acquiresColor() const;
+  bool acquiresLabel() const;
   size_t getNumCameras() const;
   const RangeCamera& getCamera(int index) const;
   size_t getNumRays() const;
@@ -76,6 +78,7 @@ PUBLISHED:
   void showFrustums();
   void hideFrustums();
 protected:
+  ShaderProgram& program;
   LVecBase2f minAngles;
   LVecBase2f maxAngles;
   LVecBase2f resolution;

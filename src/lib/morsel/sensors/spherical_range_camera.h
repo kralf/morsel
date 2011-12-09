@@ -32,10 +32,11 @@ class SphericalRangeCamera :
 public:
   /** Constructors
     */
-  SphericalRangeCamera(std::string name, const LVecBase2f& angles,
-    const LVecBase2f& fov, const LVecBase2f& numRays, const LVecBase2f&
-    rangeLimits, const LVecBase2f& resolution = LVecBase2f(256, 256),
-    bool acquireColor = false, std::string acquireLabel = "");
+  SphericalRangeCamera(const std::string& name, const ShaderProgram&
+    program, const LVecBase2f& angles, const LVecBase2f& fov, const
+    LVecBase2f& numRays, const LVecBase2f& rangeLimits, const
+    LVecBase2f& resolution = LVecBase2f(256, 256), bool
+    acquireColor = false, std::string acquireLabel = "");
     
   /** Destructor
     */

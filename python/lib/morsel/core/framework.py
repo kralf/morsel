@@ -25,6 +25,7 @@ class Framework(object):
     self.arguments = argv[0]
     self.packages = {}
     self.paths = {}
+    self.callbacks = {}
     self.configFiles = ["defaults.conf"];
     for argument in self.arguments[1:]:
       self.configFiles.append(argument)
@@ -35,6 +36,7 @@ class Framework(object):
     self.objectManager = None
     self.console = None
     self.world = None
+    self.camera = None
 
     self.debug = False
   
@@ -341,11 +343,19 @@ class Framework(object):
         Console.OUTPUT_PYTHON, inspect.stack()[2][0].f_globals)
       self.console.toggle()
       self.objectManager = ObjectManager()
+      self.camera = self.base.camera.getChild(0).node()
 
+      self.camera.getDisplayRegion(0).setDrawCallback(
+        panda.PythonCallbackObject(self.drawCallback))
       self.base.run()
     else:
       self.error("Framework.run() may only be called once.")
 
+#-------------------------------------------------------------------------------
+
+  def addDrawCallback(self, name, callback):
+    self.callbacks[name] = callback
+  
 #-------------------------------------------------------------------------------
 
   def exitHandler(self, key):
@@ -355,4 +365,11 @@ class Framework(object):
 
   def pauseHandler(self, key):
     self.scheduler.togglePause()
+
+#-------------------------------------------------------------------------------
+
+  def drawCallback(self, data):
+    for callback in self.callbacks.itervalues():
+      callback()
     
+    data.upcall()

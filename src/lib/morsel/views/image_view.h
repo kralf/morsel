@@ -42,7 +42,7 @@ PUBLISHED:
     */
   virtual ~ImageView();
 
-  bool update( double time );
+  bool update(double time);
 protected:
   ImageSensor& sensor;
   PointerTo<GraphicsOutput> window;

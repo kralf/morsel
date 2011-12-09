@@ -32,10 +32,12 @@ using namespace std;
 /* Constructors and Destructor                                               */
 /*****************************************************************************/
 
-RangeCamera::RangeCamera(string name, const LVecBase2f& angles, const
-    LVecBase2f& fov, const LVecBase2f& numRays, const LVecBase2f& rangeLimits,
-    const LVecBase2f& resolution, bool acquireColor, string acquireLabel) :
+RangeCamera::RangeCamera(const string& name, const ShaderProgram& program,
+    const LVecBase2f& angles, const LVecBase2f& fov, const LVecBase2f&
+    numRays, const LVecBase2f& rangeLimits, const LVecBase2f& resolution,
+    bool acquireColor, string acquireLabel) :
   NodePath(name),
+  program(program),
   angles(angles),
   fov(fov),
   numRays(numRays),
@@ -124,7 +126,7 @@ Colorf RangeCamera::getColor(int index) const {
     colorMap.store(colorTexels);
     lastColorTimestamp = timestamp;
   }
-  
+
   color[0] = colorTexels.get_red(ray.column, ray.row);
   color[1] = colorTexels.get_green(ray.column, ray.row);
   color[2] = colorTexels.get_blue(ray.column, ray.row);
@@ -142,6 +144,23 @@ size_t RangeCamera::getLabel(int index) const {
   }
 
   return Color::rgbToInt(labelTexels.get_xel_a(ray.column, ray.row));
+}
+
+Colorf RangeCamera::getLabelColor(int index) const {
+  const Ray& ray = rays[index];
+  Colorf color;
+
+  if (timestamp > lastLabelTimestamp) {
+    labelMap.store(labelTexels);
+    lastLabelTimestamp = timestamp;
+  }
+
+  color[0] = labelTexels.get_red(ray.column, ray.row);
+  color[1] = labelTexels.get_green(ray.column, ray.row);
+  color[2] = labelTexels.get_blue(ray.column, ray.row);
+  color[3] = 1.0;
+
+  return color;
 }
 
 void RangeCamera::setActive(bool active) {
@@ -171,18 +190,18 @@ void RangeCamera::setupCamera(PointerTo<Lens> lens) {
   depthMap.set_minfilter(Texture::FT_nearest);
   depthMap.set_magfilter(Texture::FT_nearest);
 
-  buffer = Morsel::getWindow(0)->make_texture_buffer("depthmap",
+  buffer = Morsel::getWindow(0)->make_texture_buffer("DepthMap",
     resolution[0], resolution[1], &depthMap, true);
 
-  cameraNode = new Camera("cam");
+  cameraNode = new Camera("Camera");
   cameraNode->set_camera_mask(BitMask32(1));
   cameraNode->set_scene(Morsel::getGSG()->get_scene()->get_scene_root());
   cameraNode->set_lens(lens);
 
   camera = attach_new_node(cameraNode);
-  camera.set_light_off(true);
-  camera.set_material_off(true);
-  camera.set_color_off(true);
+  camera.set_light_off(numeric_limits<int>::max());
+  camera.set_material_off(numeric_limits<int>::max());
+  camera.set_color_off(numeric_limits<int>::max());
   camera.set_transparency(TransparencyAttrib::M_none);
 
   PointerTo<DisplayRegion> drd = buffer->make_display_region();
@@ -200,21 +219,12 @@ void RangeCamera::setupCamera(PointerTo<Lens> lens) {
     labelMap.set_magfilter(Texture::FT_nearest);
     buffer->add_render_texture(&labelMap, GraphicsOutput::RTM_copy_ram,
       DrawableRegion::RTP_color);
-    
-    ostringstream stream;
-    stream << "void vshader(uniform float4x4 mat_modelproj," << endl;
-    stream << "    in float4 vtx_position : POSITION," << endl;
-    stream << "    out float4 l_position : POSITION) {" << endl;
-    stream << "  l_position = mul(mat_modelproj, vtx_position);" << endl;
-    stream << "}" << endl;
-    stream << "void fshader(uniform float4 " << acquireLabel << "," << endl;
-    stream << "    out float4 o_color : COLOR) {" << endl;
-    stream << "  o_color = " << acquireLabel << ";" << endl;
-    stream << "}" << endl;
-    labelShader = Shader::make(stream.str(), Shader::SL_Cg);
-    
-    NodePath shaderAttrib("shader label");
-    shaderAttrib.set_shader(labelShader);
+
+    program.define("LABEL", acquireLabel);
+    shader = program.make();
+
+    NodePath shaderAttrib("ShaderLabel");
+    shaderAttrib.set_shader(shader);
     shaderAttrib.set_shader_input(acquireLabel, Color::intToRgb(0));
     cameraNode->set_initial_state(shaderAttrib.get_state());
     buffer->set_clear_color(Color::intToRgb(0));

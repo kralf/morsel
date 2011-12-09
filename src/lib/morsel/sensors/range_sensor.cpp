@@ -19,6 +19,7 @@
  ***************************************************************************/
 
 #include "range_sensor.h"
+
 #include "perspective_range_camera.h"
 #include "spherical_range_camera.h"
 
@@ -34,12 +35,13 @@ using namespace std;
 /* Constructors and Destructor                                               */
 /*****************************************************************************/
 
-RangeSensor::RangeSensor(std::string name, const LVecBase2f& minAngles,
-    const LVecBase2f& maxAngles, const LVecBase2f& resolution, const
-    LVecBase2f& rangeLimits, const LVecBase2f& cameraMaxFOV, const
-    LVecBase2f& cameraResolution, bool spherical, bool acquireColor,
+RangeSensor::RangeSensor(std::string name, ShaderProgram& program, const
+    LVecBase2f& minAngles, const LVecBase2f& maxAngles, const LVecBase2f&
+    resolution, const LVecBase2f& rangeLimits, const LVecBase2f& cameraMaxFOV,
+    const LVecBase2f& cameraResolution, bool spherical, bool acquireColor,
     std::string acquireLabel) :
   NodePath(name),
+  program(program),
   minAngles(minAngles),
   maxAngles(maxAngles),
   resolution(resolution),
@@ -84,6 +86,14 @@ const LVecBase2f& RangeSensor::getRangeLimits() const {
 
 const LVecBase2f& RangeSensor::getFOV() const {
   return fov;
+}
+
+bool RangeSensor::acquiresColor() const {
+  return acquireColor;
+}
+
+bool RangeSensor::acquiresLabel() const {
+  return !acquireLabel.empty();
 }
 
 size_t RangeSensor::getNumCameras() const {
@@ -180,12 +190,12 @@ void RangeSensor::setupCameras() {
 
       RangeCamera* camera;
       if (spherical)
-        camera = new SphericalRangeCamera(stream.str(),
+        camera = new SphericalRangeCamera(stream.str(), program,
           LVecBase2f(hAngles[j], vAngles[i]), LVecBase2f(hFOVs[j], vFOVs[i]),
           LVecBase2f(hNumRays[j], vNumRays[i]), rangeLimits, cameraResolution,
           acquireColor, acquireLabel);
       else
-        camera = new PerspectiveRangeCamera(stream.str(),
+        camera = new PerspectiveRangeCamera(stream.str(), program,
           LVecBase2f(hAngles[j], vAngles[i]), LVecBase2f(hFOVs[j], vFOVs[i]),
           LVecBase2f(hNumRays[j], vNumRays[i]), rangeLimits, cameraResolution,
           acquireColor, acquireLabel);

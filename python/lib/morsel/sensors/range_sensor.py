@@ -8,15 +8,16 @@ from math import pi
 #-------------------------------------------------------------------------------
 
 class RangeSensor(Sensor):
-  def __init__(self, world, name, mesh, fieldOfView = [(-30, 30), (-30, 30)],
-      resolution = [1.0, 1.0], rangeLimits = [0.0, 10.0], spherical = False,
-      acquireColor = False, acquireLabel = None,
-      cameraMaxFieldOfView = [60.0, 60.0], cameraResolution = [128, 128],
-      **kargs):
+  def __init__(self, world, name, mesh, shader = "range_sensor.cg",
+      fieldOfView = [(-30, 30), (-30, 30)], resolution = [1.0, 1.0],
+      rangeLimits = [0.0, 10.0], spherical = False, acquireColor = False,
+      acquireLabel = None, cameraMaxFieldOfView = [60.0, 60.0],
+      cameraResolution = [128, 128], **kargs):
     Sensor.__init__(self, world, name, **kargs)
 
     self.mesh = Mesh(name = name+"Mesh", filename = mesh, parent = self)
     
+    self.shaderProgram = ShaderProgram(filename = shader)
     self.fieldOfView = fieldOfView
     self.resolution = resolution
     self.rangeLimits = rangeLimits
@@ -29,7 +30,7 @@ class RangeSensor(Sensor):
     else:
       self.acquireLabel = ""
 
-    self.sensor = CRangeSensor(name,
+    self.sensor = CRangeSensor(name, self.shaderProgram,
       panda.Vec2(self.fieldOfView[0][0], self.fieldOfView[1][0])*pi/180.0,
       panda.Vec2(self.fieldOfView[0][1], self.fieldOfView[1][1])*pi/180.0,
       panda.Vec2(*self.resolution)*pi/180.0,
