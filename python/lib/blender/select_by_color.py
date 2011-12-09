@@ -1,10 +1,10 @@
 #!BPY
 
 """
-Name: 'Morsel Path (.pth)...'
+Name: 'Select by Color'
 Blender: 241
-Group: 'Export'
-Tooltip: 'Export to Morsel Path file format (.pth)'
+Group: 'Object'
+Tooltip: 'Select all objects sharing the color of the selected object'
 """
 
 ############################################################################
@@ -30,44 +30,35 @@ Tooltip: 'Export to Morsel Path file format (.pth)'
 __author__ = "Ralf Kaestner"
 
 import Blender
-from Blender import Scene
-from Blender.Scene import *
 from Blender import Object
-from Blender.Object import *
-from Blender import Curve
-from Blender.Curve import *
-import BPyMesh
+from Blender import Draw
 
-import os, string
+def error(what):
+  Blender.Draw.PupMenu("Error: "+what)
 
-""" Blender Morsel Path export script
-    @author Ralf Kaestner SU Computer Science Dept.
-"""
+def notice(what):
+  Blender.Draw.PupMenu("Notice: "+what)
 
-def exportPath(curve, filename):
-  print "Exporting curve "+curve.name+" to "+filename
-  
-  mesh = BPyMesh.getMeshFromObject(curve)
-  mesh.transform(curve.matrixWorld)
-  numVertices = len(mesh.verts)
+def selectObjects(material):
+  for object in Object.Get():
+    materials = object.getData(mesh = 1).materials
 
-  file = open(filename, "w")
-  for i in range(0, numVertices):
-    vertex = mesh.verts[i]
-    file.write("%g %g %g\n" % (vertex.co[0], vertex.co[1], vertex.co[2]))
-  if curve.data.isCyclic():
-    vertex = mesh.verts[0]
-    file.write("%g %g %g\n" % (vertex.co[0], vertex.co[1], vertex.co[2]))    
-  file.close()
+    for mat in materials:
+      if (mat.getRGBCol() == material.getRGBCol()):
+        object.select(True)
+      else:
+        object.select(False)
 
-def exportPaths(filename):
-  dirname = os.path.dirname(filename)
-  scene = Scene.GetCurrent()
+if __name__ == '__main__':
+  selected = Object.GetSelected()
 
-  for object in scene.objects:
-    if object.type == "Curve":
-      name = string.lower(object.name)
-      exportPath(object, dirname+"/"+name+".pth")
+  if selected:
+    materials = selected[0].getData(mesh = 1).materials
+    if materials:
+      selectObjects(materials[0])
+    else:
+      error("Selected object has no material")
+  else:
+    error("No object selected")
 
-if __name__ == "__main__":
-  Blender.Window.FileSelector(exportPaths, "Export Morsel Paths", "*.pth")
+  notice("%d objects selected" % (len(Object.GetSelected())))
