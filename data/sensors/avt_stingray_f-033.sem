@@ -1,6 +1,7 @@
 type        = "ImageSensor"
 
-mesh        = "sensors/low_poly/avt_stingray_f-xxx.bam"
+mesh        = {"low_poly" : "sensors/low_poly/avt_stingray_f-xxx.bam",
+               "high_poly": "sensors/high_poly/avt_stingray_f-xxx.bam"}
 solid       = "Box"
 body        = "Box"
 mass        = 0.2
