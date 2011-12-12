@@ -1,6 +1,6 @@
 type             = "RangeSensor"
 
-mesh             = "sensors/sick_lms100.bam"
+mesh             = "sensors/low_poly/sick_lms100.bam"
 solid            = "Box"
 body             = "Box"
 mass             = 1.5

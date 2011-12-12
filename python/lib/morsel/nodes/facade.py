@@ -5,9 +5,16 @@ from morsel.nodes import *
 
 def Mesh(filename = None, **kargs):
   if filename:
-    meshFile = framework.findFile(filename)
-    if not meshFile:
-      framework.error("Mesh file '"+filename+"' not found")
+    if isinstance(filename, dict):
+      meshFile = {}
+      for layer in filename.iterkeys():
+        meshFile[layer] = framework.findFile(filename[layer])
+        if not meshFile[layer]:
+          framework.error("Mesh file '"+filename[layer]+"' not found")
+    else:
+      meshFile = framework.findFile(filename)
+      if not meshFile:
+        framework.error("Mesh file '"+filename+"' not found")
   else:
     meshFile = None
     

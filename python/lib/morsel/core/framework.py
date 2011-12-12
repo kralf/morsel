@@ -26,6 +26,7 @@ class Framework(object):
     self.packages = {}
     self.paths = {}
     self.callbacks = {}
+    self.layers = {}
     self.configFiles = ["defaults.conf"];
     for argument in self.arguments[1:]:
       self.configFiles.append(argument)
@@ -37,6 +38,7 @@ class Framework(object):
     self.console = None
     self.world = None
     self.camera = None
+    self.activeLayer = None
 
     self.debug = False
   
@@ -206,6 +208,21 @@ class Framework(object):
 
 #-------------------------------------------------------------------------------
 
+  def getActiveLayer(self):
+    return self._activeLayer
+
+  def setActiveLayer(self, layer):
+    if not layer or self.layers.has_key(layer):
+      self._activeLayer = layer
+      if self.world and self.world.scene:
+        self.world.scene.activeLayer = layer
+    else:
+      self.error("Layer '"+layer+"' is undefined.")
+
+  activeLayer = property(getActiveLayer, setActiveLayer)
+
+#-------------------------------------------------------------------------------
+
   def include(self, package, **kargs):
     self.packages[package] = Package(package, **kargs)
     
@@ -227,6 +244,13 @@ class Framework(object):
 
     if not path in self.paths[extension]:
       self.paths[extension].append(path)
+
+#-------------------------------------------------------------------------------
+
+  def addLayer(self, layer, description):
+    self.layers[layer] = description
+    if len(self.layers) == 1:
+      self.activeLayer = layer
 
 #-------------------------------------------------------------------------------
 
@@ -278,7 +302,7 @@ class Framework(object):
       context = inspect.stack()[1][0].f_globals
       execfile(configFile, context)
     else:
-      self.error("Configuration file '" + filename + "' not found.")
+      self.error("Configuration file '"+filename+"' not found.")
     
 #-------------------------------------------------------------------------------
 
@@ -365,6 +389,14 @@ class Framework(object):
 
   def pauseHandler(self, key):
     self.scheduler.togglePause()
+
+#-------------------------------------------------------------------------------
+
+  def switchLayerHandler(self, key):
+    layers = self.layers.keys()
+    index = layers.index(self.activeLayer)
+
+    self.activeLayer = layers[(index+1)%len(layers)]
 
 #-------------------------------------------------------------------------------
 

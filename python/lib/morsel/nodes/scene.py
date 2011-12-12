@@ -14,18 +14,36 @@ from facade import Collider, Solid
 #-------------------------------------------------------------------------------
 
 class Scene(Node):
-  def __init__(self, world, name, **kargs):
+  def __init__(self, world, name, activeLayer = None, **kargs):
     Node.__init__(self, world, name, parent = render, **kargs)
 
     if not world.scene:
       world.scene = self
     else:
       framework.error("World already has a scene")
-
+      
     self.collider = Collider(name = name+"Collider", parent = self,
       collisionMasks = [STATIC_COLLISIONS_FROM, STATIC_COLLISIONS_INTO])
     self.solid = Solid(name = name+"Solid", type = "Empty", mesh = self,
       parent = self)
+
+    if activeLayer:
+      self.activeLayer = activeLayer
+    else:
+      self.activeLayer = framework.activeLayer
+
+#-------------------------------------------------------------------------------
+
+  def getActiveLayer(self):
+    return self._activeLayer
+
+  def setActiveLayer(self, layer):
+    self._activeLayer = layer
+
+    for mesh in self.meshes:
+      mesh.setActiveLayer(layer)
+
+  activeLayer = property(getActiveLayer, setActiveLayer)
 
 #-------------------------------------------------------------------------------
 

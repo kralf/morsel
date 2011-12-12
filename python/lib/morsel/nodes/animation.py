@@ -15,11 +15,13 @@ class Animation(Node):
     self.startFrame = startFrame
     self.endFrame = endFrame
     self.loop = loop
-    
-    self.actor = Actor(mesh.model)
 
-    if not self.animation:
-      self.animation = self.actor.getAnimNames()[0]
+    for layer in self.mesh.layers:
+      actor = Actor(self.mesh.getModel(layer))
+      self.setActor(actor, layer)
+      if not self.animation:
+        self.setAnimation(actor.getAnimNames()[0])
+      
     if not self.endFrame:
       self.endFrame = self.actor.getNumFrames(self.animation)-1
     self.numFrames = (self.endFrame-self.startFrame)+1
@@ -27,14 +29,61 @@ class Animation(Node):
 
 #-------------------------------------------------------------------------------
 
-  def getActor(self):
-    return self._actor
+  def getActor(self, layer = None):    
+    if layer:
+      return self._actor[layer]
+    else:
+      return self._actor
 
-  def setActor(self, actor):
-    self._actor = actor
-    self._actor.reparentTo(self.mesh.model)
+  def setActor(self, actor, layer = None):
+    if layer:
+      if not hasattr(self, "_actor"):
+        self._actor = {}
+      self._actor[layer] = actor
+      actor.reparentTo(self.mesh.getModel(layer))
+    else:
+      self._actor = actor
+      actor.reparentTo(self.mesh.model)
 
   actor = property(getActor, setActor)
+
+#-------------------------------------------------------------------------------
+
+  def getActors(self):
+    if isinstance(self._actor, dict):
+      return self._actor.itervalues()
+    else:
+      return [self._actor]
+
+  actors = property(getActors)
+
+#-------------------------------------------------------------------------------
+
+  def getAnimation(self, layer = None):
+    if layer:
+      return self._animation[layer]
+    else:
+      return self._animation
+
+  def setAnimation(self, animation, layer = None):
+    if layer:
+      if not hasattr(self, "_animation"):
+        self._animation = {}
+      self._animation[layer] = animation
+    else:
+      self._animation = animation
+
+  animation = property(getAnimation, setAnimation)
+
+#-------------------------------------------------------------------------------
+
+  def getAnimations(self):
+    if isinstance(self._animation, dict):
+      return self._animation.itervalues()
+    else:
+      return [self._animation]
+
+  animations = property(getAnimations)
 
 #-------------------------------------------------------------------------------
 
@@ -46,5 +95,7 @@ class Animation(Node):
       time = min(self.world.time, self.duration)
       
     frame = self.startFrame+round(self.numFrames*time/self.duration)
-    self.actor.pose(self.animation, frame)
+
+    for layer in self.mesh.layers:
+      self.getActor(layer).pose(self.getAnimation(layer), frame)
     

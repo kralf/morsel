@@ -1,6 +1,7 @@
 type             = "RangeSensor"
 
-mesh             = "sensors/sick_lms200.bam"
+mesh             = {"low_poly" : "sensors/low_poly/sick_lms200.bam",
+                    "high_poly": "sensors/high_poly/sick_lms200.bam"}
 solid            = "Box"
 body             = "Box"
 mass             = 4.5

@@ -38,4 +38,7 @@ framework.setConfigVariable("depth-bits", 16)
 framework.setConfigVariable("direct-gui-edit", True)
 framework.setConfigVariable("basic-shaders-only", False)
 
+framework.addLayer("low_poly", "Low polygon meshes")
+framework.addLayer("high_poly", "High polygon meshes")
+
 framework.run()
