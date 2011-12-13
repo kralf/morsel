@@ -7,6 +7,7 @@ from light import Light
 from collection import Collection
 from iterator import Iterator
 from scene import Scene
+from text import Text
 from mesh import Mesh
 from animation import Animation
 from collider import Collider

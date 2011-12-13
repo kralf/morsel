@@ -1,7 +1,6 @@
+from morsel.panda import *
 from morsel.nodes import View
 from morsel.morselc import ImageView as CImageView
-
-from morsel.panda import *
 
 #-------------------------------------------------------------------------------
 

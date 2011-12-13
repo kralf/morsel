@@ -40,6 +40,7 @@ class Framework(object):
     self.camera = None
     self.activeLayer = None
 
+    self.frame = 0
     self.debug = False
   
 #-------------------------------------------------------------------------------
@@ -359,45 +360,45 @@ class Framework(object):
       self.base = ShowBase()
       self.scheduler = Scheduler()
       self.eventManager = EventManager()
-
-      for configFile in self.configFiles:
-        self.loadConfigFile(configFile)
-
       self.console = Console.pandaConsole(Console.INPUT_GUI |
         Console.OUTPUT_PYTHON, inspect.stack()[2][0].f_globals)
       self.console.toggle()
       self.objectManager = ObjectManager()
       self.camera = self.base.camera.getChild(0).node()
 
+      for configFile in self.configFiles:
+        self.loadConfigFile(configFile)
+
       self.camera.getDisplayRegion(0).setDrawCallback(
         panda.PythonCallbackObject(self.drawCallback))
       self.base.run()
     else:
-      self.error("Framework.run() may only be called once.")
+      self.error("Framework already running")
+
+#-------------------------------------------------------------------------------
+
+  def exit(self):
+    exit
+
+#-------------------------------------------------------------------------------
+
+  def toggleLayer(self):
+    layers = self.layers.keys()
+    index = layers.index(self.activeLayer)
+
+    self.activeLayer = layers[(index+1)%len(layers)]
+
+#-------------------------------------------------------------------------------
+
+  def saveScreen(self):    
+    self.base.win.saveScreenshot("frame-%06d.jpg" % (self.frame))
+    self.frame += 1
 
 #-------------------------------------------------------------------------------
 
   def addDrawCallback(self, name, callback):
     self.callbacks[name] = callback
   
-#-------------------------------------------------------------------------------
-
-  def exitHandler(self, key):
-    exit
-
-#-------------------------------------------------------------------------------
-
-  def pauseHandler(self, key):
-    self.scheduler.togglePause()
-
-#-------------------------------------------------------------------------------
-
-  def switchLayerHandler(self, key):
-    layers = self.layers.keys()
-    index = layers.index(self.activeLayer)
-
-    self.activeLayer = layers[(index+1)%len(layers)]
-
 #-------------------------------------------------------------------------------
 
   def drawCallback(self, data):

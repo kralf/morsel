@@ -4,19 +4,37 @@ from panda3d.direct.showbase.DirectObject import DirectObject
 
 class EventManager(DirectObject):
   def __init__(self):
-    self.handlers = {}
-    
+    DirectObject.__init__(self)
+
+    self.eventHandlers = {}
+    self.keyHandlers = {}
+
 #-------------------------------------------------------------------------------
 
-  def addHandler(self, key, function):
-    if not self.handlers.has_key(key):
-      self.handlers[ key ] = {}
+  def addEventHandler(self, event, function):
+    if not self.eventHandlers.has_key(event):
+      self.eventHandlers[event] = []
+
+    self.eventHandlers[event].append(function)
+    self.accept(event, self.dispatchEvent, [event])
+
+#-------------------------------------------------------------------------------
+
+  def addKeyHandler(self, key, function):
+    if not self.keyHandlers.has_key(key):
+      self.keyHandlers[key] = []
       
-    self.handlers[key][function] = function
-    self.accept(key, self.dispatch, [key])
+    self.keyHandlers[key].append(function)
+    self.accept(key, self.dispatchKey, [key])
 
 #-------------------------------------------------------------------------------
 
-  def dispatch(self, key):
-    for function in self.handlers[key]:
-      function(key)
+  def dispatchEvent(self, event):
+    for function in self.eventHandlers[event]:
+      function()
+
+#-------------------------------------------------------------------------------
+
+  def dispatchKey(self, key):
+    for function in self.keyHandlers[key]:
+      function()

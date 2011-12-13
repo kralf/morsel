@@ -10,5 +10,4 @@ from sys import exit
 
 from _world import *
 from _nodes import *
-from _screenshot import *
 from _utility import *

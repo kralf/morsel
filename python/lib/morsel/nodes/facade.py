@@ -3,6 +3,12 @@ from morsel.nodes import *
 
 #-------------------------------------------------------------------------------
 
+def Text(**kargs):
+  return framework.createInstance("nodes", type = "Text",
+    world = framework.world, **kargs)
+
+#-------------------------------------------------------------------------------
+
 def Mesh(filename = None, **kargs):
   if filename:
     if isinstance(filename, dict):

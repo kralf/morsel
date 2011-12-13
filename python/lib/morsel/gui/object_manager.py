@@ -125,12 +125,14 @@ class ObjectManager(DirectObject.DirectObject):
     
     i = 0
     selected = 0
-    for mesh in framework.world.scene.meshes:
-      self.objects[mesh.getName()] = mesh
-      items.append(mesh.getName())
-      if mesh == base.camera.getParent():
-        selected = i
-      i = i + 1
+
+    if framework.world and framework.world.scene:
+      for mesh in framework.world.scene.meshes:
+        self.objects[mesh.getName()] = mesh
+        items.append(mesh.getName())
+        if mesh == base.camera.getParent():
+          selected = i
+        i = i + 1
     self.objectMenu["items"] = items
     if len(items) > 0:
       self.objectMenu.set(selected, 0)
