@@ -3,8 +3,8 @@ from label import Label
 #-------------------------------------------------------------------------------
 
 class HelpDisplay(Label):
-  def __init__(self, gui, name = "HelpDisplay", anchor = ["Center", "Bottom"],
-      origin = [0, -1], margin = [1, 1], align = "Left", hidden = True,
+  def __init__(self, gui, name = "HelpDisplay", anchor = ["Center", "Center"],
+      origin = [0, 0], margin = [1, 1], align = "Left", hidden = True,
       **kargs):
 
     Label.__init__(self, gui, name, anchor = anchor, origin = origin,
@@ -14,7 +14,7 @@ class HelpDisplay(Label):
 
   def setHidden(self, hidden):
     if self.hidden and not hidden:
-      text = "Keyboard shortcuts:\n\n"
+      text = "Framework keyboard shortcuts:\n\n"
       for (key, description) in framework.shortcuts.iteritems():
         text += key.upper()+": "+description+"\n"
         

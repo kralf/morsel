@@ -62,9 +62,9 @@ class Mesh(Object):
       self._model[layer] = model
       
       if layer == self.activeLayer:
-        model.show()
+        model.unstash()
       else:
-        model.hide()
+        model.stash()
     else:
       self._model = model
 
@@ -101,9 +101,9 @@ class Mesh(Object):
     if self.layers:
       for layer in self.layers:
         if not layer or layer == self._activeLayer:
-          self.getModel(layer).show()
+          self.getModel(layer).unstash()
         else:
-          self.getModel(layer).hide()
+          self.getModel(layer).stash()
 
   activeLayer = property(getActiveLayer, setActiveLayer)
 
