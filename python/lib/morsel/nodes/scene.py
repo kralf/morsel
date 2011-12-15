@@ -1,5 +1,5 @@
-from morsel.world.globals import *
-from node import Node
+from globals import *
+from object import Object
 from iterator import Iterator
 from mesh import Mesh
 from solid import Solid
@@ -13,24 +13,20 @@ from facade import Collider, Solid
 
 #-------------------------------------------------------------------------------
 
-class Scene(Node):
-  def __init__(self, world, name, activeLayer = None, **kargs):
-    Node.__init__(self, world, name, parent = render, **kargs)
-
-    if not world.scene:
-      world.scene = self
-    else:
-      framework.error("World already has a scene")
-      
-    self.collider = Collider(name = name+"Collider", parent = self,
-      collisionMasks = [STATIC_COLLISIONS_FROM, STATIC_COLLISIONS_INTO])
-    self.solid = Solid(name = name+"Solid", type = "Empty", mesh = self,
-      parent = self)
+class Scene(Object):
+  def __init__(self, world, name, activeLayer = None, collisionMasks =
+      [STATIC_COLLISIONS_FROM, STATIC_COLLISIONS_INTO], **kargs):
+    Object.__init__(self, world, name, parent = render, **kargs)
 
     if activeLayer:
       self.activeLayer = activeLayer
     else:
       self.activeLayer = framework.activeLayer
+
+    self.collider = Collider(name = name+"Collider", parent = self,
+      collisionMasks = collisionMasks)
+    self.solid = Solid(name = name+"Solid", type = "Empty", mesh = self,
+      parent = self)
 
 #-------------------------------------------------------------------------------
 

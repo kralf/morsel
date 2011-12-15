@@ -5,8 +5,8 @@ from morsel.math import Quaternion
 #-------------------------------------------------------------------------------
 
 class Path(Node):
-  def __init__(self, world, name, filename = None, **kargs):
-    Node.__init__(self, world, name, **kargs)
+  def __init__(self, name, filename = None, **kargs):
+    Node.__init__(self, name, **kargs)
 
     self.filename = None
     self.positions = []

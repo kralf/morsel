@@ -41,8 +41,8 @@ class World(Base):
 #-------------------------------------------------------------------------------
 
   def updateGraphics(self):
-    for animation in self.animations:
-      animation.updateGraphics()
+    for mesh in self.meshes:
+      mesh.updateGraphics()
     for actuator in self.actuators:
       actuator.updateGraphics()
     for sensor in self.sensors:

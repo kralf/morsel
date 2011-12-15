@@ -6,9 +6,9 @@ import math
 #-------------------------------------------------------------------------------
 
 class Animation(Node):
-  def __init__(self, world, name, mesh, animation = None, startFrame = 0,
+  def __init__(self, name, mesh, animation = None, startFrame = 0,
       endFrame = None, loop = True, parent = None, **kargs):
-    Node.__init__(self, world, name, parent = mesh.model, **kargs)
+    Node.__init__(self, name, parent = mesh.model, **kargs)
 
     self.mesh = mesh
     self.animation = animation
@@ -87,12 +87,11 @@ class Animation(Node):
 
 #-------------------------------------------------------------------------------
 
-  def updateGraphics(self):
+  def step(self, time):
     if self.loop:
-      time = self.world.time-math.floor(self.world.time/
-        self.duration)*self.duration
+      time = time-math.floor(time/self.duration)*self.duration
     else:
-      time = min(self.world.time, self.duration)
+      time = min(time, self.duration)
       
     frame = self.startFrame+round(self.numFrames*time/self.duration)
 

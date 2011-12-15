@@ -1,16 +1,15 @@
 from panda3d import pandac as panda
 from panda3d.direct.showbase.ShowBase import ShowBase
 
+from morsel.config import Configuration
+
 from scheduler import Scheduler
 from event_manager import EventManager
 from package import Package
 
-from morsel.console import interactive_console as Console
-from morsel.gui.object_manager import ObjectManager
-from morsel.config import *
-
 from math import *
-from os import *
+import sys
+import os
 from os.path import *
 
 import __builtin__
@@ -27,22 +26,32 @@ class Framework(object):
     self.paths = {}
     self.callbacks = {}
     self.layers = {}
-    self.configFiles = ["defaults.conf"];
-    for argument in self.arguments[1:]:
-      self.configFiles.append(argument)
-      
+    self.shortcuts = {}
+
     self.base = None
+    self.window = None
+    self.displayRegion = None
+    self.camera = None
+    
     self.scheduler = None
     self.eventManager = None
-    self.objectManager = None
-    self.console = None
+    self.gui = None
     self.world = None
-    self.camera = None
+    
     self.activeLayer = None
-
     self.frame = 0
+    
     self.debug = False
-  
+
+    self.include("morsel")
+    self.configuration = Configuration()    
+    self.addPath("conf", self.configuration.configurationPath)
+    self.configFiles = ["defaults.conf"]
+    self.windowTitle = self.configuration.fullName
+    
+    for argument in self.arguments[1:]:
+      self.configFiles.append(argument)
+
 #-------------------------------------------------------------------------------
 
   def getSystemDir(self, package = "morsel"):
@@ -62,8 +71,25 @@ class Framework(object):
 
 #-------------------------------------------------------------------------------
 
+  def getGUI(self):
+    if self._gui:
+      return self._gui
+    else:
+      self.error("GUI not initialized")
+
+  def setGUI(self, gui):
+    if not self._gui:
+      self._gui = gui
+    else:
+      self.error("GUI already initialized")
+
+#-------------------------------------------------------------------------------
+
   def getWorld(self):
-    return self._world
+    if self._world:
+      return self._world
+    else:
+      self.error("World not initialized")
 
   def setWorld(self, world):
     if not self._world:
@@ -119,10 +145,10 @@ class Framework(object):
   def setFullscreen(self, fullscreen):
     self.setConfigVariable("fullscreen", fullscreen)
 
-    if self.base:
-      properties = panda.WindowProperties(self.base.win.getProperties())
+    if self.window:
+      properties = panda.WindowProperties(self.window.getProperties())
       properties.setFullscreen(fullscreen)
-      self.base.win.requestProperties(properties)
+      self.window.requestProperties(properties)
 
   fullscreen = property(getFullscreen, setFullscreen)
 
@@ -134,10 +160,10 @@ class Framework(object):
   def setWindowPosition(self, position):
     self.setConfigVariable("win-origin", position)
 
-    if self.base:
-      properties = panda.WindowProperties(self.base.win.getProperties())
+    if self.window:
+      properties = panda.WindowProperties(self.window.getProperties())
       properties.setOrigin(position[0], position[1])
-      self.base.win.requestProperties(properties)
+      self.window.requestProperties(properties)
 
   windowPosition = property(getWindowPosition, setWindowPosition)
 
@@ -149,10 +175,10 @@ class Framework(object):
   def setWindowSize(self, size):
     self.setConfigVariable("win-size", size)
 
-    if self.base:
-      properties = panda.WindowProperties(self.base.win.getProperties())
+    if self.window:
+      properties = panda.WindowProperties(self.window.getProperties())
       properties.setSize(size[0], size[1])
-      self.base.win.requestProperties(properties)
+      self.window.requestProperties(properties)
 
   windowSize = property(getWindowSize, setWindowSize)
 
@@ -164,12 +190,27 @@ class Framework(object):
   def setWindowTitle(self, title):
     self.setConfigVariable("window-title", title)
 
-    if self.base:
-      properties = panda.WindowProperties(self.base.win.getProperties())
+    if self.window:
+      properties = panda.WindowProperties(self.window.getProperties())
       properties.setTitle(title)
-      self.base.win.requestProperties(properties)
+      self.window.requestProperties(properties)
 
   windowTitle = property(getWindowTitle, setWindowTitle)
+
+#-------------------------------------------------------------------------------
+
+  def getBackgroundColor(self):
+    return self.getConfigVariable("background-color",
+      [float, float, float, float])
+
+  def setBackgroundColor(self, color):
+    self.setConfigVariable("background-color", color)
+
+    if self.displayRegion:
+      self.displayRegion.setClearColorActive(True)
+      self.displayRegion.setClearColor(panda.Vec4(*color))
+
+  backgroundColor = property(getBackgroundColor, setBackgroundColor)
 
 #-------------------------------------------------------------------------------
 
@@ -252,6 +293,15 @@ class Framework(object):
     self.layers[layer] = description
     if len(self.layers) == 1:
       self.activeLayer = layer
+
+#-------------------------------------------------------------------------------
+
+  def addShortcut(self, key, function, description):
+    if not key in self.shortcuts:
+      self.shortcuts[key] = description
+      self.eventManager.addKeyHandler(key, function)
+    else:
+      self.error("Duplicate shortcut for '"+key+"' key")
 
 #-------------------------------------------------------------------------------
 
@@ -358,13 +408,12 @@ class Framework(object):
   def run(self):
     if not self.base:
       self.base = ShowBase()
+      self.window = self.base.win
+      self.camera = self.base.camera.getChild(0).node()
+      self.displayRegion = self.camera.getDisplayRegion(0)
+      
       self.scheduler = Scheduler()
       self.eventManager = EventManager()
-      self.console = Console.pandaConsole(Console.INPUT_GUI |
-        Console.OUTPUT_PYTHON, inspect.stack()[2][0].f_globals)
-      self.console.toggle()
-      self.objectManager = ObjectManager()
-      self.camera = self.base.camera.getChild(0).node()
 
       for configFile in self.configFiles:
         self.loadConfigFile(configFile)
@@ -378,7 +427,7 @@ class Framework(object):
 #-------------------------------------------------------------------------------
 
   def exit(self):
-    exit
+    sys.exit()
 
 #-------------------------------------------------------------------------------
 
@@ -390,9 +439,10 @@ class Framework(object):
 
 #-------------------------------------------------------------------------------
 
-  def saveScreen(self):    
-    self.base.win.saveScreenshot("frame-%06d.jpg" % (self.frame))
-    self.frame += 1
+  def saveScreen(self):
+    if self.window:
+      self.window.saveScreenshot("frame-%06d.jpg" % (self.frame))
+      self.frame += 1
 
 #-------------------------------------------------------------------------------
 

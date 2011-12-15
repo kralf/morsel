@@ -4,10 +4,9 @@ from morsel.nodes.controller import Controller
 #-------------------------------------------------------------------------------
 
 class Keyboard(Controller):
-  def __init__(self, world, name = "Keyboard",
-      keys = [("arrow_down","arrow_up"), ("arrow_right", "arrow_left")],
-      delay = None, **kargs):
-    Controller.__init__(self, world, name = name, **kargs)
+  def __init__(self, name = "Keyboard", keys = [("arrow_down","arrow_up"),
+      ("arrow_right", "arrow_left")], delay = None, **kargs):
+    Controller.__init__(self, name = name, **kargs)
 
     self.delay = delay
     if not self.delay:

@@ -1,13 +1,13 @@
-from morsel.world.globals import *
-from node import Node
+from globals import *
+from object import Object
 from facade import Collider, Solid
 
 #-------------------------------------------------------------------------------
 
-class Actuated(Node):
-  def __init__(self, world, name, actuator = None,
-      collisionMasks = [NO_COLLISIONS_FROM, NO_COLLISIONS_INTO], **kargs):
-    Node.__init__(self, world, name, **kargs)
+class Actuated(Object):
+  def __init__(self, world, name, actuator = None, collisionMasks =
+      [NO_COLLISIONS_FROM, NO_COLLISIONS_INTO], **kargs):
+    Object.__init__(self, world, name, **kargs)
 
     self.actuator = actuator
     if self.actuator:
@@ -28,10 +28,10 @@ class Actuated(Node):
     if self.actuator:
       return self.actuator.getLabel(name)
     else:
-      return Node.getLabel(self, name)
+      return Object.getLabel(self, name)
 
   def setLabel(self, name, label):
     if self.actuator:
       self.actuator.setLabel(name, label)
     else:
-      Node.setLabel(self, name, label)
+      Object.setLabel(self, name, label)

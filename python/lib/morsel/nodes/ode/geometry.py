@@ -1,16 +1,16 @@
 from morsel.panda import *
-from morsel.nodes import Node
+from morsel.nodes import Object
 
 #-------------------------------------------------------------------------------
 
-class Geometry(Node):
+class Geometry(Object):
   def __init__(self, world, name, solid, geometry = None, **kargs):
     self.geometry = geometry
     self.body = None
     self.positionOffset = [0, 0, 0]
     self.orientationOffset = [0, 0, 0]
     
-    Node.__init__(self, world, name, **kargs)
+    Object.__init__(self, world, name, **kargs)
 
     self.solid = solid
 
@@ -25,22 +25,22 @@ class Geometry(Node):
 #-------------------------------------------------------------------------------
 
   def setPosition(self, position, node = None):
-    Node.setPosition(self, position, node)
+    Object.setPosition(self, position, node)
     
     if self.geometry:
       self.geometry.setPosition(self.getPos(self.world.scene))
 
-  position = property(Node.getPosition, setPosition)
+  position = property(Object.getPosition, setPosition)
 
 #-------------------------------------------------------------------------------
 
   def setOrientation(self, orientation, node = None):
-    Node.setOrientation(self, orientation, node)
+    Object.setOrientation(self, orientation, node)
     
     if self.geometry:
       self.geometry.setQuaternion(self.getQuat(self.world.scene))
 
-  orientation = property(Node.getOrientation, setOrientation)
+  orientation = property(Object.getOrientation, setOrientation)
 
 #-------------------------------------------------------------------------------
 

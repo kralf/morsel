@@ -2,12 +2,12 @@
 # Submodules
 #===============================================================================
 
+from globals import *
 from node import Node
+from object import Object
 from light import Light
-from collection import Collection
 from iterator import Iterator
 from scene import Scene
-from text import Text
 from mesh import Mesh
 from animation import Animation
 from collider import Collider
@@ -23,3 +23,4 @@ from path import Path
 from view import View
 from input import Input
 from output import Output
+from widget import Widget

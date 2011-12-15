@@ -1,14 +1,14 @@
-from morsel.world.globals import *
-from collection import Collection
+from globals import *
+from object import Object
 from iterator import Iterator
 from solid import Solid
 
 #-------------------------------------------------------------------------------
 
-class Collider(Collection):
-  def __init__(self, world, name, collisionMasks = [NO_COLLISIONS_FROM,
+class Collider(Object):
+  def __init__(self, name, world, collisionMasks = [NO_COLLISIONS_FROM,
       NO_COLLISIONS_INTO], **kargs):
-    Collection.__init__(self, world, name, **kargs)
+    Object.__init__(self, name, world, **kargs)
     
     self.hide()
 

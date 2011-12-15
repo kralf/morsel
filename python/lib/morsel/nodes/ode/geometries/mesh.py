@@ -7,7 +7,7 @@ from morsel.nodes import Node
 class Mesh(Geometry):
   def __init__(self, world, name, solid, position = [0, 0, 0],
       scale = [1, 1, 1], **kargs):
-    data = Node(world, name+"Data")
+    data = Node(name+"Data")
     solid.mesh.copyTo(data)
     data.clearTransform(solid.mesh)
     data.flattenStrong()
@@ -20,7 +20,7 @@ class Mesh(Geometry):
 #-------------------------------------------------------------------------------
 
   def makeDisplay(self):
-    display = Node(self.world, self.name+"Display")
+    display = Node(self.name+"Display")
     self.solid.mesh.copyTo(display)
     display.flattenStrong()
 

@@ -1,12 +1,12 @@
-from node import Node
+from object import Object
 from animation import Animation
 
 #-------------------------------------------------------------------------------
 
-class Mesh(Node):
+class Mesh(Object):
   def __init__(self, world, name, filename = None, model = None,
       exclude = [], twoSided = False, parent = None, **kargs):
-    Node.__init__(self, world, name, **kargs)
+    Object.__init__(self, world, name, **kargs)
 
     self.filename = None
     self.animation = None
@@ -41,7 +41,7 @@ class Mesh(Node):
     for model in self.models:
       character = model.find("*/+Character")
       if not character.isEmpty():
-        self.animation = Animation(self.world, name+"Animation", self)
+        self.animation = Animation(name+"Animation", self)
         character.hide()
 
 #-------------------------------------------------------------------------------
@@ -106,3 +106,9 @@ class Mesh(Node):
           self.getModel(layer).hide()
 
   activeLayer = property(getActiveLayer, setActiveLayer)
+
+#-------------------------------------------------------------------------------
+
+  def updateGraphics(self):
+    if self.animation:
+      self.animation.step(self.world.time)

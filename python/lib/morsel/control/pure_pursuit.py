@@ -6,9 +6,9 @@ from morsel.nodes.facade import Path
 #-------------------------------------------------------------------------------
 
 class PurePursuit(Controller):
-  def __init__(self, world, name = "PathFollow", path = None, velocity = 1,
+  def __init__(self, name = "PathFollow", path = None, velocity = 1,
       lookAhead = 1, waypoint = None, kidnap = True, epsilon = 1e-6, **kargs):
-    Controller.__init__(self, world, name = name, **kargs)
+    Controller.__init__(self, name = name, **kargs)
     
     self.path = Path(name = name+"Path", filename = path, parent = self)
     

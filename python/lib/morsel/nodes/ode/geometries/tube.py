@@ -34,7 +34,7 @@ class Tube(Geometry):
 #-------------------------------------------------------------------------------
 
   def makeDisplay(self):
-    display = Node(self.world, self.name+"Display")
+    display = Node(self.name+"Display")
 
     radius = self.geometry.getRadius()
     length = self.geometry.getLength()

@@ -6,7 +6,7 @@ from numpy.random import *
 #-------------------------------------------------------------------------------
 
 class Random(Controller):
-  def __init__(self, world, name = "Random", range = [(0, 1), (-1, 1)],
+  def __init__(self, name = "Random", range = [(0, 1), (-1, 1)],
       delay = [1, 1], **kargs):
     Controller.__init__(self, name = name, **kargs)
 

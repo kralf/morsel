@@ -1,24 +1,15 @@
 from morsel.panda import *
-from morsel.math import *
-from morsel.morselc import Color
-
-import sys
 
 #-------------------------------------------------------------------------------
 
 class Node(panda.NodePath):
-  def __init__(self, world, name, parent = None, position = None,
-      orientation = None, scale = None, color = None, **kargs):
+  def __init__(self, name, parent = None, position = None, orientation = None,
+      scale = None, color = None, hidden = False, **kargs):
     panda.NodePath.__init__(self, name)
         
-    if not world:
-      framework.error("World not initialized")
-
     self.type = self.__class__
     self.this = self
-    self.world = world
-    self.world.registerNode(self)
-
+    
     self.parent = parent
 
     if position:
@@ -29,6 +20,7 @@ class Node(panda.NodePath):
       self.scale = scale
     if color:
       self.color = color
+    self.hidden = hidden
 
 #-------------------------------------------------------------------------------
 
@@ -60,16 +52,6 @@ class Node(panda.NodePath):
 
 #-------------------------------------------------------------------------------
 
-  def getGlobalPosition(self):
-    return self.getPosition(self.world.scene)
-
-  def setGlobalPosition(self, position):
-    self.setPosition(position, self.world.scene)
-
-  globalPosition = property(getGlobalPosition, setGlobalPosition)
-
-#-------------------------------------------------------------------------------
-
   def getOrientation(self, node = None):
     if node:
       orientation = self.getHpr(node)
@@ -94,16 +76,6 @@ class Node(panda.NodePath):
 
 #-------------------------------------------------------------------------------
 
-  def getGlobalOrientation(self):
-    return self.getOrientation(self.world.scene)
-
-  def setGlobalOrientation(self, orientation):
-    self.setOrientation(orientation, self.world.scene)
-
-  globalOrientation = property(getGlobalOrientation, setGlobalOrientation)
-
-#-------------------------------------------------------------------------------
-
   def getQuaternion(self, node = None):
     if node:
       return self.getQuat(node)
@@ -117,16 +89,6 @@ class Node(panda.NodePath):
       self.setQuat(quaternion)
 
   quaternion = property(getQuaternion, setQuaternion)
-
-#-------------------------------------------------------------------------------
-
-  def getGlobalQuaternion(self):
-    return self.getQuaternion(self.world.scene)
-
-  def setGlobalQuaternion(self, quaternion):
-    self.setQuaternion(quaternion, self.world.scene)
-
-  globalQuaternion = property(getGlobalQuaternion, setGlobalQuaternion)
 
 #-------------------------------------------------------------------------------
 
@@ -162,16 +124,6 @@ class Node(panda.NodePath):
 
 #-------------------------------------------------------------------------------
 
-  def getGlobalScale(self):
-    return self.getScale(self.world.scene)
-
-  def setGlobalScale(self, scale):
-    self.setScale(scale, self.world.scene)
-
-  globalScale = property(getGlobalScale, setGlobalScale)
-
-#-------------------------------------------------------------------------------
-
   def getBounds(self, node = None):
     p_min = panda.Point3()
     p_max = panda.Point3()
@@ -190,13 +142,6 @@ class Node(panda.NodePath):
 
 #-------------------------------------------------------------------------------
 
-  def getGlobalBounds(self):
-    return self.getBounds(self.world.scene)
-
-  globalBounds = property(getGlobalBounds)
-
-#-------------------------------------------------------------------------------
-
   def getColor(self):
     if self.hasColor():
       color = panda.NodePath.getColor(self)
@@ -211,11 +156,16 @@ class Node(panda.NodePath):
 
 #-------------------------------------------------------------------------------
 
-  def getLabel(self, name):
-    return Color.rgbToInt(self.getShaderInput(name).getVector())
+  def getHidden(self):
+    return self.isHidden()
 
-  def setLabel(self, name, label):
-    self.setShaderInput(name, Color.intToRgb(label))
+  def setHidden(self, hidden):
+    if hidden:
+      self.hide()
+    else:
+      self.show()
+
+  hidden = property(getHidden, setHidden)
 
 #-------------------------------------------------------------------------------
 
@@ -260,11 +210,11 @@ class Node(panda.NodePath):
 
   def setParent(self, parent, transform = False):
     if not parent:
-      parent = self.world.scene
-
+      parent = render
+      
     if transform:
       self.setTransform(self.getTransform(parent))
-    
+      
     self.reparentTo(parent)
 
   parent = property(getParent, setParent)
@@ -285,28 +235,5 @@ class Node(panda.NodePath):
 
 #-------------------------------------------------------------------------------
 
-  def getCollider(self):
-    return self.getProperty("collider")
-
-  def setCollider(self, collider):
-    return self.setProperty("collider", collider)
-
-  collider = property(getCollider, setCollider)
-
-#-------------------------------------------------------------------------------
-
-  def attachCamera(self, position, lookAt = [0, 0, 0], camera = None,
-      rotate = False):
-    if not camera:
-      camera = framework.base.camera
-      
-    camera.reparentTo(self)
-    camera.setPos(*position)
-    camera.lookAt(*lookAt)
-    
-    matrix = panda.Mat4(camera.getMat())
-    matrix.invertInPlace()
-    base.mouseInterfaceNode.setMat(matrix)
-    
-    if rotate == False:
-      camera.setEffect(panda.CompassEffect.make(self.world.scene))
+  def toggle(self):
+    self.hidden = not self.hidden

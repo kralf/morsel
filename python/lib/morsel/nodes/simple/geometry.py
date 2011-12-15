@@ -1,14 +1,14 @@
 from morsel.panda import *
-from morsel.nodes import Node
+from morsel.nodes import Object
 
 #-------------------------------------------------------------------------------
 
-class Geometry(Node):
+class Geometry(Object):
   def __init__(self, world, name, solid, geometry = None, **kargs):
     self.solid = solid
     self.geometry = geometry
 
-    Node.__init__(self, world, name, **kargs)
+    Object.__init__(self, world, name, **kargs)
 
     if framework.debug:
       self.display = self.makeDisplay()

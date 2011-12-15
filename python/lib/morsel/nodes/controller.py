@@ -3,9 +3,9 @@ from node import Node
 #-------------------------------------------------------------------------------
 
 class Controller(Node):
-  def __init__(self, world, name, actuator = None, platform = None,
-      actor = None, **kargs):
-    Node.__init__(self, world, name, **kargs)
+  def __init__(self, name, actuator = None, platform = None, actor = None,
+      **kargs):
+    Node.__init__(self, name, **kargs)
 
     if platform:
       self.actuator = platform.actuator

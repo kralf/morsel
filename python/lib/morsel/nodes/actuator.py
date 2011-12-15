@@ -1,17 +1,18 @@
-from morsel.world.globals import *
-from node import Node
+from globals import *
+from object import Object
 from facade import Collider, Solid
 
 #-------------------------------------------------------------------------------
 
-class Actuator(Node):
-  def __init__(self, world, name, solid = None, limits = [], **kargs):
+class Actuator(Object):
+  def __init__(self, world, name, solid = None, limits = [], collisionMasks =
+      [ACTUATOR_COLLISIONS_FROM, ACTUATOR_COLLISIONS_INTO], **kargs):
     self.solid = None
     
-    Node.__init__(self, world, name, **kargs)
+    Object.__init__(self, world, name, **kargs)
 
     self.collider = Collider(name = name+"Collider", parent = self,
-      collisionMasks = [ACTUATOR_COLLISIONS_FROM, ACTUATOR_COLLISIONS_INTO])
+      collisionMasks = collisionMasks)
     if solid:
       self.solid = solid
     else:
@@ -30,10 +31,10 @@ class Actuator(Node):
         node = self.parent
       return self.solid.getPosition(node)
     else:
-      return Node.getPosition(self, node)
+      return Object.getPosition(self, node)
 
   def setPosition(self, position, node = None):
-    Node.setPosition(self, position, node)
+    Object.setPosition(self, position, node)
 
     if self.solid:
       self.solid.position = self.solid.position
@@ -48,10 +49,10 @@ class Actuator(Node):
         node = self.parent
       return self.solid.getOrientation(node)
     else:
-      return Node.getOrientation(self, node)
+      return Object.getOrientation(self, node)
 
   def setOrientation(self, orientation, node = None):
-    Node.setOrientation(self, orientation, node)
+    Object.setOrientation(self, orientation, node)
 
     if self.solid:
       self.solid.orientation = self.solid.orientation

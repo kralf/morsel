@@ -1,10 +1,10 @@
 from morsel.panda import *
 from morsel.math import *
-from morsel.nodes import Node
+from morsel.nodes import Object
 
 #-------------------------------------------------------------------------------
 
-class Body(Node):
+class Body(Object):
   def __init__(self, world, name, solid, mass = None, position = [0, 0, 0],
       orientation = [0, 0, 0], **kargs):
     self.solid = solid
@@ -14,24 +14,24 @@ class Body(Node):
     if self.mass:
       self.body.setMass(self.mass)
 
-    Node.__init__(self, world, name, position = position,
+    Object.__init__(self, world, name, position = position,
       orientation = orientation, **kargs)
 
 #-------------------------------------------------------------------------------
 
   def setPosition(self, position, node = None):
-    Node.setPosition(self, position, node)
+    Object.setPosition(self, position, node)
     self.body.setPosition(self.getPos(self.world.scene))
 
-  position = property(Node.getPosition, setPosition)
+  position = property(Object.getPosition, setPosition)
 
 #-------------------------------------------------------------------------------
 
   def setOrientation(self, orientation, node = None):
-    Node.setOrientation(self, orientation, node)
+    Object.setOrientation(self, orientation, node)
     self.body.setQuaternion(self.getQuat(self.world.scene))
 
-  orientation = property(Node.getOrientation, setOrientation)
+  orientation = property(Object.getOrientation, setOrientation)
 
 #-------------------------------------------------------------------------------
 

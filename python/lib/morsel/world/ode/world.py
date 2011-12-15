@@ -46,13 +46,13 @@ class World(Base):
 
 #-------------------------------------------------------------------------------
 
-  def registerNode(self, node):
-    type = node.getPythonTag("type")
+  def registerObject(self, object):
+    type = object.getPythonTag("type")
 
     if issubclass(type, Solid):
-      self.solids.append(node)
+      self.solids.append(object)
 
-    Base.registerNode(self, node)
+    Base.registerObject(self, object)
       
 #-------------------------------------------------------------------------------
   
@@ -71,8 +71,8 @@ class World(Base):
 #-------------------------------------------------------------------------------
 
   def updateGraphics(self):
-    for animation in self.animations:
-      animation.updateGraphics()
+    for mesh in self.meshes:
+      mesh.updateGraphics()
     for actuator in self.actuators:
       actuator.updateGraphics()
     for solid in self.solids:

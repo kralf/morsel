@@ -1,12 +1,12 @@
-from morsel.world.globals import *
-from node import Node
+from globals import *
+from object import Object
 from morsel.nodes.facade import Collider, Solid, Mesh
 
 #-------------------------------------------------------------------------------
 
-class Static(Node):
+class Static(Object):
   def __init__(self, world, name, mesh, solid = None, exclude = [], **kargs):
-    Node.__init__(self, world, name, parent = world.scene, **kargs)
+    Object.__init__(self, world, name, parent = world.scene, **kargs)
 
     self.mesh = Mesh(name = name+"Mesh", filename = mesh, exclude = exclude,
       parent = self)

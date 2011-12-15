@@ -1,11 +1,14 @@
-from morsel.world import globals
 from morsel.nodes import *
 
 #-------------------------------------------------------------------------------
 
-def Text(**kargs):
-  return framework.createInstance("nodes", type = "Text",
-    world = framework.world, **kargs)
+def Scene(model = None, **kargs):
+  scene = framework.createInstance("nodes."+framework.world.physics,
+    type = "Scene", world = framework.world, **kargs)
+  if model:
+    framework.executeFile(model+".scm")
+
+  return scene
 
 #-------------------------------------------------------------------------------
 
@@ -30,21 +33,7 @@ def Mesh(filename = None, **kargs):
 #-------------------------------------------------------------------------------
 
 def Light(**kargs):
-  return framework.createInstance("light", world = framework.world,
-    **kargs)
-
-#-------------------------------------------------------------------------------
-
-def Path(filename = None, **kargs):
-  if filename:
-    pathFile = framework.findFile(filename)
-    if not pathFile:
-      framework.error("Path file '"+filename+"' not found")
-  else:
-    pathFile = None
-
-  return framework.createInstance("nodes", type = "Path",
-    world = framework.world, filename = pathFile, **kargs)
+  return framework.createInstance("light", world = framework.world, **kargs)
 
 #-------------------------------------------------------------------------------
 
@@ -55,7 +44,7 @@ def Collider(**kargs):
 #-------------------------------------------------------------------------------
 
 def Solid(**kargs):
-  return framework.createInstance( "nodes."+framework.world.physics+".solids",
+  return framework.createInstance("nodes."+framework.world.physics+".solids",
     world = framework.world, **kargs)
 
 #-------------------------------------------------------------------------------
@@ -63,16 +52,6 @@ def Solid(**kargs):
 def Static(**kargs):
   return framework.createInstance("nodes", type = "Static",
     world = framework.world, **kargs)
-
-#-------------------------------------------------------------------------------
-
-def Scene(model = None, **kargs):
-  scene = framework.createInstance("nodes."+framework.world.physics,
-    type = "Scene", world = framework.world, **kargs)
-  if model:
-    framework.executeFile(model+".scm")
-
-  return scene
 
 #-------------------------------------------------------------------------------
 
@@ -100,27 +79,28 @@ def Platform(model, **kargs):
 
 #-------------------------------------------------------------------------------
 
-def Controller(model, **kargs):
-  return framework.loadInstance("control", model+".ctl",
-    world = framework.world, **kargs)
+def View(**kargs):
+  return framework.createInstance("views", world = framework.world, **kargs)
 
 #-------------------------------------------------------------------------------
 
-def View(**kargs):
-  return framework.createInstance("views", world = framework.world,
-    **kargs)
+def Widget(**kargs):
+  return framework.createInstance("widgets", gui = framework.gui, **kargs)
+
+#-------------------------------------------------------------------------------
+
+def Controller(model, **kargs):
+  return framework.loadInstance("control", model+".ctl", **kargs)
 
 #-------------------------------------------------------------------------------
 
 def Input(**kargs):
-  return framework.createInstance("input", world = framework.world,
-    **kargs)
+  return framework.createInstance("input", **kargs)
 
 #-------------------------------------------------------------------------------
 
 def Output(**kargs):
-  return framework.createInstance("output", world = framework.world,
-    **kargs)
+  return framework.createInstance("output", **kargs)
 
 #-------------------------------------------------------------------------------
 
@@ -129,3 +109,16 @@ def Camera(position, object = None, **kargs):
     object.attachCamera(position, **kargs)
   else:
     framework.world.scene.attachCamera(position, **kargs)
+
+#-------------------------------------------------------------------------------
+
+def Path(filename = None, **kargs):
+  if filename:
+    pathFile = framework.findFile(filename)
+    if not pathFile:
+      framework.error("Path file '"+filename+"' not found")
+  else:
+    pathFile = None
+
+  return framework.createInstance("nodes", type = "Path", filename = pathFile,
+    **kargs)

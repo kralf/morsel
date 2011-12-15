@@ -8,6 +8,7 @@ from sys import exit
 # Submodules
 #===============================================================================
 
+from _gui import *
 from _world import *
 from _nodes import *
 from _utility import *

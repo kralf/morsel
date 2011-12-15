@@ -1,15 +1,21 @@
 import os
 from os.path import *
 
-MORSEL_CONFIGURATION_PATH = os.path.abspath(
-  os.path.join("${CONFIGURATION_DESTINATION}", ".."))
-MORSEL_FILE_PATH = os.path.abspath(
-  os.path.join("${FILE_DESTINATION}", ".."))
+#-------------------------------------------------------------------------------
 
-MORSEL_NAME = "${REMAKE_PROJECT_NAME}"
-MORSEL_MAJOR_VISION = ${REMAKE_PROJECT_MAJOR}
-MORSEL_MINOR_VISION = ${REMAKE_PROJECT_MINOR}
-MORSEL_PATCH = ${REMAKE_PROJECT_PATCH}
+class Configuration(object):
+  def __init__(self):
+    object.__init__(self)
 
-MORSEL_FULL_NAME = "%s version %d.%d.%d" % (MORSEL_NAME,
-  MORSEL_MAJOR_VISION, MORSEL_MINOR_VISION, MORSEL_PATCH)
+    self.name = "${REMAKE_PROJECT_NAME}"
+    self.majorVersion = ${REMAKE_PROJECT_MAJOR}
+    self.minorVersion = ${REMAKE_PROJECT_MINOR}
+    self.patch = ${REMAKE_PROJECT_PATCH}
+
+    self.fullName = "%s version %d.%d.%d" % (self.name,
+      self.majorVersion, self.minorVersion, self.patch)
+
+    self.configurationPath = os.path.abspath(
+      os.path.join("${CONFIGURATION_DESTINATION}", ".."))
+    self.filePath = os.path.abspath(
+      os.path.join("${FILE_DESTINATION}", ".."))

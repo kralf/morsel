@@ -1,18 +1,18 @@
-from node import Node
+from object import Object
 from iterator import Iterator
 from facade import Collider
 
 #-------------------------------------------------------------------------------
 
-class Solid(Node):
+class Solid(Object):
   def __init__(self, world, name, mesh = None, parent = None, **kargs):
     if not isinstance(parent, Solid):
       if not parent.collider:
         parent.collider = Collider(name = parent.name+"Collider",
           parent = parent)
-      Node.__init__(self, world, name, parent = parent.collider, **kargs)
+      Object.__init__(self, world, name, parent = parent.collider, **kargs)
     else:
-      Node.__init__(self, world, name, parent = parent, **kargs)
+      Object.__init__(self, world, name, parent = parent, **kargs)
 
     parent.collider.addSolid(self)
     
@@ -21,18 +21,18 @@ class Solid(Node):
 #-------------------------------------------------------------------------------
 
   def setPosition(self, position, node = None):
-    Node.setPosition(self, position, node)
+    Object.setPosition(self, position, node)
     self.updateTransform()
 
-  position = property(Node.getPosition, setPosition)
+  position = property(Object.getPosition, setPosition)
 
 #-------------------------------------------------------------------------------
 
   def setOrientation(self, orientation, node = None):
-    Node.setOrientation(self, orientation, node)
+    Object.setOrientation(self, orientation, node)
     self.updateTransform()
 
-  orientation = property(Node.getOrientation, setOrientation)
+  orientation = property(Object.getOrientation, setOrientation)
 
 #-------------------------------------------------------------------------------
 

@@ -1,11 +1,10 @@
-from morsel.world.globals import *
-from node import Node
+from object import Object
 
 #-------------------------------------------------------------------------------
 
-class View(Node):
+class View(Object):
   def __init__(self, world, name, **kargs):
-    Node.__init__(self, world, name, **kargs)
+    Object.__init__(self, world, name, **kargs)
 
 #-------------------------------------------------------------------------------
 

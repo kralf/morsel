@@ -18,7 +18,7 @@ class ObjectManager(DirectObject.DirectObject):
   HL_COLOR    = (0.65, 0.65, 0.65, 1)
   SCALE       = 0.05
 
-  def __init__(self, toggleKey = "f9"):
+  def __init__(self):
     self.top = 0.5 / self.SCALE
     self.frame   = DirectFrame(
       relief     = DGG.GROOVE, 
@@ -45,6 +45,7 @@ class ObjectManager(DirectObject.DirectObject):
     self.accept('window-event', self.windowEvent)
     self.objects = {}
     self.camera_poses = {}
+    
     framework.scheduler.addTask("ObjectManagerUpdate", self.update)
     
 #-------------------------------------------------------------------------------
@@ -113,8 +114,7 @@ class ObjectManager(DirectObject.DirectObject):
     pos = current.getPos()
     self.positionLabel.setText("%.2f, %.2f, %.2f" % (pos[0], pos[1], pos[2]))
     hpr = current.getHpr()
-    self.orientationLabel.setText("%.2f, %.2f, %.2f" % (hpr[0], hpr[1], hpr[2])
-)
+    self.orientationLabel.setText("%.2f, %.2f, %.2f" % (hpr[0], hpr[1], hpr[2]))
 
 #-------------------------------------------------------------------------------
 
@@ -139,6 +139,8 @@ class ObjectManager(DirectObject.DirectObject):
       self.objectMenu["text_align"] = panda.TextNode.ALeft
       self.objectMenu.resetFrameSize()
       
+#-------------------------------------------------------------------------------
+
   def windowEvent(self, window):
     self.frame.setPos(-0.5, 0, -0.5)
   
