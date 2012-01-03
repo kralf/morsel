@@ -20,7 +20,8 @@ class Node(panda.NodePath):
       self.scale = scale
     if color:
       self.color = color
-    self.hidden = hidden
+    if hidden:
+      self.hidden = hidden
 
 #-------------------------------------------------------------------------------
 
@@ -160,9 +161,9 @@ class Node(panda.NodePath):
     return self.isHidden()
 
   def setHidden(self, hidden):
-    if hidden:
+    if hidden and not self.hidden:
       self.hide()
-    else:
+    elif self.hidden:
       self.show()
 
   hidden = property(getHidden, setHidden)

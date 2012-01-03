@@ -1,5 +1,6 @@
 from morsel.panda import *
 from morsel.nodes.controller import Controller
+from morsel.core.event_handler import EventHandler
 
 #-------------------------------------------------------------------------------
 
@@ -32,13 +33,17 @@ class Keyboard(Controller):
     
     for i in range(len(self._keys)):
       if self._keys[i]:
-        self.keyMap[self._keys[i][0]] = 0
-        base.accept(self._keys[i][0], self.setKey, [self._keys[i][0], 1])
-        base.accept(self._keys[i][0]+"-up", self.setKey, [self._keys[i][0], 0])
+        self.keyMap[self._keys[i][0]] = False
+        framework.eventManager.addHandler(self._keys[i][0],
+          EventHandler(self.setKey, self._keys[i][0], True))
+        framework.eventManager.addHandler(self._keys[i][0]+"-up",
+          EventHandler(self.setKey, self._keys[i][0], False))
 
-        self.keyMap[self._keys[i][1]] = 0
-        base.accept(self._keys[i][1], self.setKey, [self._keys[i][1], 1])
-        base.accept(self._keys[i][1]+"-up", self.setKey, [self._keys[i][1], 0])
+        self.keyMap[self._keys[i][1]] = False
+        framework.eventManager.addHandler(self._keys[i][1],
+          EventHandler(self.setKey, self._keys[i][1], True))
+        framework.eventManager.addHandler(self._keys[i][1]+"-up",
+          EventHandler(self.setKey, self._keys[i][1], False))
 
       self.increments.append(
         (self.actuator.limits[i][1]-self.actuator.limits[i][0])/self.delay[i])

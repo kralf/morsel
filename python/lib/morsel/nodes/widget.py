@@ -7,7 +7,7 @@ class Widget(Node):
   def __init__(self, gui, name, widget = None, anchor = None, origin = [0, 0],
       frame = None, margin = None, text = None, color = [0, 0, 0, 0.3],
       font = None, foregroundColor = [1, 1, 1, 1], backgroundColor = None,
-      parent = None, scale = 0.05, **kargs):
+      parent = None, scale = 1, **kargs):
     self.gui = gui
 
     if anchor:
@@ -24,14 +24,13 @@ class Widget(Node):
       self.margin = margin
     if color:
       self.color = color
-    if font:
-      self.font = font
-    if foregroundColor:
-      self.foregroundColor = foregroundColor
-    if backgroundColor:
-      self.backgroundColor = backgroundColor
+    self.font = font
+    self.foregroundColor = foregroundColor
+    self.backgroundColor = backgroundColor
     
     self.gui.registerWidget(self)
+    
+    self.updateBounds()
 
 #-------------------------------------------------------------------------------
 
@@ -104,35 +103,94 @@ class Widget(Node):
 
 #-------------------------------------------------------------------------------
 
-  def getFrame(self):
+  def getFrame(self, node = None):
     if self.widget:
-      return self.widget["frameSize"]
-    else:
-      return None
+      frame = self.widget["frameSize"]
+      if frame:
+        if not node:
+          node = self
+        topLeft = node.getRelativePoint(self.widget,
+          panda.Point3(frame[0], 0, frame[3]))
+        bottomRight = node.getRelativePoint(self.widget,
+          panda.Point3(frame[1], 0, frame[2]))
 
-  def setFrame(self, frame):
+        return [topLeft[0], bottomRight[0], bottomRight[2], topLeft[2]]
+
+    return None
+
+  def setFrame(self, frame, node = None):
     if self.widget:
       if len(frame) == 2:
-        frame = [-0.5*frame[0], 0.5*frame[0], -0.5*frame[1], 0.5*frame[1]]
-      self.widget["frameSize"] = frame
+        center = self.center
+        frame = [center[0]-0.5*frame[0], center[0]+0.5*frame[0],
+          center[1]-0.5*frame[1], center[1]+0.5*frame[1]]
+
+      if not node:
+        node = self
+      topLeft = self.widget.getRelativePoint(node,
+        panda.Point3(frame[0], 0, frame[3]))
+      bottomRight = self.widget.getRelativePoint(node,
+        panda.Point3(frame[1], 0, frame[2]))
+      self.widget["frameSize"] = [topLeft[0], bottomRight[0],
+        bottomRight[2], topLeft[2]]
+      
       self.updateBounds()
 
   frame = property(getFrame, setFrame)
 
 #-------------------------------------------------------------------------------
 
-  def getMargin(self):
+  def getMargin(self, node = None):
     if self.widget:
-      return self.widget["pad"]
-    else:
-      return None
+      margin = self.widget["pad"]
+      if margin:
+        if not node:
+          node = self
+        scale = self.widget.getScale(node)
+        
+        return [margin[0]*scale[0], margin[1]*scale[2]]
 
-  def setMargin(self, margin):
+    return None
+
+  def setMargin(self, margin, node = None):
     if self.widget:
-      self.widget["pad"] = margin
+      if not node:
+        node = self
+      scale = self.widget.getScale(node)
+      
+      self.widget["pad"] = [margin[0]/scale[0], margin[1]/scale[2]]
+      
       self.updateBounds()
 
   margin = property(getMargin, setMargin)
+
+#-------------------------------------------------------------------------------
+
+  def getLeft(self, node = None):
+    return self.getBounds(node)[0][0]
+
+  left = property(getLeft)
+
+#-------------------------------------------------------------------------------
+
+  def getTop(self, node = None):
+    return self.getBounds(node)[1][1]
+
+  top = property(getTop)
+
+#-------------------------------------------------------------------------------
+
+  def getRight(self, node = None):
+    return self.getBounds(node)[1][0]
+
+  right = property(getRight)
+
+#-------------------------------------------------------------------------------
+
+  def getBottom(self, node = None):
+    return self.getBounds(node)[0][1]
+
+  bottom = property(getBottom)
 
 #-------------------------------------------------------------------------------
 
@@ -153,17 +211,8 @@ class Widget(Node):
 #-------------------------------------------------------------------------------
 
   def getCenter(self, node = None):
-    if self.widget:
-      center = self.widget.getCenter()
-      p_center = panda.Point3(center[0], 0, center[1])
-    else:
-      p_center = panda.Point3(*self.position)
-
-    if not node:
-      node = self
-    p_center = node.getRelativePoint(self, p_center)
-
-    return panda.Point2(p_center[0], p_center[2])
+    p_min, p_max = self.getBounds(node)
+    return (p_min+p_max)*0.5
 
   center = property(getCenter)
 
@@ -176,13 +225,13 @@ class Widget(Node):
       p_min = panda.Point3(bounds[0], 0, bounds[2])
       p_max = panda.Point3(bounds[1], 0, bounds[3])
     else:
-      p_min = panda.Point3(*self.position)
-      p_max = panda.Point3(*self.position)
+      p_min = panda.Point3(0, 0, 0)
+      p_max = panda.Point3(0, 0, 0)
 
     if not node:
       node = self
-    p_min = node.getRelativePoint(self, p_min)
-    p_max = node.getRelativePoint(self, p_max)
+    p_min = node.getRelativePoint(self.widget, p_min)
+    p_max = node.getRelativePoint(self.widget, p_max)
 
     return (panda.Point2(p_min[0], p_min[2]), panda.Point2(p_max[0], p_max[2]))
 
@@ -203,11 +252,36 @@ class Widget(Node):
 
 #-------------------------------------------------------------------------------
 
+  def getTextWidth(self, text, node = None):
+    if not node:
+      node = self      
+    scale = self.widget.getScale(node)
+    
+    return self.font.getWidth(text)*scale[0]
+
+#-------------------------------------------------------------------------------
+
+  def getTextHeight(self, text, node = None):
+    if not node:
+      node = self
+    scale = self.widget.getScale(node)
+
+    return self.font.getHeight(text)*scale[2]
+
+#-------------------------------------------------------------------------------
+
   def getFont(self):
-    return self.widget["text_font"]
+    return self._font
 
   def setFont(self, font):
-    self.widget["text_font"] = font
+    if isinstance(font, str):
+      font = Font(font)
+    if font:
+      self._font = font
+    else:
+      self._font = Font()
+      
+    self.widget["text_font"] = self._font.font
     self.updateBounds()
 
   font = property(getFont, setFont)
@@ -225,28 +299,26 @@ class Widget(Node):
 #-------------------------------------------------------------------------------
 
   def getForegroundColor(self):
-    if self.widget:
-      return self.widget["text_fg"]
-    else:
-      return None
+    return self._foregroundColor
 
   def setForegroundColor(self, color):
-    if self.widget:
+    if self.widget and color:
       self.widget["text_fg"] = color
+
+    self._foregroundColor = color
 
   foregroundColor = property(getForegroundColor, setForegroundColor)
 
 #-------------------------------------------------------------------------------
 
   def getBackgroundColor(self):
-    if self.widget:
-      return self.widget["text_bg"]
-    else:
-      return None
+    return self._backgroundColor
       
   def setBackgroundColor(self, color):
-    if self.widget:
+    if self.widget and color:
       self.widget["text_bg"] = color
+
+    self._backgroundColor = color
 
   backgroundColor = property(getBackgroundColor, setBackgroundColor)
 
@@ -255,8 +327,10 @@ class Widget(Node):
   def updateBounds(self):
     if self.widget:
       center = self.center
-      self.widget.setPos(-0.5*self.width*self.origin[0]-center[0], 0,
-        -0.5*self.height*self.origin[1]-center[1])
+      position = self.widget.getPos()
+
+      self.widget.setPos(position[0]-0.5*self.width*self.origin[0]-center[0], 0,
+        position[2]-0.5*self.height*self.origin[1]-center[1])
 
 #-------------------------------------------------------------------------------
 

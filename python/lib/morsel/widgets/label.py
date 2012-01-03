@@ -14,8 +14,8 @@ class Label(Widget):
       "Right": panda.TextNode.ARight
     }
     
-    Widget.__init__(self, gui, name, widget = DirectLabel(), text = text,
-      **kargs)
+    Widget.__init__(self, gui, name, widget = DirectLabel(scale = 0.05),
+      text = text, **kargs)
 
     if align:
       self.align = align
@@ -31,28 +31,6 @@ class Label(Widget):
 
   def setAlign(self, align):
     self.widget["text_align"] = self.alignments[align]
+    self.updateBounds()
 
   align = property(getAlign, setAlign)
-
-#-------------------------------------------------------------------------------
-
-  def setFrame(self, frame):
-    Widget.setFrame(self, frame)
-    frame = self.frame
-
-    frame[2] = frame[2]+0.33*self.lineHeight
-    frame[3] = frame[3]+0.33*self.lineHeight
-
-    Widget.setFrame(self, frame)
-
-  frame = property(Widget.getFrame, setFrame)
-
-#-------------------------------------------------------------------------------
-
-  def getLineHeight(self):
-    if self.text:
-      return 1.0/1.5*self.font.getLineHeight()
-    else:
-      return 0
-    
-  lineHeight = property(getLineHeight)

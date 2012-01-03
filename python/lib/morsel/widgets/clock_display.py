@@ -6,7 +6,8 @@ import math
 
 class ClockDisplay(Label):
   def __init__(self, gui, name = "ClockDisplay", anchor = ["Left", "Top"],
-      origin = [-1, 1], frame = [10.5, 1.5], position = [0, -0.025], **kargs):
+      origin = [-1, 1], frame = [0.525, 0.075], position = [0, -0.025],
+      **kargs):
 
     Label.__init__(self, gui, name, text = "World time: n/a", anchor = anchor,
       origin = origin, frame = frame, position = position, **kargs)

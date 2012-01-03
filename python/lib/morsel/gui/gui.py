@@ -28,8 +28,7 @@ class GUI(object):
           name = horizontal+vertical+"Anchor", position = [x, 0, y],
           parent = aspect2d)
 
-    framework.eventManager.addEventHandler("aspectRatioChanged",
-      self.updateAnchors)
+    framework.eventManager.addHandler("aspectRatioChanged", self.updateAnchors)
     framework.scheduler.addTask("GUIUpdate", self.update)
 
 #-------------------------------------------------------------------------------

@@ -6,7 +6,6 @@ from label import Label
 class SceneDisplay(Label):
   def __init__(self, gui, name = "SceneDisplay", anchor = ["Center", "Bottom"],
       origin = [0, -1], margin = [0.5, 0.3], hidden = True, **kargs):
-
     Label.__init__(self, gui, name, anchor = anchor, origin = origin,
       margin = margin, hidden = hidden, **kargs)
   

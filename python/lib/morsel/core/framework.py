@@ -5,6 +5,7 @@ from morsel.config import Configuration
 
 from scheduler import Scheduler
 from event_manager import EventManager
+from event_handler import EventHandler
 from package import Package
 
 from math import *
@@ -280,12 +281,13 @@ class Framework(object):
 
 #-------------------------------------------------------------------------------
 
-  def addPath(self, extension, path):
+  def addPath(self, extension, *args):
     if not self.paths.has_key(extension):
       self.paths[extension] = []
 
-    if not path in self.paths[extension]:
-      self.paths[extension].append(path)
+    for path in args:
+      if not path in self.paths[extension]:
+        self.paths[extension].append(path)
 
 #-------------------------------------------------------------------------------
 
@@ -299,7 +301,9 @@ class Framework(object):
   def addShortcut(self, key, function, description):
     if not key in self.shortcuts:
       self.shortcuts[key] = description
-      self.eventManager.addKeyHandler(key, function)
+
+      handler = EventHandler(function)
+      self.eventManager.addHandler(key, handler)
     else:
       self.error("Duplicate shortcut for '"+key+"' key")
 
@@ -417,6 +421,7 @@ class Framework(object):
 
       for configFile in self.configFiles:
         self.loadConfigFile(configFile)
+      self.locals = inspect.stack()[0][0].f_globals
 
       self.camera.getDisplayRegion(0).setDrawCallback(
         panda.PythonCallbackObject(self.drawCallback))

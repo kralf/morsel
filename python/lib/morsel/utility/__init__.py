@@ -2,4 +2,5 @@
 # Submodules
 #===============================================================================
 
+from font import Font
 from shader_program import ShaderProgram
