@@ -444,10 +444,26 @@ class Framework(object):
 
 #-------------------------------------------------------------------------------
 
-  def saveScreen(self):
+  def saveScreen(self, filename = "frame-%.jpg"):
     if self.window:
-      self.window.saveScreenshot("frame-%06d.jpg" % (self.frame))
+      filename = filename.replace("%", "%06d" % (self.frame))
+      self.window.saveScreenshot(filename)
       self.frame += 1
+
+#-------------------------------------------------------------------------------
+
+  def toggleCaptureScreen(self, framerate = 24):
+    if not self.scheduler.containsTask("CaptureScreen"):
+      self.scheduler.addTask("CaptureScreen", self.captureScreen,
+        period = 1.0/framerate)
+    else:
+      self.scheduler.removeTask("CaptureScreen")
+
+#-------------------------------------------------------------------------------
+
+  def captureScreen(self, time):
+    self.saveScreen()
+    return True
 
 #-------------------------------------------------------------------------------
 

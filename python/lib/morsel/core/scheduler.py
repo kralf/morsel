@@ -31,7 +31,7 @@ class Scheduler(object):
     self.renderTasks = []
     self.profile = False
     
-    taskMgr.add(self.dispatcher, "morselDispatcher", -20)
+    taskMgr.add(self.dispatcher, "MorselDispatcher", -20)
 
 #-------------------------------------------------------------------------------
 
@@ -124,15 +124,16 @@ class Scheduler(object):
           result = self.runTask(task, time)
         else:
           result = True
-
-        if result:
-          if period > 0:
-            self.scheduleTask(time+period, task)
-          elif period == 0:
-            self.scheduleTask(time+result, task)
-        else:
-          self.removeTask(task["name"])
         processed[task["name"]] = True
+        
+        if self.containsTask(task["name"]):
+          if result:
+            if period > 0:
+              self.scheduleTask(time+period, task)
+            elif period == 0:
+              self.scheduleTask(time+result, task)
+          else:
+            self.removeTask(task["name"])
         
     for task in self.renderTasks:
       result = self.runTask(task, self.getFrameTime())
@@ -206,4 +207,4 @@ class Scheduler(object):
     del self.tasks[name]
     if task in self.renderTasks:
       self.renderTasks.remove(task)
-  
+      
