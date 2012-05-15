@@ -4,10 +4,10 @@ from morsel.morselc import RangeSensorLogWriter as CRangeSensorLogWriter
 #-------------------------------------------------------------------------------
 
 class RangeSensorLogWriter(Output):
-  def __init__(self, world, name, filename, sensor, binary = True,
+  def __init__(self, name, filename, sensor, binary = True,
       logTimestamps = True, logColors = False, logLabels = False,
       logInvalids = False, **kargs):
-    Output.__init__(self, world, name, **kargs)
+    Output.__init__(self, name, **kargs)
 
     self.sensor = sensor
     self.filename = filename

@@ -4,12 +4,12 @@ from morsel.morselc import CommandLogWriter as CCommandLogWriter
 #-------------------------------------------------------------------------------
 
 class CommandLogWriter(Output):
-  def __init__(self, world, name, filename, actuator = None, platform = None,
+  def __init__(self, name, filename, actuator = None, platform = None,
       binary = True, logTimestamps = True, **kargs):
     if platform:
       actuator = platform.actuator
 
-    Output.__init__(self, world, name, **kargs)
+    Output.__init__(self, name, **kargs)
 
     self.actuator = actuator
     self.filename = filename

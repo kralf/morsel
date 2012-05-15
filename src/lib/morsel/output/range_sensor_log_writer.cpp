@@ -96,6 +96,8 @@ void RangeSensorLogWriter::writeData(double time) {
     if (logInvalids || ray.valid) {
       if (binary) {
         (*this) << ray.point[0] << ray.point[1] << ray.point[2];
+        if (logInvalids)
+          (*this) << ray.valid;
         if (logColors)
           (*this) << ray.color[0] << ray.color[1] << ray.color[2];
         if (logLabels)
@@ -103,6 +105,8 @@ void RangeSensorLogWriter::writeData(double time) {
       }
       else {
         (*this) << ray.point[0] << " " << ray.point[1] << " " << ray.point[2];
+        if (logInvalids)
+          (*this) << " " << ray.valid;
         if (logColors)
           (*this) << " " << ray.color[0] << " " << ray.color[1] << " " <<
             ray.color[2];

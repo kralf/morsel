@@ -4,12 +4,12 @@ from morsel.morselc import CommandLogReader as CCommandLogReader
 #-------------------------------------------------------------------------------
 
 class CommandLogReader(Input):
-  def __init__(self, world, name, filename, actuator = None, platform = None,
+  def __init__(self, name, filename, actuator = None, platform = None,
       binary = True, **kargs):
     if platform:
       actuator = platform.actuator
       
-    Input.__init__(self, world, name, **kargs)
+    Input.__init__(self, name, **kargs)
 
     self.actuator = actuator
     self.filename = filename
