@@ -61,6 +61,8 @@ void RangeSensorLogWriter::writeHeader() {
       (*this) << " r g b";
     if (logLabels)
       (*this) << " label";
+    if (logInvalids)
+      (*this) << " valid";
     (*this) << "\n";
   }
   else
