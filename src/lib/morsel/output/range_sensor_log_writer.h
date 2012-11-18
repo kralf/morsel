@@ -36,18 +36,21 @@ PUBLISHED:
     */
   RangeSensorLogWriter(std::string name, NodePath& sensor, std::string
     filename, bool binary = true, bool logTimestamps = true, bool
-    logColors = false, bool logLabels = false, bool logInvalids = false);
+    logPoses = true, bool logColors = false, bool logLabels = false,
+    bool logInvalids = false);
   
   /** Destructor
     */
   virtual ~RangeSensorLogWriter();
 
   virtual void writeHeader();
-  virtual void writeData(double time);
+  virtual void writeData(double time, const LVecBase3f& position, const
+    LVecBase3f& orientation);
 protected:
   RangeSensor& sensor;
   std::string filename;
   bool logTimestamps;
+  bool logPoses;
   bool logColors;
   bool logLabels;
   bool logInvalids;

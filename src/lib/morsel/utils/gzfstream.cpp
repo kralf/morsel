@@ -29,7 +29,7 @@ using namespace std;
 /* Statics                                                                   */
 /*****************************************************************************/
 
-size_t gzstreambuf::bufferSize = BUFSIZ;
+size_t gzstreambuf::bufferSize = 1024*1024;
 
 /*****************************************************************************/
 /* Constructors and Destructor                                               */

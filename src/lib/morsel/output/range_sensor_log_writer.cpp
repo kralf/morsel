@@ -30,12 +30,13 @@ using namespace std;
 /*****************************************************************************/
 
 RangeSensorLogWriter::RangeSensorLogWriter(string name, NodePath& sensor,
-    string filename, bool binary, bool logTimestamps, bool logColors,
-    bool logLabels, bool logInvalids) :
+    string filename, bool binary, bool logTimestamps, bool logPoses, bool
+    logColors, bool logLabels, bool logInvalids) :
   LogWriter(name, binary),
   sensor(static_cast<RangeSensor&>(sensor)),
   filename(filename),
   logTimestamps(logTimestamps),
+  logPoses(logPoses),
   logColors(logColors),
   logLabels(logLabels),
   logInvalids(logInvalids) {
@@ -53,6 +54,7 @@ void RangeSensorLogWriter::writeHeader() {
   
   if (!binary) {
     (*this) << "# Timestamps: " << logTimestamps << "\n";
+    (*this) << "# Poses: " << logPoses << "\n";
     (*this) << "# Colors: " << logColors << "\n";
     (*this) << "# Labels: " << logLabels << "\n";
     (*this) << "# Ivalids: " << logInvalids << "\n";
@@ -66,10 +68,12 @@ void RangeSensorLogWriter::writeHeader() {
     (*this) << "\n";
   }
   else
-    (*this) << logTimestamps << logColors << logLabels << logInvalids;
+    (*this) << logTimestamps << logPoses << logColors << logLabels <<
+      logInvalids;
 }
 
-void RangeSensorLogWriter::writeData(double time) {
+void RangeSensorLogWriter::writeData(double time, const LVecBase3f& position,
+    const LVecBase3f& orientation) {
   double timestamp = sensor.getTimestamp();
 
   unsigned int numRays = sensor.getNumRays();
@@ -85,12 +89,20 @@ void RangeSensorLogWriter::writeData(double time) {
     (*this) << numRays;
     if (logTimestamps)
       (*this) << timestamp;
+    if (logPoses)
+      (*this) << position[0]  << position[1] << position[2] <<
+        orientation[0]*M_PI/180.0 << orientation[1]*M_PI/180.0  <<
+        orientation[2]*M_PI/180.0;
   }
   else {
     (*this) << "# Number of points: " << numRays << "\n";
     if (logTimestamps)
       (*this) << "# Timestamp: " << Timestamp::toString(timestamp).c_str() <<
         "\n";
+    if (logPoses)
+      (*this) << "# Pose: " << position[0] << " " << position[1] << " " <<
+        position[2] << " " << orientation[0] << " " <<  orientation[1] <<
+        " " << orientation[2] << "\n";
   }
 
   for (int i = 0; i < sensor.getNumRays(); ++i) {

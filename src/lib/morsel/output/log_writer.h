@@ -65,7 +65,6 @@ public:
   LogWriter& operator<<(const std::string& value);
 
   virtual void writeHeader();
-  virtual void writeData(double time) = 0;
 protected:
   std::string logFilename;
   bool binary;
