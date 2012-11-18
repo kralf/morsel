@@ -40,10 +40,9 @@ class RangeSensor(Sensor):
       self.spherical, self.acquireColor, self.acquireLabel)
     self.sensor.reparentTo(self)
 
-#-------------------------------------------------------------------------------
-
-  def updateGraphics(self):
-    self.sensor.update(self.world.time)
+    self.callback = panda.CallbackNode(name+"Callback")
+    self.callback.setDrawCallback(panda.PythonCallbackObject(self.draw))
+    self.attachNewNode(self.callback)
 
 #-------------------------------------------------------------------------------
 
@@ -54,3 +53,14 @@ class RangeSensor(Sensor):
 
   def hideFrustums(self):
     self.sensor.hideFrustums()
+
+#-------------------------------------------------------------------------------
+
+  def draw(self, callbackData):
+    position = self.globalPosition
+    orientation = self.globalOrientation
+
+    self.sensor.update(self.world.time, panda.Vec3(*position),
+      panda.Vec3(*orientation))
+      
+    callbackData.upcall()

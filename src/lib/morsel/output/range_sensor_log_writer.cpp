@@ -72,9 +72,10 @@ void RangeSensorLogWriter::writeHeader() {
       logInvalids;
 }
 
-void RangeSensorLogWriter::writeData(double time, const LVecBase3f& position,
-    const LVecBase3f& orientation) {
+void RangeSensorLogWriter::writeData(double time) {
   double timestamp = sensor.getTimestamp();
+  LVecBase3f position = sensor.getPosition();
+  LVecBase3f orientation = sensor.getOrientation();
 
   unsigned int numRays = sensor.getNumRays();
   if (!logInvalids) {

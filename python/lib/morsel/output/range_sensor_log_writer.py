@@ -26,8 +26,4 @@ class RangeSensorLogWriter(Output):
 #-------------------------------------------------------------------------------
 
   def outputData(self, time):
-    position = self.sensor.globalPosition
-    orientation = self.sensor.globalOrientation
-    
-    self.writer.writeData(time, panda.Vec3(*position),
-      panda.Vec3(*orientation))
+    self.writer.writeData(time)

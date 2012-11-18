@@ -44,8 +44,7 @@ PUBLISHED:
   virtual ~RangeSensorLogWriter();
 
   virtual void writeHeader();
-  virtual void writeData(double time, const LVecBase3f& position, const
-    LVecBase3f& orientation);
+  virtual void writeData(double time);
 protected:
   RangeSensor& sensor;
   std::string filename;

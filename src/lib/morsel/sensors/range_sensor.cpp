@@ -121,16 +121,27 @@ double RangeSensor::getTimestamp() const {
   return timestamp;
 }
 
+const LVecBase3f& RangeSensor::getPosition() const {
+  return position;
+}
+
+const LVecBase3f& RangeSensor::getOrientation() const {
+  return orientation;
+}
+
 /*****************************************************************************/
 /* Methods                                                                   */
 /*****************************************************************************/
 
-bool RangeSensor::update(double time) {
+bool RangeSensor::update(double time, const LVecBase3f& position, const
+    LVecBase3f& orientation) {
   timestamp = time;
+  this->position = position;
+  this->orientation = orientation;
   
   for (int i = 0; i < cameras.size(); ++i)
     cameras[i]->update(time);
-  
+
   return true;
 }
 

@@ -73,8 +73,11 @@ PUBLISHED:
   size_t getNumRays() const;
   const Ray& getRay(int index) const;
   double getTimestamp() const;
+  const LVecBase3f& getPosition() const;
+  const LVecBase3f& getOrientation() const;
   
-  bool update(double time);
+  bool update(double time, const LVecBase3f& position, const LVecBase3f&
+    orientation);
   void showFrustums();
   void hideFrustums();
 protected:
@@ -94,6 +97,8 @@ protected:
   std::vector<RangeCamera*> cameras;
 
   double timestamp;
+  LVecBase3f position;
+  LVecBase3f orientation;
   mutable double lastTimestamp;
   mutable std::vector<Ray> rays;
   
