@@ -91,8 +91,9 @@ void RangeSensorLogWriter::writeData(double time, const LVecBase3f& position,
       (*this) << timestamp;
     if (logPoses)
       (*this) << position[0]  << position[1] << position[2] <<
-        orientation[0]*M_PI/180.0 << orientation[1]*M_PI/180.0  <<
-        orientation[2]*M_PI/180.0;
+        float(orientation[0]*M_PI/180.0) <<
+        float(orientation[1]*M_PI/180.0) <<
+        float(orientation[2]*M_PI/180.0);
   }
   else {
     (*this) << "# Number of points: " << numRays << "\n";
