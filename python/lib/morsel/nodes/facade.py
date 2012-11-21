@@ -50,8 +50,8 @@ def Solid(**kargs):
 #-------------------------------------------------------------------------------
 
 def Static(**kargs):
-  return framework.createInstance("nodes", type = "Static",
-    world = framework.world, **kargs)
+  return framework.createInstance("nodes."+framework.world.physics,
+    type = "Static", world = framework.world, **kargs)
 
 #-------------------------------------------------------------------------------
 
