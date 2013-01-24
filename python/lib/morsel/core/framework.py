@@ -272,8 +272,8 @@ class Framework(object):
     try:
       facade = __import__(self.packages[package].module+".facade",
         __builtin__.globals(), __builtin__.locals(), ["*"])
-    except ImportError:
-      pass
+    except ImportError, error:
+      raise error
     else:
       for expression in dir(facade):
         if not __builtin__.__dict__.has_key(expression):
