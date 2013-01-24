@@ -40,7 +40,7 @@ PUBLISHED:
     */
   LaserView(std::string name, NodePath& sensor, ShaderProgram& program,
     const Colorf& color, bool showPoints = true, bool showLines = false,
-    bool showColors = false, bool showLabels = false);
+    bool showColors = false, bool showLabels = false, bool useAlpha = true);
 
   /** Destructor
     */
@@ -54,6 +54,7 @@ protected:
   bool showLines;
   bool showColors;
   bool showLabels;
+  bool useAlpha;
   PointerTo<Shader> shader;
 
   std::vector<PandaNode*> nodes;

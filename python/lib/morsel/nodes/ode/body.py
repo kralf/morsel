@@ -17,6 +17,8 @@ class Body(Object):
     Object.__init__(self, world, name, position = position,
       orientation = orientation, **kargs)
 
+    self.updateTransform()
+
 #-------------------------------------------------------------------------------
 
   def setPosition(self, position, node = None):

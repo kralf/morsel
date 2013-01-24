@@ -41,7 +41,7 @@ using namespace std;
 
 LaserView::LaserView(std::string name, NodePath& sensor, ShaderProgram&
     program, const Colorf& color, bool showPoints, bool showLines,
-    bool showColors, bool showLabels) :
+    bool showColors, bool showLabels, bool useAlpha) :
   NodePath(name),
   sensor(static_cast<RangeSensor&>(sensor)),
   color(color),
@@ -49,9 +49,11 @@ LaserView::LaserView(std::string name, NodePath& sensor, ShaderProgram&
   showLines(showLines),
   showColors(showColors),
   showLabels(showLabels),
+  useAlpha(useAlpha),
   shader(0) {
   set_two_sided(true);
   set_depth_write(false);
+  set_color_off();
   set_transparency(TransparencyAttrib::M_alpha);
   setupGeometries();
   if (program.isEmpty())
@@ -192,11 +194,15 @@ void LaserView::updateGeometries() {
       else if (showLabels && sensor.acquiresLabel())
         color = camera.getLabelColor(ri);
 
-      double radius = point.length();
-      if ((radius > rangeLimits[0]) && (radius < rangeLimits[1]))
-        color[3] = 1.0-radius/rangeLimits[1];
+      if (useAlpha) {
+        double radius = point.length();
+        if ((radius > rangeLimits[0]) && (radius < rangeLimits[1]))
+          color[3] = 1.0-radius/rangeLimits[1];
+        else
+          color[3] = 0.0;
+      }
       else
-        color[3] = 0.0;
+        color[3] = 1.0;
 
       v.set_data3f(point);
       c.set_data4f(color);

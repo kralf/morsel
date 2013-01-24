@@ -4,23 +4,17 @@ from morsel.nodes import Object
 #-------------------------------------------------------------------------------
 
 class Geometry(Object):
-  def __init__(self, world, name, solid, geometry = None, **kargs):
+  def __init__(self, world, name, solid, geometry = None, placeable = True,
+      **kargs):
     self.geometry = geometry
     self.body = None
     self.positionOffset = [0, 0, 0]
     self.orientationOffset = [0, 0, 0]
+    self.placeable = placeable
     
     Object.__init__(self, world, name, **kargs)
 
     self.solid = solid
-
-    if framework.debug:
-      self.display = self.makeDisplay()
-      if self.display:
-        self.display.parent = self
-        self.display.color = [1, 1, 1, 0.5]
-        self.display.setTextureOff(1)
-        self.display.setTransparency(panda.TransparencyAttrib.MAlpha)
 
 #-------------------------------------------------------------------------------
 
@@ -71,8 +65,47 @@ class Geometry(Object):
 
 #-------------------------------------------------------------------------------
 
+  def getGeometry(self):
+    if hasattr(self, "_geometry"):
+      return self._geometry
+    else:
+      return None
+
+  def setGeometry(self, geometry):
+    self._geometry = geometry
+    if self._geometry and self.body:
+      self._geometry.setBody(self.body.body)
+
+      positionOffset = (panda.Vec3(*self.globalPosition)-
+        panda.Vec3(*self.body.globalPosition))
+      orientationOffset = (panda.Vec3(*self.globalOrientation)-
+        panda.Vec3(*self.body.globalOrientation))
+
+      self.positionOffset = [positionOffset[0], positionOffset[1],
+        positionOffset[2]]
+      self.orientationOffset = [orientationOffset[0], orientationOffset[1],
+        orientationOffset[2]]
+
+    if self._geometry and framework.debug:
+      self.display = self.makeDisplay()
+      if self.display:
+        self.display.parent = self
+        self.display.color = [1, 1, 1, 0.5]
+        self.display.setTextureOff(1)
+        self.display.setTransparency(panda.TransparencyAttrib.MAlpha)
+
+    if self._geometry:
+      self.updateTransform()
+
+  geometry = property(getGeometry, setGeometry)
+
+#-------------------------------------------------------------------------------
+
   def getBody(self):
-    return self._body
+    if hasattr(self, "_body"):
+      return self._body
+    else:
+      return None
 
   def setBody(self, body):
     self._body = body
@@ -110,8 +143,9 @@ class Geometry(Object):
 #-------------------------------------------------------------------------------
 
   def updateTransform(self):
-    self.geometry.setPosition(self.getPos(self.world.scene))
-    self.geometry.setQuaternion(self.getQuat(self.world.scene))
+    if self.geometry and self.placeable:
+      self.geometry.setPosition(self.getPos(self.world.scene))
+      self.geometry.setQuaternion(self.getQuat(self.world.scene))
 
 #-------------------------------------------------------------------------------
 

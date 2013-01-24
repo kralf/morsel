@@ -9,12 +9,7 @@ class Static(Base):
 
     if not solid:
       solid = "Empty"
-    if not body:
-      body = "Empty"
 
     self.solid = Solid(name = name+"Solid", type = solid, mesh = self.mesh,
       body = body, parent = self.world.scene.solid)
-    joint = panda.OdeFixedJoint(world.world)
-    joint.attach(self.solid.body.body, self.world.scene.solid.body.body)
-    joint.set()
     

@@ -21,7 +21,7 @@ def ShaderProgram(filename = None, **kargs):
     if not shaderFile:
       framework.error("Shader file '"+filename+"' not found")
   else:
-    shaderFile = None
+    shaderFile = ""
 
   return framework.createInstance("utility", type = "ShaderProgram",
     filename = shaderFile, **kargs)

@@ -14,7 +14,7 @@ class Plane(Geometry):
     elif d_min == scale[2]:
       normal = panda.Vec3(0, 0 , 1)
 
-    plane = panda.Plane(normal, panda.Point3(x, y, z))
+    plane = panda.Plane(normal, panda.Point3(0, 0, 0))
     geometry = panda.CollisionPlane(plane)
 
     Geometry.__init__(self, world, name, solid, geometry = geometry,

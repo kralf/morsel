@@ -7,11 +7,11 @@ from morsel.nodes.facade import Mesh
 class Ray(Geometry):
   def __init__(self, world, name, solid, position = [0, 0, 0],
       scale = [1, 1, 1], **kargs):
-    geometry = panda.OdeRayGeom(world.space, scale[2])
-
     position[2] -= 0.5*scale[2]
-    Geometry.__init__(self, world, name, solid, geometry = geometry,
-      position = position, scale = [1, 1, scale[2]], **kargs)
+    Geometry.__init__(self, world, name, solid, position = position,
+      scale = [1, 1, scale[2]], **kargs)
+    
+    self.geometry = panda.OdeRayGeom(world.space, self.globalScale[2])
 
 #-------------------------------------------------------------------------------
 

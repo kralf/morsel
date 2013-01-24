@@ -103,12 +103,13 @@ class Solid(Base):
 
   def updateGraphics(self):
     if self.body:
-      transform = panda.TransformState.makePos(self.body.body.getPosition())
+      transform = panda.TransformState.makeScale(panda.Vec3(*self.globalScale))
+      transform = transform.setPos(self.body.body.getPosition())
       transform = transform.setQuat(panda.Quat(self.body.body.getQuaternion()))
       bodyTransform = panda.TransformState.makePos(self.body.getPos())
       bodyTransform = bodyTransform.setQuat(self.body.getQuaternion())
       transform = transform.compose(bodyTransform.getInverse())
-      
+
       if self.mesh:
         self.mesh.setTransform(self.world.scene, transform)
       self.setTransform(self.world.scene, transform)

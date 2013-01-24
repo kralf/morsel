@@ -1,3 +1,4 @@
-type = "Joystick"
+type   = "Joystick"
 
-axes = [1, 0]
+axes   = [1, 0]
+scales = [-1, -1]

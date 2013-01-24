@@ -5,31 +5,29 @@ from morsel.nodes.facade import Mesh
 #-------------------------------------------------------------------------------
 
 class Cylinder(Geometry):
-  def __init__(self, world, name, solid, scale = [1, 1, 1], **kargs):
-    dxy = abs(scale[0]-scale[1])
-    dxz = abs(scale[0]-scale[2])
-    dyz = abs(scale[1]-scale[2])
+  def __init__(self, world, name, solid, **kargs):
+    Geometry.__init__(self, world, name, solid, **kargs)
+
+    dxy = abs(self.globalScale[0]-self.globalScale[1])
+    dxz = abs(self.globalScale[0]-self.globalScale[2])
+    dyz = abs(self.globalScale[1]-self.globalScale[2])
     d_min = min(dxy, dxz, dyz)
 
     if d_min == dxy:
-      radius = 0.5*max(scale[0], scale[1])
-      length = scale[2]
-      orientation = [0, 0, 0]
+      radius = 0.5*max(self.globalScale[0], self.globalScale[1])
+      length = self.globalScale[2]
     elif d_min == dxz:
-      radius = 0.5*max(scale[0], scale[2])
-      length = scale[1]
-      orientation = [0, 90, 0]
-      scale = [scale[0], scale[2], scale[1]]
-    elif d_min == dyz:
-      radius = 0.5*max(scale[1], scale[2])
-      length = scale[0]
-      orientation = [0, 0, 90]
-      scale = [scale[2], scale[1], scale[0]]
+      radius = 0.5*max(self.globalScale[0], self.globalScale[2])
+      length = self.globalScale[1]
+      self.orientation = [0, 90, 0]
+      self.scale = [self.scale[0], self.scale[2], self.scale[1]]
+    else:
+      radius = 0.5*max(self.globalScale[1], self.globalScale[2])
+      length = self.globalScale[0]
+      self.orientation = [0, 0, 90]
+      self.scale = [self.scale[2], self.scale[1], self.scale[0]]
 
-    geometry = panda.OdeCylinderGeom(world.space, radius, length)
-
-    Geometry.__init__(self, world, name, solid, geometry = geometry,
-      orientation = orientation, scale = scale, **kargs)
+    self.geometry = panda.OdeCylinderGeom(world.space, radius, length)
 
 #-------------------------------------------------------------------------------
 

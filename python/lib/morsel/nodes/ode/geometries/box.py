@@ -5,11 +5,10 @@ from morsel.nodes.facade import Mesh
 #-------------------------------------------------------------------------------
 
 class Box(Geometry):
-  def __init__(self, world, name, solid, scale = [1, 1, 1], **kargs):
-    geometry = panda.OdeBoxGeom(world.space, *scale)
+  def __init__(self, world, name, solid, **kargs):
+    Geometry.__init__(self, world, name, solid, **kargs)
 
-    Geometry.__init__(self, world, name, solid, geometry = geometry,
-      scale = scale, **kargs)
+    self.geometry = panda.OdeBoxGeom(world.space, *self.globalScale)
 
 #-------------------------------------------------------------------------------
 

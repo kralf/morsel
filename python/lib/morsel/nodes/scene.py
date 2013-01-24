@@ -9,6 +9,7 @@ from sensor import Sensor
 from platform import Platform
 from actor import Actor
 from view import View
+from controller import Controller
 from facade import Collider, Solid
 
 #-------------------------------------------------------------------------------
@@ -89,6 +90,13 @@ class Scene(Object):
     return Iterator(self, View).generator
 
   views = property(getViews)
+
+#-------------------------------------------------------------------------------
+
+  def getControllers(self):
+    return Iterator(self, Controller).generator
+
+  controllers = property(getControllers)
 
 #-------------------------------------------------------------------------------
 

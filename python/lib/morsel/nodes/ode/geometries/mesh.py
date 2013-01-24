@@ -6,17 +6,18 @@ from morsel.nodes import Node
 
 class Mesh(Geometry):
   def __init__(self, world, name, solid, position = [0, 0, 0],
-      scale = [1, 1, 1], parent = None, **kargs):
-    data = Node(name+"Data", parent = parent)
+      scale = [1, 1, 1], **kargs):
+    Geometry.__init__(self, world, name, solid, **kargs)
+      
+    data = Node(name+"Data", scale = self.globalScale)
     solid.mesh.copyTo(data)
-    data.clearTransform(solid.mesh)
     data.flattenStrong()
+    data.clearTransform(solid.mesh)
     self.data = panda.OdeTriMeshData(data)
-    geometry = panda.OdeTriMeshGeom(world.space, self.data)
+    
+    self.geometry = panda.OdeTriMeshGeom(world.space, self.data)
+    
     data.removeNode()
-
-    Geometry.__init__(self, world, name, solid, geometry = geometry,
-      parent = parent, **kargs)
 
 #-------------------------------------------------------------------------------
 

@@ -5,12 +5,13 @@ from morsel.nodes.facade import Mesh
 #-------------------------------------------------------------------------------
 
 class Sphere(Geometry):
-  def __init__(self, world, name, solid, scale = [1, 1, 1], **kargs):
-    radius = 0.5*max(scale)
-    geometry = panda.OdeSphereGeom(world.space, radius)
+  def __init__(self, world, name, solid, **kargs):
+    Geometry.__init__(self, world, name, solid, **kargs)
 
-    Geometry.__init__(self, world, name, solid, geometry = geometry,
-      scale = [2*radius]*3, **kargs)
+    self.scale = [max(self.scale)]*3
+    radius = 0.5*max(self.globalScale)
+    
+    self.geometry = panda.OdeSphereGeom(world.space, radius)
 
 #-------------------------------------------------------------------------------
 

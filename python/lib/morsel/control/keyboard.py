@@ -58,7 +58,7 @@ class Keyboard(Controller):
   def updateCommand(self, period):
     command = self.actuator.command
 
-    for i in range(len(self.keys)):
+    for i in range(min(len(self.keys), len(command))):
       if self.keys[i]:
         if self.keyMap[self.keys[i][0]]:
           command[i] -= self.increments[i]*period
