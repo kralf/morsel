@@ -90,8 +90,9 @@ class Ackermann(WheelChassis):
   def setRotationalVelocity(self, rotationalVelocity):
     if abs(rotationalVelocity[0]) >= self.epsilon:
       radius = self.command[0]/(rotationalVelocity[0]*pi/180)
-      self.command = [self.command[0],
-        atan(self.steeringAxisDistance/radius)*180/pi]
+      if abs(radius) >= self.epsilon:
+        self.command = [self.command[0],
+          atan(self.steeringAxisDistance/radius)*180/pi]
     else:
       self.command = [self.command[0], 0]
 

@@ -71,6 +71,10 @@ const PNMImage& ImageSensor::getImage() const {
   return colorTexels;
 }
 
+const Camera& ImageSensor::getCamera() const {
+  return *cameraNode;
+}
+
 /*****************************************************************************/
 /* Methods                                                                   */
 /*****************************************************************************/

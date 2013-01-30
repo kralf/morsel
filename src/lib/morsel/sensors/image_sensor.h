@@ -50,6 +50,7 @@ PUBLISHED:
   const Texture& getColorMap() const;
   double getTimestamp() const;
   const PNMImage& getImage() const;
+  const Camera& getCamera() const;
   
   bool update(double time);
   void showFrustum();

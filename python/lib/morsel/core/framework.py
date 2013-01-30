@@ -268,12 +268,12 @@ class Framework(object):
 
   def include(self, package, **kargs):
     self.packages[package] = Package(package, **kargs)
-    
+
     try:
       facade = __import__(self.packages[package].module+".facade",
         __builtin__.globals(), __builtin__.locals(), ["*"])
     except ImportError, error:
-      raise error
+      pass
     else:
       for expression in dir(facade):
         if not __builtin__.__dict__.has_key(expression):
