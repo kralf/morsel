@@ -15,6 +15,7 @@ from os.path import *
 
 import __builtin__
 import inspect
+import pkgutil
 
 #-------------------------------------------------------------------------------
 
@@ -269,12 +270,13 @@ class Framework(object):
   def include(self, package, **kargs):
     self.packages[package] = Package(package, **kargs)
 
-    try:
+    packageModule = __import__(self.packages[package].module)
+    packagePath = os.path.dirname(packageModule.__file__)
+    modules = [name for _, name, _ in pkgutil.iter_modules([packagePath])]
+
+    if "facade" in modules:      
       facade = __import__(self.packages[package].module+".facade",
         __builtin__.globals(), __builtin__.locals(), ["*"])
-    except ImportError, error:
-      pass
-    else:
       for expression in dir(facade):
         if not __builtin__.__dict__.has_key(expression):
           __builtin__.__dict__[expression] = getattr(facade, expression)
