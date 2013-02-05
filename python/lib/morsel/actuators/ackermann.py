@@ -83,7 +83,7 @@ class Ackermann(WheelChassis):
   def getRotationalVelocity(self):
     if abs(self.state[1]) >= self.epsilon:
       radius = self.steeringAxisDistance/tan(self.state[1]*pi/180)
-      return self.state[0]/radius*180/pi
+      return [self.state[0]/radius*180/pi, 0, 0]
     else:
       return [0, 0, 0]
 
