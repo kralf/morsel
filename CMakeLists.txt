@@ -49,3 +49,11 @@ remake_pack_deb(
   DESCRIPTION "blender scripts"
   blender
 )
+
+remake_distribute_deb(
+  DISTRIBUTION lucid
+  SECTION python
+  UPLOAD ppa:kralf/asl
+  DEPENDS remake panda3d-dev panda3d-python
+  PASS CMAKE_BUILD_TYPE MORSEL_SUBVERSION_REVISION
+)
