@@ -1,3 +1,9 @@
+morsel (1.3-244) lucid; urgency=low
+
+  * Added free tree models
+
+ -- Ralf Kaestner <ralf.kaestner@gmail.com>  Sun, 17 Feb 2013 11:33:00 +0100
+
 morsel (1.3-243) lucid; urgency=low
 
   * Release distribution
