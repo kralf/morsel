@@ -1,4 +1,5 @@
 from morsel.panda import *
+from morsel.math import *
 from morsel.sensors.inertial_sensor import InertialSensor as Base
 from morsel.nodes.facade import Solid
 
@@ -18,5 +19,11 @@ class InertialSensor(Base):
 #-------------------------------------------------------------------------------
 
   def updateVelocity(self, period):
-    self.translationalVelocity = self.solid.body.translationalVelocity
-    self.rotationalVelocity = self.solid.body.rotationalVelocity
+    self.rotationalVelocity = self.solid.body.getRotationalVelocity(self)
+    self.translationalVelocity = self.solid.body.getTranslationalVelocity(self)
+    
+    rv = panda.Vec3(self.rotationalVelocity[2], self.rotationalVelocity[1],
+      self.rotationalVelocity[0])*pi/180.0
+    tv = (panda.Vec3(*self.translationalVelocity)+
+      rv.cross(-self.solid.body.getPos(self)))
+    self.translationalVelocity = [tv[0], tv[1], tv[2]]

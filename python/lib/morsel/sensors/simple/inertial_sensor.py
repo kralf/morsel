@@ -1,3 +1,5 @@
+from morsel.panda import *
+from morsel.math import *
 from morsel.sensors.inertial_sensor import InertialSensor as Base
 from morsel.nodes.facade import Solid
 
@@ -19,13 +21,13 @@ class InertialSensor(Base):
     if self.lastPosition:
       tv = ((panda.Vec3(*self.globalPosition)-
         panda.Vec3(*self.lastPosition))/period)
-      tv = self.getRelativeVector(self.world.scene, tv)
+      tv = self.world.scene.getQuaternion(self).xform(tv)
       self.translationalVelocity = [tv[0], tv[1], tv[2]]
     if self.lastOrientation:
       rv = ((panda.Vec3(*self.globalOrientation)-
         panda.Vec3(*self.lastOrientation))/period)
-      rv = self.getRelativeVector(self.world.scene,
-        panda.Vec3(rv[2], rv[1], rv[0]))
+      rv = panda.Vec3(rv[2], rv[1], rv[0])
+      rv = self.world.scene.getQuaternion(self).xform(rv)
       self.rotationalVelocity = [rv[2], rv[1], rv[0]]
 
     self.lastPosition = self.globalPosition

@@ -56,4 +56,5 @@ remake_distribute_deb(
   UPLOAD ppa:kralf/asl
   DEPENDS remake panda3d-dev panda3d-python
   PASS CMAKE_BUILD_TYPE MORSEL_SUBVERSION_REVISION
+  EXCLUDE "[.]blend$"
 )

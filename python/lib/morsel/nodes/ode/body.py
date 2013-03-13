@@ -40,7 +40,7 @@ class Body(Object):
   def getTranslationalVelocity(self, node = None):
     if not node:
       node = self
-      
+    
     tv = self.world.scene.getQuaternion(node).xform(
       self.body.getLinearVel())
     

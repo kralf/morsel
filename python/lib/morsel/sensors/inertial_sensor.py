@@ -1,4 +1,5 @@
 from morsel.panda import *
+from morsel.math import *
 from morsel.nodes import Sensor
 from morsel.nodes.facade import Mesh
 
@@ -18,6 +19,29 @@ class InertialSensor(Sensor):
 
     self.lastTranslationalVelocity = None
     self.lastRotationalVelocity = None
+
+#-------------------------------------------------------------------------------
+
+  def getTranslationalVelocity(self, node = None):
+    if not node:
+      node = self
+
+    tv = panda.Vec3(*self.translationalVelocity)
+    tv = self.getQuaternion(node).xform(tv)
+
+    return [tv[0], tv[1], tv[2]]
+
+#-------------------------------------------------------------------------------
+
+  def getRotationalVelocity(self, node = None):
+    if not node:
+      node = self
+
+    rv = panda.Vec3(self.rotationalVelocity[2], self.rotationalVelocity[1],
+      self.rotationalVelocity[0])
+    rv = self.getQuaternion(node).xform(rv)
+
+    return [rv[2], rv[1], rv[0]]
 
 #-------------------------------------------------------------------------------
 
