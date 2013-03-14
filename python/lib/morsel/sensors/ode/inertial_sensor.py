@@ -18,12 +18,31 @@ class InertialSensor(Base):
 
 #-------------------------------------------------------------------------------
 
-  def updateVelocity(self, period):
+  def getTranslationalVelocity(self, node = None):
+    if not node:
+      node = self
+      
+    q = panda.Quat(self.solid.body.body.getQuaternion())
     rv = self.solid.body.body.getAngularVel()
-    tv = self.world.scene.getQuaternion(self).xform(
+    tv = self.world.scene.getQuaternion(node).xform(
       self.solid.body.body.getLinearVel()+
-      rv.cross(self.getPos(self.world.scene)-
-      self.solid.body.getPos(self.world.scene)))
-    
-    self.rotationalVelocity = self.solid.body.getRotationalVelocity(self)
-    self.translationalVelocity = [tv[0], tv[1], tv[2]]
+      rv.cross(-q.xform(self.solid.body.getPos())))
+
+    return [tv[0], tv[1], tv[2]]
+
+#-------------------------------------------------------------------------------
+
+  def getRotationalVelocity(self, node = None):
+    if not node:
+      node = self
+
+    rv = self.solid.body.body.getAngularVel()
+    rv = self.world.scene.getQuaternion(node).xform(rv)*180.0/pi
+
+    return [rv[2], rv[1], rv[0]]
+
+#-------------------------------------------------------------------------------
+
+  def updateVelocity(self, period):
+    self.rotationalVelocity = self.getRotationalVelocity()
+    self.translationalVelocity = self.getTranslationalVelocity()

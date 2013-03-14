@@ -1,3 +1,11 @@
+morsel (1.3-247) lucid; urgency=low
+
+  * Fixed inertial sensor velocity transformation (was corrupted by usage
+    of the Panda transforms in the update task running less frequently
+    than the physics task)
+
+ -- Ralf Kaestner <ralf.kaestner@gmail.com>  Thu, 14 Mar 2013 13:50:00 +0100
+
 morsel (1.3-246) lucid; urgency=low
 
   * Changed orientation angles from Panda to robotics convention:
