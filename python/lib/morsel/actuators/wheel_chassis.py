@@ -17,7 +17,7 @@ class WheelChassis(Actuator):
     self.wheelRadius = []
     self.wheelCircumference = []
     self.wheelYaw = []
-    self.wheelRoll = []
+    self.wheelPitch = []
 
     for wheel in wheels:
       wheelModel = mesh.find("**/"+wheel)
@@ -34,7 +34,7 @@ class WheelChassis(Actuator):
         self.wheelRadius.append(radius)
         self.wheelCircumference.append(2*pi*radius)
         self.wheelYaw.append(wheel.yaw)
-        self.wheelRoll.append(wheel.pitch)
+        self.wheelPitch.append(wheel.pitch)
       else:
         framework.error("Wheel model '"+wheel+"' not found")
     
@@ -75,12 +75,12 @@ class WheelChassis(Actuator):
 
   def updatePhysics(self, period):
     for i in range(self.numWheels):
-      self.wheelRoll[i] += self.turningRates[i]*period
-      self.wheelRoll[i] = positiveAngle(self.wheelRoll[i])
+      self.wheelPitch[i] += self.turningRates[i]*period
+      self.wheelPitch[i] = positiveAngle(self.wheelPitch[i])
 
 #-------------------------------------------------------------------------------
 
   def updateGraphics(self):
     for i in range(self.numWheels):
       self.wheels[i].yaw = self.wheelYaw[i]+self.steeringAngles[i]
-      self.wheels[i].roll = self.wheelRoll[i]
+      self.wheels[i].pitch = self.wheelPitch[i]

@@ -19,12 +19,12 @@ class Tube(Geometry):
     elif d_min == dxz:
       radius = 0.5*max(self.globalScale[0], self.globalScale[2])
       length = max(self.globalScale[1]-2*radius, 0)
-      self.orientation = [0, 90, 0]
+      self.orientation = [0, 0, 90]
       self.scale = [self.scale[0], self.scale[2], self.scale[1]]
     else:
       radius = 0.5*max(self.globalScale[1], self.globalScale[2])
       length = max(self.globalScale[0]-2*radius, 0)
-      self.orientation = [0, 0, 90]
+      self.orientation = [0, 90, 0]
       self.scale = [self.scale[2], self.scale[1], self.scale[0]]
 
     self.geometry = panda.OdeCappedCylinderGeom(world.space, radius, length)

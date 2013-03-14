@@ -1,13 +1,22 @@
-morsel (1.3-244) lucid; urgency=low
+morsel (1.3-246) lucid; urgency=low
+
+  * Changed orientation angles from Panda to robotics convention:
+    + yaw rotates about z-axis (same as in Panda)
+    + pitch rotates about y-axis (about x-axis in Panda)
+    + roll rotates about x-axis (about y-axis in Panda)
+
+ -- Ralf Kaestner <ralf.kaestner@gmail.com>  Thu, 14 Mar 2013 10:57:00 +0100
+
+morsel (1.3-245) lucid; urgency=low
 
   * Bug fixes:
     + Corrected velocity output of inertial sensor in ODE and simple mode
       (velocities are now expressed in the frame of the sensor instead of
       its body)
 
- -- Ralf Kaestner <ralf.kaestner@gmail.com>  Sun, 13 Mar 2013 17:00:00 +0100
+ -- Ralf Kaestner <ralf.kaestner@gmail.com>  Wed, 13 Mar 2013 17:00:00 +0100
 
-morsel (1.3-243) lucid; urgency=low
+morsel (1.3-244) lucid; urgency=low
 
   * Added free tree models
   * Excluded .blend files from source distribution

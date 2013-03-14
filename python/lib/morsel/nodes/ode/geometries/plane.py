@@ -12,10 +12,10 @@ class Plane(Geometry):
     d_min = min(self.scale)
 
     if d_min == self.scale[0]:
-      self.orientation = [0, 90, 0]
+      self.orientation = [0, 0, 90]
       self.scale = [1, 1e3*self.scale[1], 1e3*self.scale[2]]
     elif d_min == self.scale[1]:
-      self.orientation = [0, 0, 90]
+      self.orientation = [0, 90, 0]
       self.scale = [1e3*self.scale[0], 1, 1e3*self.scale[2]]
     else:
       self.scale = [1e3*self.scale[0], 1e3*self.scale[1], 1]

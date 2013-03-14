@@ -18,12 +18,12 @@ class Cylinder(Body):
     elif d_min == dxz:
       radius = 0.5*max(scale[0], scale[2])
       length = scale[1]
-      orientation = [0, 90, 0]
+      orientation = [0, 0, 90]
       scale = [scale[0], scale[2], scale[1]]
     elif d_min == dyz:
       radius = 0.5*max(scale[1], scale[2])
       length = scale[0]
-      orientation = [0, 0, 90]
+      orientation = [0, 90, 0]
       scale = [scale[2], scale[1], scale[0]]
     direction = 3
 

@@ -59,21 +59,21 @@ class Node(panda.NodePath):
     else:
       orientation = self.getHpr()
       
-    return [orientation[0], orientation[1], orientation[2]]
+    return [orientation[0], orientation[2], orientation[1]]
 
   def setOrientation(self, orientation, node = None):
     if node:
-      self.setHpr(node, *orientation)
+      self.setHpr(node, orientation[0], orientation[2], orientation[1])
     else:
-      self.setHpr(*orientation)
+      self.setHpr(orientation[0], orientation[2], orientation[1])
 
   orientation = property(getOrientation, setOrientation)
 
 #-------------------------------------------------------------------------------
 
   yaw = property(panda.NodePath.getH, panda.NodePath.setH)
-  pitch = property(panda.NodePath.getP, panda.NodePath.setP)
-  roll = property(panda.NodePath.getR, panda.NodePath.setR)
+  pitch = property(panda.NodePath.getR, panda.NodePath.setR)
+  roll = property(panda.NodePath.getP, panda.NodePath.setP)
 
 #-------------------------------------------------------------------------------
 
