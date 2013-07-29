@@ -1,10 +1,17 @@
-morsel (1.3-248) lucid; urgency=low
+morsel (1.4-98) lucid; urgency=low
+
+  * Re-enumerated patch versions after exporting the "port" branch to github
+  * Increased minor version to 4 to ensure consecutive versioning
+
+ -- Ralf Kaestner <ralf.kaestner@gmail.com>  Mon, 29 Jul 2013 15:20:00 +0100
+
+morsel (1.3-97) lucid; urgency=low
 
   * Fixed library linkage for precise builds
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Mon, 29 Jul 2013 14:07:00 +0100
 
-morsel (1.3-247) lucid; urgency=low
+morsel (1.3-96) lucid; urgency=low
 
   * Fixed inertial sensor velocity transformation (was corrupted by usage
     of the Panda transforms in the update task running less frequently
@@ -12,7 +19,7 @@ morsel (1.3-247) lucid; urgency=low
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Thu, 14 Mar 2013 13:50:00 +0100
 
-morsel (1.3-246) lucid; urgency=low
+morsel (1.3-95) lucid; urgency=low
 
   * Changed orientation angles from Panda to robotics convention:
     + yaw rotates about z-axis (same as in Panda)
@@ -21,7 +28,7 @@ morsel (1.3-246) lucid; urgency=low
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Thu, 14 Mar 2013 10:57:00 +0100
 
-morsel (1.3-245) lucid; urgency=low
+morsel (1.3-94) lucid; urgency=low
 
   * Bug fixes:
     + Corrected velocity output of inertial sensor in ODE and simple mode
@@ -30,20 +37,20 @@ morsel (1.3-245) lucid; urgency=low
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Wed, 13 Mar 2013 17:00:00 +0100
 
-morsel (1.3-244) lucid; urgency=low
+morsel (1.3-93) lucid; urgency=low
 
   * Added free tree models
   * Excluded .blend files from source distribution
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Sun, 17 Feb 2013 11:33:00 +0100
 
-morsel (1.3-243) lucid; urgency=low
+morsel (1.3-92) lucid; urgency=low
 
   * Release distribution
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Thu, 14 Feb 2013 11:28:00 +0100
 
-morsel (1.3-242) unstable; urgency=low
+morsel (1.3-91) unstable; urgency=low
 
   * Bugfixes:
     + Ackerman.getRotationalVelocity() now outputs velocity vector instead
@@ -51,27 +58,27 @@ morsel (1.3-242) unstable; urgency=low
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Tue, 05 Feb 2013 14:48:44 +0100
 
-morsel (1.3-241) unstable; urgency=low
+morsel (1.3-90) unstable; urgency=low
 
   * Changed Framework.include() to first check for facade module before
     importing
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Thu, 31 Jan 2013 08:10:40 +0100
 
-morsel (1.3-240) unstable; urgency=low
+morsel (1.3-89) unstable; urgency=low
 
   * Fixed bug in Ackerman ODE actuator
   * Added camera accessor to ImageSensor
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Wed, 30 Jan 2013 17:42:45 +0100
 
-morsel (1.3-239) unstable; urgency=low
+morsel (1.3-88) unstable; urgency=low
 
   * Made framework.include() rethrow ImportError
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Thu, 24 Jan 2013 14:28:37 +0100
 
-morsel (1.3-238) unstable; urgency=low
+morsel (1.3-87) unstable; urgency=low
 
   * Revised ODE solids, formerly causing stability problems and decreased
     runtime performance
@@ -80,93 +87,93 @@ morsel (1.3-238) unstable; urgency=low
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Thu, 24 Jan 2013 08:48:40 +0100
 
-morsel (1.3-237) unstable; urgency=low
+morsel (1.3-86) unstable; urgency=low
 
   * Added new 8-shaped path for "Smallville"
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Wed, 21 Nov 2012 11:04:38 +0100
 
-morsel (1.3-236) unstable; urgency=low
+morsel (1.3-85) unstable; urgency=low
 
   * Fixed positioning of crate in "Playground" configuration
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Wed, 21 Nov 2012 10:37:54 +0100
 
-morsel (1.3-235) unstable; urgency=low
+morsel (1.3-84) unstable; urgency=low
 
   * Added buildings and misc models
   * Added "Smallville" scene and sample configuration
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Wed, 21 Nov 2012 10:36:16 +0100
 
-morsel (1.3-234) unstable; urgency=low
+morsel (1.3-83) unstable; urgency=low
 
   * Fixed synchronization of the range sensor
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Sun, 18 Nov 2012 14:03:15 +0100
 
-morsel (1.3-233) unstable; urgency=low
+morsel (1.3-82) unstable; urgency=low
 
   * Fixed bug in range sensor log writer
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Sun, 18 Nov 2012 10:40:14 +0100
 
-morsel (1.3-232) unstable; urgency=low
+morsel (1.3-81) unstable; urgency=low
 
   * Changed file format of range sensor log
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Sun, 18 Nov 2012 09:25:26 +0100
 
-morsel (1.3-231) unstable; urgency=low
+morsel (1.3-80) unstable; urgency=low
 
   * Fixed range sensor log writer bug
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Tue, 15 May 2012 23:16:21 +0200
 
-morsel (1.3-230) unstable; urgency=low
+morsel (1.3-79) unstable; urgency=low
 
   * Changed log writers
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Tue, 15 May 2012 21:48:55 +0200
 
-morsel (1.3-229) unstable; urgency=low
+morsel (1.3-78) unstable; urgency=low
 
   * Added Framework.captureScreen() and keyboard shortcut
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Wed, 11 Jan 2012 09:51:51 +0100
 
-morsel (1.3-228) unstable; urgency=low
+morsel (1.3-77) unstable; urgency=low
 
   * Renamd car.pth to alfa_romeo_147.pth for better distinction
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Wed, 11 Jan 2012 08:51:52 +0100
 
-morsel (1.3-227) unstable; urgency=low
+morsel (1.3-76) unstable; urgency=low
 
   * Moved paths out of playground blender file
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Wed, 11 Jan 2012 07:56:01 +0100
 
-morsel (1.3-226) unstable; urgency=low
+morsel (1.3-75) unstable; urgency=low
 
   * Fixed SceneDisplay margin
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Wed, 04 Jan 2012 09:48:47 +0100
 
-morsel (1.3-225) unstable; urgency=low
+morsel (1.3-74) unstable; urgency=low
 
   * Revised widgets and console implementation
   * Added proper font support
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Tue, 03 Jan 2012 16:58:27 +0100
 
-morsel (1.3-224) unstable; urgency=low
+morsel (1.3-72) unstable; urgency=low
 
   * Added SceneDisplay
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Thu, 15 Dec 2011 20:45:15 +0100
 
-morsel (1.3-223) unstable; urgency=low
+morsel (1.3-73) unstable; urgency=low
 
   * Added basic GUI and Widget support
   * Added FramerateDisplay, ClockDisplay, and HelpDisplay widgets
@@ -174,7 +181,7 @@ morsel (1.3-223) unstable; urgency=low
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Thu, 15 Dec 2011 17:40:04 +0100
 
-morsel (1.3-222) unstable; urgency=low
+morsel (1.3-71) unstable; urgency=low
 
   * Added Text node implementation
   * Added clock view and framerate meter
@@ -182,25 +189,25 @@ morsel (1.3-222) unstable; urgency=low
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Tue, 13 Dec 2011 15:51:15 +0100
 
-morsel (1.3-221) unstable; urgency=low
+morsel (1.3-70) unstable; urgency=low
 
   * More material fixes of laser models
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Mon, 12 Dec 2011 15:57:08 +0100
 
-morsel (1.3-220) unstable; urgency=low
+morsel (1.3-69) unstable; urgency=low
 
   * Fixed material properties of laser models
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Mon, 12 Dec 2011 15:50:42 +0100
 
-morsel (1.3-219) unstable; urgency=low
+morsel (1.3-68) unstable; urgency=low
 
   * Updated sensor model files to include low/high-poly meshes
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Mon, 12 Dec 2011 15:42:36 +0100
 
-morsel (1.3-218) unstable; urgency=low
+morsel (1.3-67) unstable; urgency=low
 
   * Added low poly meshes of sensors
   * Added preliminary layer management to switch between low/high poly
@@ -209,31 +216,31 @@ morsel (1.3-218) unstable; urgency=low
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Mon, 12 Dec 2011 15:34:37 +0100
 
-morsel (1.3-217) unstable; urgency=low
+morsel (1.3-66) unstable; urgency=low
 
   * Merged SICK LMS200 model meshes
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Fri, 09 Dec 2011 16:28:42 +0100
 
-morsel (1.3-216) unstable; urgency=low
+morsel (1.3-65) unstable; urgency=low
 
   * Compressed SICK LMS100 Blender model
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Fri, 09 Dec 2011 15:24:46 +0100
 
-morsel (1.3-215) unstable; urgency=low
+morsel (1.3-64) unstable; urgency=low
 
   * Merged SICK LMS100 model meshes
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Fri, 09 Dec 2011 15:24:12 +0100
 
-morsel (1.3-214) unstable; urgency=low
+morsel (1.3-63) unstable; urgency=low
 
   * Added Blender script for selecting objects by color
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Fri, 09 Dec 2011 14:19:34 +0100
 
-morsel (1.3-213) unstable; urgency=low
+morsel (1.3-62) unstable; urgency=low
 
   * Added ShaderProgram implementation to preprocess and compile shaders
   * Externalized the shader code
@@ -242,40 +249,40 @@ morsel (1.3-213) unstable; urgency=low
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Fri, 09 Dec 2011 11:57:16 +0100
 
-morsel (1.3-212) unstable; urgency=low
+morsel (1.3-61) unstable; urgency=low
 
   * Testing version using a GLSL shader for LaserView
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Wed, 07 Dec 2011 16:47:53 +0100
 
-morsel (1.3-211) unstable; urgency=low
+morsel (1.3-60) unstable; urgency=low
 
   * Removed duplicate generation of shader in LaserView
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Wed, 07 Dec 2011 15:05:40 +0100
 
-morsel (1.3-210) unstable; urgency=low
+morsel (1.3-59) unstable; urgency=low
 
   * Not hiding the LaserView after compilation errors anymore since it does
     not solve the "shader too complex" issue
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Tue, 06 Dec 2011 17:31:29 +0100
 
-morsel (1.3-209) unstable; urgency=low
+morsel (1.3-58) unstable; urgency=low
 
   * Hiding the LaserView in cases where the shader does not compile
   * Parented sensor views to the sensor, not the sensor mesh
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Tue, 06 Dec 2011 15:30:10 +0100
 
-morsel (1.3-208) unstable; urgency=low
+morsel (1.3-57) unstable; urgency=low
 
   * Fixed bug in RangeSensor that would lead to wrong update of
     rays
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Tue, 06 Dec 2011 11:57:49 +0100
 
-morsel (1.3-207) unstable; urgency=low
+morsel (1.3-56) unstable; urgency=low
 
   * Added InertialSensor implementation
   * Added XSens MTi sensor model
@@ -283,77 +290,77 @@ morsel (1.3-207) unstable; urgency=low
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Tue, 06 Dec 2011 10:00:46 +0100
 
-morsel (1.3-206) unstable; urgency=low
+morsel (1.3-55) unstable; urgency=low
 
   * Fixed bug in ODE Body implementation that caused a wrong angular velocity
     to be reported
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Mon, 05 Dec 2011 14:29:23 +0100
 
-morsel (1.3-205) unstable; urgency=low
+morsel (1.3-54) unstable; urgency=low
 
   * Removed source/destination member from Input and Output
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Mon, 05 Dec 2011 10:51:53 +0100
 
-morsel (1.3-204) unstable; urgency=low
+morsel (1.3-53) unstable; urgency=low
 
   * Changed Input.update() and Output.update() to take time argument instead
     of the period
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Mon, 05 Dec 2011 08:47:57 +0100
 
-morsel (1.3-203) unstable; urgency=low
+morsel (1.3-52) unstable; urgency=low
 
   * Added facade import to Framework.include()
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Mon, 05 Dec 2011 08:33:55 +0100
 
-morsel (1.3-202) unstable; urgency=low
+morsel (1.3-51) unstable; urgency=low
 
   * Added RangeSensor::getMin/MaxAngles() accessors
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Fri, 02 Dec 2011 15:41:14 +0100
 
-morsel (1.3-201) unstable; urgency=low
+morsel (1.3-50) unstable; urgency=low
 
   * Added RangeSensor::getResolution() accessor
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Fri, 02 Dec 2011 14:58:38 +0100
 
-morsel (1.3-200) unstable; urgency=low
+morsel (1.3-49) unstable; urgency=low
 
   * Added SICK vendor models for LMS100 and LMS200
   * Added sensor model for SICK LMS100
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Fri, 02 Dec 2011 12:59:25 +0100
 
-morsel (1.3-199) unstable; urgency=low
+morsel (1.3-48) unstable; urgency=low
 
   * Fixed keywords in Mesh constructor that would cause geometries to break
     the displays
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Fri, 02 Dec 2011 11:38:38 +0100
 
-morsel (1.3-198) unstable; urgency=low
+morsel (1.3-47) unstable; urgency=low
 
   * Fixed keyed arguments to Package constructor in Framework.include()
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Thu, 01 Dec 2011 23:14:43 +0100
 
-morsel (1.3-197) unstable; urgency=low
+morsel (1.3-46) unstable; urgency=low
 
   * Fixed error handling in Framework.createInstance()
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Thu, 01 Dec 2011 22:36:14 +0100
 
-morsel (1.3-196) unstable; urgency=low
+morsel (1.3-45) unstable; urgency=low
 
   * Fixed config.h inclusion
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Thu, 01 Dec 2011 15:58:57 +0100
 
-morsel (1.3-195) unstable; urgency=low
+morsel (1.3-44) unstable; urgency=low
 
   * Cleaned facade methods to not take unnecessary args and kargs
   * Made the world a property of Framework
@@ -363,7 +370,7 @@ morsel (1.3-195) unstable; urgency=low
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Thu, 01 Dec 2011 14:35:16 +0100
 
-morsel (1.3-194) unstable; urgency=low
+morsel (1.3-43) unstable; urgency=low
 
   * Created LogReader and toy example CommandLogWriter/CommandLogReader
   * Fixed some global static accessors
@@ -371,63 +378,63 @@ morsel (1.3-194) unstable; urgency=low
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Tue, 29 Nov 2011 15:19:00 +0100
 
-morsel (1.3-193) unstable; urgency=low
+morsel (1.3-42) unstable; urgency=low
 
   * Fixed frame time calculation in scheduler
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Mon, 28 Nov 2011 11:58:26 +0100
 
-morsel (1.3-192) unstable; urgency=low
+morsel (1.3-41) unstable; urgency=low
 
   * Added lighting section in sample configuration files
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Mon, 28 Nov 2011 09:55:44 +0100
 
-morsel (1.3-191) unstable; urgency=low
+morsel (1.3-40) unstable; urgency=low
 
   * First draft of animation support
   * Refactured light classes
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Mon, 28 Nov 2011 09:52:52 +0100
 
-morsel (1.3-190) unstable; urgency=low
+morsel (1.3-39) unstable; urgency=low
 
   * Added development package
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Fri, 25 Nov 2011 13:04:30 +0100
 
-morsel (1.3-189) unstable; urgency=low
+morsel (1.3-38) unstable; urgency=low
 
   * Added doctor actor to plane.conf
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Fri, 25 Nov 2011 12:31:53 +0100
 
-morsel (1.3-188) unstable; urgency=low
+morsel (1.3-37) unstable; urgency=low
 
   * Moved platform models
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Fri, 25 Nov 2011 11:19:25 +0100
 
-morsel (1.3-187) unstable; urgency=low
+morsel (1.3-36) unstable; urgency=low
 
   * Cleaned configuration files
   * Moved platform meshes
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Fri, 25 Nov 2011 11:15:42 +0100
 
-morsel (1.3-186) unstable; urgency=low
+morsel (1.3-35) unstable; urgency=low
 
   * Removed obsolete files
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Fri, 25 Nov 2011 10:59:30 +0100
 
-morsel (1.3-185) unstable; urgency=low
+morsel (1.3-34) unstable; urgency=low
 
   * Added proper Smartter model
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Thu, 24 Nov 2011 18:03:37 +0100
 
-morsel (1.3-184) unstable; urgency=low
+morsel (1.3-33) unstable; urgency=low
 
   * Changed sensor update to a "lazy" approach to facilitate real-time display
     where no output is needed
@@ -436,7 +443,7 @@ morsel (1.3-184) unstable; urgency=low
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Thu, 24 Nov 2011 16:54:53 +0100
 
-morsel (1.3-183) unstable; urgency=low
+morsel (1.3-32) unstable; urgency=low
 
   * Revised ODE collision system, where bodies and geometries are parented
     to the solid and the offset is explicit with their relative position to each other
@@ -448,14 +455,14 @@ morsel (1.3-183) unstable; urgency=low
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Wed, 23 Nov 2011 17:55:34 +0100
 
-morsel (1.3-182) unstable; urgency=low
+morsel (1.3-31) unstable; urgency=low
 
   * Fixed buffer size bug in gzstreambuf that would cause write operations
     to segfault
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Wed, 09 Nov 2011 09:07:44 +0100
 
-morsel (1.3-181) unstable; urgency=low
+morsel (1.3-30) unstable; urgency=low
 
   * Added output modules
   * Added first revision of RangeScanLogWriter
@@ -465,97 +472,97 @@ morsel (1.3-181) unstable; urgency=low
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Wed, 09 Nov 2011 08:26:31 +0100
 
-morsel (1.3-180) unstable; urgency=low
+morsel (1.3-29) unstable; urgency=low
 
   * Revised utility functions
   * Added car actor models
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Mon, 31 Oct 2011 18:52:25 +0100
 
-morsel (1.3-179) unstable; urgency=low
+morsel (1.3-28) unstable; urgency=low
 
   * Revised Platform/Actor concept with common Actuator implementations
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Mon, 31 Oct 2011 16:05:48 +0100
 
-morsel (1.3-178) unstable; urgency=low
+morsel (1.3-27) unstable; urgency=low
 
   * Fixed segfaulting bug in ImageView implementation that was caused by
     a wrong pipe passed to make_output()
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Thu, 27 Oct 2011 17:00:05 +0200
 
-morsel (1.3-177) unstable; urgency=low
+morsel (1.3-26) unstable; urgency=low
 
   * Major revision of colliders and solids (solids may now be parented)
   * First working solution of pure-pursuit controller with ODE support
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Thu, 27 Oct 2011 15:51:47 +0200
 
-morsel (1.3-176) unstable; urgency=low
+morsel (1.3-25) unstable; urgency=low
 
   * Blender path export script added
   * Added first version of pure-pursuit path controller
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Wed, 26 Oct 2011 09:05:00 +0200
 
-morsel (1.3-175) unstable; urgency=low
+morsel (1.3-24) unstable; urgency=low
 
   * Fixed delay in LaserView through the use of shaders
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Thu, 20 Oct 2011 13:59:09 +0200
 
-morsel (1.3-174) unstable; urgency=low
+morsel (1.3-23) unstable; urgency=low
 
   * Changed camera resolution parameters for Velodyne HDL 64e
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Wed, 19 Oct 2011 13:40:32 +0200
 
-morsel (1.3-173) unstable; urgency=low
+morsel (1.3-22) unstable; urgency=low
 
   * Added label coloring to the laser view
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Wed, 19 Oct 2011 11:10:20 +0200
 
-morsel (1.3-172) unstable; urgency=low
+morsel (1.3-21) unstable; urgency=low
 
   * Basic version acquiring labels with each laser ray
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Tue, 18 Oct 2011 15:02:52 +0200
 
-morsel (1.3-171) unstable; urgency=low
+morsel (1.3-20) unstable; urgency=low
 
   * Draft version of image sensor and image view
   * Revised geometry concept for ODE physics simulation
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Thu, 13 Oct 2011 15:16:39 +0200
 
-morsel (1.3-170) unstable; urgency=low
+morsel (1.3-19) unstable; urgency=low
 
   * Modified range camera implementation to support exact row/column computation
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Mon, 10 Oct 2011 12:18:18 +0200
 
-morsel (1.3-169) unstable; urgency=low
+morsel (1.3-18) unstable; urgency=low
 
   * Velodyne implementation working with spherical coordinate system
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Sun, 09 Oct 2011 17:02:44 +0200
 
-morsel (1.3-168) unstable; urgency=low
+morsel (1.3-17) unstable; urgency=low
 
   * Added support for sensors
   * Revised range sensor implementation, unfinished
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Sat, 10 Sep 2011 19:44:31 +0200
 
-morsel (1.3-167) unstable; urgency=low
+morsel (1.3-16) unstable; urgency=low
 
   * Apply transformations to car models
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Thu, 04 Aug 2011 15:53:44 +0200
 
-morsel (1.3-166) unstable; urgency=low
+morsel (1.3-15) unstable; urgency=low
 
   * Fixed bug that would cause wrong computation of caster angles in simple
     differential model
@@ -563,62 +570,62 @@ morsel (1.3-166) unstable; urgency=low
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Thu, 04 Aug 2011 14:26:41 +0200
 
-morsel (1.3-165) unstable; urgency=low
+morsel (1.3-14) unstable; urgency=low
 
   * Added support for Pioneer 3AT
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Thu, 04 Aug 2011 11:25:53 +0200
 
-morsel (1.3-164) unstable; urgency=low
+morsel (1.3-13) unstable; urgency=low
 
   * Revised car models
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Thu, 04 Aug 2011 10:39:13 +0200
 
-morsel (1.3-163) unstable; urgency=low
+morsel (1.3-12) unstable; urgency=low
 
   * Differential drive ODE and simple models
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Wed, 03 Aug 2011 18:16:02 +0200
 
-morsel (1.3-162) unstable; urgency=low
+morsel (1.3-11) unstable; urgency=low
 
   * Simple model of differential drive robot
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Tue, 02 Aug 2011 10:39:24 +0200
 
-morsel (1.3-161) unstable; urgency=low
+morsel (1.3-10) unstable; urgency=low
 
   * Fixed bug in ODE solid transformation into mesh coordinates
   * Revised controllers
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Fri, 29 Jul 2011 19:39:47 +0200
 
-morsel (1.3-160) unstable; urgency=low
+morsel (1.3-9) unstable; urgency=low
 
   * Minor revisions of the port collider system
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Thu, 28 Jul 2011 10:21:33 +0200
 
-morsel (1.3-159) unstable; urgency=low
+morsel (1.3-8) unstable; urgency=low
 
   * Tested version of ODE Ackermann model in port
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Thu, 28 Jul 2011 07:44:03 +0200
 
-morsel (1.3-158) unstable; urgency=low
+morsel (1.3-7) unstable; urgency=low
 
   * Major port revisions
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Tue, 26 Jul 2011 17:06:09 +0200
 
-morsel (1.3-157) unstable; urgency=low
+morsel (1.3-6) unstable; urgency=low
 
   * Separated buildings from scene models
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Mon, 18 Jul 2011 10:37:20 +0200
 
-morsel (1.3-156) unstable; urgency=low
+morsel (1.3-5) unstable; urgency=low
 
   * Laser raytracing issues resolved
   * Note: Laser raytracing is now part of the main rendering loop since
@@ -626,782 +633,27 @@ morsel (1.3-156) unstable; urgency=low
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Fri, 08 Jul 2011 12:48:02 +0200
 
-morsel (1.3-155) unstable; urgency=low
+morsel (1.3-4) unstable; urgency=low
 
   * Revised models to have two-sided polygons
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Fri, 01 Jul 2011 11:40:47 +0200
 
-morsel (1.3-154) unstable; urgency=low
+morsel (1.3-3) unstable; urgency=low
 
   * Added loader support for two-sided mesh rendering
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Thu, 30 Jun 2011 16:52:49 +0200
 
-morsel (1.3-153) unstable; urgency=low
+morsel (1.3-2) unstable; urgency=low
 
   * Modified Python modules to interface with morselc
   * Added converted models
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Thu, 30 Jun 2011 15:31:51 +0200
 
-morsel (1.3-152) unstable; urgency=low
+morsel (1.3-1) unstable; urgency=low
 
   * Added ReMake port branch
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Tue, 28 Jun 2011 14:20:49 +0200
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
-
-morsel (0.1) unstable; urgency=low
-
-
- --  <kralf@unknown>  Thu, 01 Jan 1970 01:00:00 +0100
