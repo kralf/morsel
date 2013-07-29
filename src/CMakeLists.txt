@@ -1,5 +1,5 @@
 remake_find_package(PythonLibs)
-remake_find_package(ZLIB)
+remake_find_package(zlib CONFIG)
 remake_find_library(panda3d-panda panda.h PACKAGE Panda3d)
 
 remake_find_executable(panda3d-interrogate)
@@ -13,3 +13,4 @@ remake_include(
 )
 remake_add_directories(lib)
 remake_add_directories(metalib)
+remake_pkg_config_generate(REQUIRES python zlib panda3d)

@@ -5,5 +5,6 @@ panda3d_interrogate_module(
 )
 
 remake_add_library(
-  morselc PREFIX panda3d- LINK morsel ${PANDA3D_PANDA_LIBRARY}
+  morselc PREFIX panda3d-
+  LINK morsel input output sensors utils views ${PANDA3D_PANDA_LIBRARY}
 )

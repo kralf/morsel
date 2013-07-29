@@ -16,7 +16,7 @@ remake_project(
   INSTALL /usr
 )
 
-remake_python()
+remake_add_directories(python)
 remake_add_directories(
   data
   COMPONENT data
@@ -52,6 +52,14 @@ remake_pack_deb(
 
 remake_distribute_deb(
   DISTRIBUTION lucid
+  SECTION python
+  UPLOAD ppa:kralf/asl
+  DEPENDS remake panda3d-dev panda3d-python
+  PASS CMAKE_BUILD_TYPE MORSEL_SUBVERSION_REVISION
+  EXCLUDE "[.]blend$"
+)
+remake_distribute_deb(
+  DISTRIBUTION precise
   SECTION python
   UPLOAD ppa:kralf/asl
   DEPENDS remake panda3d-dev panda3d-python

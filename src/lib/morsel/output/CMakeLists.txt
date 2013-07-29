@@ -9,5 +9,5 @@ panda3d_interrogate(
   MODULE morsel
 )
 
-remake_add_library(output)
+remake_add_library(output LINK morsel)
 remake_add_headers(INSTALL output)
