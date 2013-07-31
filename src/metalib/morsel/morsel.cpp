@@ -20,11 +20,9 @@
 
 #include "morsel.h"
 
-#include "morsel/config.h"
+#include "config.h"
 
 #include <pandaFramework.h>
-
-using namespace std;
 
 /*****************************************************************************/
 /* Methods                                                                   */

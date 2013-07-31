@@ -15,13 +15,13 @@ class Scheduler(object):
   ones, which should still be used for system related tasks (gui, event
   handling, etc.)
   '''
-  def __init__(self):
+  def __init__(self, pause = False):
     object.__init__(self)
 
     self.clock = globalClock
     self.realTime = True
     self.skipFrames = True
-    self.pause = False
+    self.pause = pause
     self.time = self.clock.getLongTime()
     self.frameTime = None
     self.lastTime = -1

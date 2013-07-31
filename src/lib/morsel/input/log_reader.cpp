@@ -20,7 +20,6 @@
 
 #include "log_reader.h"
 
-#include "morsel/morsel.h"
 #include "morsel/utils/timestamp.h"
 
 #include <stdexcept>

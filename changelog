@@ -1,3 +1,14 @@
+morsel (1.4-99) lucid; urgency=low
+
+  * Added pkg-config file
+  * Added commandline parser and help output to Framework constructor
+  * Removed libmorsel, moved libmorsel sources to meta library
+    libpanda3d-morsel
+  * Revised linkage
+  * Release distributions
+
+ -- Ralf Kaestner <ralf.kaestner@gmail.com>  Wed, 31 Jul 2013 11:27:00 +0100
+
 morsel (1.4-98) lucid; urgency=low
 
   * Re-enumerated patch versions after exporting the "port" branch to github

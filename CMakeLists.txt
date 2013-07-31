@@ -5,18 +5,20 @@ include(Panda3D)
 
 remake_project(
   Morsel
-  VERSION 1.3
+  VERSION 1.4
   RELEASE beta
   SUMMARY "MObile Robot Simulator."
   AUTHOR "Ralf Kaestner"
   AUTHOR "Dizan Vasquez"
   CONTACT "ralf.kaestner@gmail.com"
-  HOME "http://aslforge.ethz.ch/projects/morsel"
+  HOME "http://github.com/kralf/morsel"
   LICENSE "GNU General Public License (GPL)"
   INSTALL /usr
 )
 
-remake_add_directories(python)
+remake_add_directories(
+  python
+)
 remake_add_directories(
   data
   COMPONENT data
@@ -26,43 +28,45 @@ remake_doc(
 )
 
 remake_pack_deb(
-  panda3d
+  DEPENDS panda3d
 )
 remake_pack_deb(
   COMPONENT dev
   DESCRIPTION "development headers"
-  morsel panda3d-dev
+  DEPENDS morsel panda3d-dev
 )
 remake_pack_deb(
   COMPONENT python
-  morsel panda3d-python
+  DEPENDS morsel panda3d-python
 )
 remake_pack_deb(
   ARCH all
   COMPONENT data
   DESCRIPTION "data"
-  morsel
+  DEPENDS morsel panda3d-models
 )
 remake_pack_deb(
   ARCH all
   COMPONENT blender
   DESCRIPTION "blender scripts"
-  blender
+  DEPENDS blender panda3d-blender
 )
 
 remake_distribute_deb(
   DISTRIBUTION lucid
   SECTION python
   UPLOAD ppa:kralf/asl
-  DEPENDS remake panda3d-dev panda3d-python
-  PASS CMAKE_BUILD_TYPE MORSEL_SUBVERSION_REVISION
+  DEPENDS panda3d-dev panda3d-python panda3d-models panda3d-blender
+    remake pkg-config doxygen
+  PASS CMAKE_BUILD_TYPE MORSEL_GIT_REVISION
   EXCLUDE "[.]blend$"
 )
 remake_distribute_deb(
   DISTRIBUTION precise
   SECTION python
   UPLOAD ppa:kralf/asl
-  DEPENDS remake panda3d-dev panda3d-python
-  PASS CMAKE_BUILD_TYPE MORSEL_SUBVERSION_REVISION
+  DEPENDS panda3d-dev panda3d-python panda3d-models panda3d-blender
+    remake pkg-config doxygen
+  PASS CMAKE_BUILD_TYPE MORSEL_GIT_REVISION
   EXCLUDE "[.]blend$"
 )

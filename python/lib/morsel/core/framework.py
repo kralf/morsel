@@ -12,6 +12,7 @@ from math import *
 import sys
 import os
 from os.path import *
+from optparse import OptionParser
 
 import __builtin__
 import inspect
@@ -23,7 +24,6 @@ class Framework(object):
   def __init__(self, *argv):
     object.__init__(self)
 
-    self.arguments = argv[0]
     self.packages = {}
     self.paths = {}
     self.callbacks = {}
@@ -51,7 +51,34 @@ class Framework(object):
     self.configFiles = ["defaults.conf"]
     self.windowTitle = self.configuration.fullName
     
-    for argument in self.arguments[1:]:
+    self.parser = OptionParser(version = self.configuration.fullName,
+      description = ("%s Copyright by %s. For additional help, contact "+
+        "the authors at <%s> or visit the project homepage under %s.") % \
+        (self.configuration.summary, self.configuration.authors,
+        self.configuration.contact, self.configuration.home),
+      usage = "usage: %prog [OPT1 [OPT2 [...]]] [FILE1 [FILE2 [...]]")
+    self.parser.add_option("-p", "--pause", dest = "pause", default = False,
+      action = "store_true", help = "immediately pause simulation on startup")
+    self.parser.add_option("--build", dest = "build", default = False,
+      action = "store_true", help = "print build information and exit")
+    self.parser.add_option("--defaults", dest = "defaults", default = False,
+      action = "store_true", help = "print default paths and exit")
+      
+    (self.options, self.arguments) = self.parser.parse_args()
+    
+    if self.options.build:
+      print "Build system: %s" % self.configuration.buildSystem
+      print "Build architecture: %s" % self.configuration.buildArchitecture
+      print "Build type: %s" % self.configuration.buildType
+      exit(0)
+    if self.options.defaults:
+      print "Configuration path: %s" % os.path.join(
+        self.configuration.configurationPath, "morsel")
+      print "File path: %s" % os.path.join(
+        self.configuration.filePath, "morsel")
+      exit(0)
+    
+    for argument in  self.arguments:
       self.configFiles.append(argument)
 
 #-------------------------------------------------------------------------------
@@ -418,7 +445,7 @@ class Framework(object):
       self.camera = self.base.camera.getChild(0).node()
       self.displayRegion = self.camera.getDisplayRegion(0)
       
-      self.scheduler = Scheduler()
+      self.scheduler = Scheduler(pause = self.options.pause)
       self.eventManager = EventManager()
 
       for configFile in self.configFiles:

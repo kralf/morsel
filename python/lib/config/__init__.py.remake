@@ -11,8 +11,10 @@ class Configuration(object):
     self.majorVersion = ${REMAKE_PROJECT_MAJOR}
     self.minorVersion = ${REMAKE_PROJECT_MINOR}
     self.patch = ${REMAKE_PROJECT_PATCH}
+    self.revision = ${REMAKE_PROJECT_REVISION}
     self.release = "${REMAKE_PROJECT_RELEASE}"
 
+    self.summary = "${REMAKE_PROJECT_SUMMARY}"
     self.authors = "${REMAKE_PROJECT_AUTHORS}"
     self.contact = "${REMAKE_PROJECT_CONTACT}"
     self.home = "${REMAKE_PROJECT_HOME}"
@@ -25,8 +27,9 @@ class Configuration(object):
     if not self.buildType:
       self.buildType = "Debug"
 
-    self.fullName = "%s version %d.%d.%d (%s)" % (self.name,
-      self.majorVersion, self.minorVersion, self.patch, self.release)
+    self.fullName = "%s version %d.%d.%d-%d (%s)" % (self.name,
+      self.majorVersion, self.minorVersion, self.patch, self.revision,
+      self.release)
 
     self.configurationPath = os.path.abspath(
       os.path.join("${CONFIGURATION_DESTINATION}", ".."))
