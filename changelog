@@ -1,3 +1,10 @@
+morsel (1.4-100) lucid; urgency=low
+
+  * Removed python pkg-config file dependency as it cannot be satisfied
+    under lucid
+
+ -- Ralf Kaestner <ralf.kaestner@gmail.com>  Wed, 07 Aug 2013 17:18:00 +0100
+
 morsel (1.4-99) lucid; urgency=low
 
   * Added pkg-config file

@@ -19,4 +19,4 @@ panda3d_interrogate_include(
 
 remake_add_directories(lib)
 remake_add_directories(metalib)
-remake_pkg_config_generate(REQUIRES python panda3d)
+remake_pkg_config_generate(REQUIRES panda3d)
