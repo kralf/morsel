@@ -1,3 +1,9 @@
+morsel (1.4-101) lucid; urgency=low
+
+  * No changes, rebuild to fix install location of Python modules
+
+ -- Ralf Kaestner <ralf.kaestner@gmail.com>  Thu, 08 Aug 2013 16:13:00 +0100
+
 morsel (1.4-100) lucid; urgency=low
 
   * Removed python pkg-config file dependency as it cannot be satisfied
