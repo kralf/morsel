@@ -37,6 +37,7 @@ remake_pack_deb(
 )
 remake_pack_deb(
   COMPONENT python
+  DESCRIPTION "Python modules"
   DEPENDS morsel panda3d-python
 )
 remake_pack_deb(

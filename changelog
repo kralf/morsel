@@ -1,3 +1,9 @@
+morsel (1.4-102) lucid; urgency=low
+
+  * Added description of morsel-python package
+
+ -- Ralf Kaestner <ralf.kaestner@gmail.com>  Fri, 09 Aug 2013 12:50:00 +0100
+
 morsel (1.4-101) lucid; urgency=low
 
   * No changes, rebuild to fix install location of Python modules
