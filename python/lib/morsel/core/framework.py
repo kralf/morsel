@@ -43,8 +43,6 @@ class Framework(object):
     self.activeLayer = None
     self.frame = 0
     
-    self.debug = False
-
     self.include("morsel")
     self.configuration = Configuration()    
     self.addPath("conf", self.configuration.configurationPath)
@@ -63,6 +61,8 @@ class Framework(object):
       action = "store_true", help = "print build information and exit")
     self.parser.add_option("--defaults", dest = "defaults", default = False,
       action = "store_true", help = "print default paths and exit")
+    self.parser.add_option("-d", "--debug", dest = "debug", default = False,
+      action = "store_true", help = "enable debugging output")
       
     (self.options, self.arguments) = self.parser.parse_args()
     
@@ -77,7 +77,9 @@ class Framework(object):
       print "File path: %s" % os.path.join(
         self.configuration.filePath, "morsel")
       exit(0)
-    
+
+    self.debug = self.options.debug
+      
     for argument in  self.arguments:
       self.configFiles.append(argument)
 
@@ -338,6 +340,12 @@ class Framework(object):
 
 #-------------------------------------------------------------------------------
 
+  def warn(self, message):
+    if self.debug:
+      print "Warning: "+message
+
+#-------------------------------------------------------------------------------
+
   def error(self, message):
     raise RuntimeError(message)
 
@@ -412,14 +420,17 @@ class Framework(object):
           __builtin__.globals(), __builtin__.locals(), [type])
         instance = getattr(imported, type)
       except ImportError as importError:
-        self.error("Failed to import "+type+" from module "+module+": "+
-          str(importError))
+        self.warn("Importing "+type+" from "+self.packages[package].module+
+          "."+module+": "+str(importError))
       except AttributeError as attributeError:
-        self.error("Failed to import "+type+" from module "+module+": "+
-          str(attributeError))
+        self.warn("Importing "+type+" from "+self.packages[package].module+
+          "."+module+": "+str(attributeError))
       else:
         return instance(**kargs)
 
+    self.error("Failed to import "+type+" from module "+module+
+      ". Enable debugging output for details.")
+        
 #-------------------------------------------------------------------------------
 
   def loadInstance(self, module, filename = None, **kargs):
