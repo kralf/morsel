@@ -1,3 +1,9 @@
+morsel (1.4-104) lucid; urgency=low
+
+  * Added import error descriptions to Framework.createInstance()
+
+ -- Ralf Kaestner <ralf.kaestner@gmail.com>  Mon, 12 Aug 2013 15:48:00 +0100
+
 morsel (1.4-103) lucid; urgency=low
 
   * Added missing Python package and build dependencies

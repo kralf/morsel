@@ -339,7 +339,7 @@ class Framework(object):
 #-------------------------------------------------------------------------------
 
   def error(self, message):
-    raise RuntimeError("Error: "+message)
+    raise RuntimeError(message)
 
 #-------------------------------------------------------------------------------
 
@@ -411,14 +411,14 @@ class Framework(object):
         imported = __import__(self.packages[package].module+"."+module,
           __builtin__.globals(), __builtin__.locals(), [type])
         instance = getattr(imported, type)
-      except ImportError:
-        pass
-      except AttributeError:
-        pass
+      except ImportError as importError:
+        self.error("Failed to import "+type+" from module "+module+": "+
+          str(importError))
+      except AttributeError as attributeError:
+        self.error("Failed to import "+type+" from module "+module+": "+
+          str(attributeError))
       else:
         return instance(**kargs)
-
-    self.error("Failed to import "+type+" from module "+module)
 
 #-------------------------------------------------------------------------------
 
