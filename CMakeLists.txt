@@ -38,7 +38,7 @@ remake_pack_deb(
 remake_pack_deb(
   COMPONENT python
   DESCRIPTION "Python modules"
-  DEPENDS morsel panda3d-python
+  DEPENDS morsel panda3d-python python-numpy python-pygame python-gtk2
 )
 remake_pack_deb(
   ARCH all
@@ -58,7 +58,7 @@ remake_distribute_deb(
   SECTION python
   UPLOAD ppa:kralf/asl
   DEPENDS panda3d-dev panda3d-python panda3d-models panda3d-blender
-    remake pkg-config doxygen
+    python-numpy python-pygame python-gtk2 remake pkg-config doxygen
   PASS CMAKE_BUILD_TYPE MORSEL_GIT_REVISION
   EXCLUDE "[.]blend$"
 )
@@ -67,7 +67,7 @@ remake_distribute_deb(
   SECTION python
   UPLOAD ppa:kralf/asl
   DEPENDS panda3d-dev panda3d-python panda3d-models panda3d-blender
-    remake pkg-config doxygen
+    python-numpy python-pygame python-gtk2 remake pkg-config doxygen
   PASS CMAKE_BUILD_TYPE MORSEL_GIT_REVISION
   EXCLUDE "[.]blend$"
 )
