@@ -1,6 +1,20 @@
+morsel (1.4-106) lucid; urgency=low
+
+  * Extended list and grouping of commandline options
+  * Revised Python Package and Configuration class structure:
+    * Packages are now expected to provide a Python implementation
+      of Configuration
+  * Revised Framework class:
+    * Added configDir accessor
+    * Added Framework.findConfigFile()
+    * Revised search strategies for files (now prioritizing the most
+      recently included package)
+
+ -- Ralf Kaestner <ralf.kaestner@gmail.com>  Mon, 12 Aug 2013 21:12:00 +0100
+
 morsel (1.4-105) lucid; urgency=low
 
-  * Added debug option to command line
+  * Added debug option to commandline
   * Added debugging output to Framework.createInstance()
 
  -- Ralf Kaestner <ralf.kaestner@gmail.com>  Mon, 12 Aug 2013 21:12:00 +0100

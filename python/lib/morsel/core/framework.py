@@ -12,7 +12,7 @@ from math import *
 import sys
 import os
 from os.path import *
-from optparse import OptionParser
+from optparse import OptionParser, OptionGroup
 
 import __builtin__
 import inspect
@@ -42,12 +42,8 @@ class Framework(object):
     
     self.activeLayer = None
     self.frame = 0
-    
-    self.include("morsel")
+
     self.configuration = Configuration()    
-    self.addPath("conf", self.configuration.configurationPath)
-    self.configFiles = ["defaults.conf"]
-    self.windowTitle = self.configuration.fullName
     
     self.parser = OptionParser(version = self.configuration.fullName,
       description = ("%s Copyright by %s. For additional help, contact "+
@@ -55,16 +51,49 @@ class Framework(object):
         (self.configuration.summary, self.configuration.authors,
         self.configuration.contact, self.configuration.home),
       usage = "usage: %prog [OPT1 [OPT2 [...]]] [FILE1 [FILE2 [...]]")
-    self.parser.add_option("-p", "--pause", dest = "pause", default = False,
+      
+    group = OptionGroup(self.parser, "Options that control the simulation")
+    group.add_option("--framerate", dest = "framerate", type = "float",
+      metavar = "FPS", default = 60.0, action = "store",
+      help = "maximum framerate in frames/s [%default]")
+    group.add_option("-f", "--fullscreen", dest = "fullscreen", default = False,
+      action = "store_true", help = "startup in fullscreen mode")
+    group.add_option("-p", "--pause", dest = "pause", default = False,
       action = "store_true", help = "immediately pause simulation on startup")
-    self.parser.add_option("--build", dest = "build", default = False,
-      action = "store_true", help = "print build information and exit")
-    self.parser.add_option("--defaults", dest = "defaults", default = False,
-      action = "store_true", help = "print default paths and exit")
-    self.parser.add_option("-d", "--debug", dest = "debug", default = False,
+    self.parser.add_option_group(group)
+
+    group = OptionGroup(self.parser, "Framework configuration options")
+    group.add_option("-i", "--include", dest = "include", metavar = "PACKAGE",
+      action = "append", help = "include a list of packages")
+    self.parser.add_option_group(group)
+
+    group = OptionGroup(self.parser, "Output and debugging options")
+    group.add_option("-v", "--verbose", dest = "verbose", default = False,
+      action = "store_true", help = "enable verbose output")
+    group.add_option("-d", "--debug", dest = "debug", default = False,
       action = "store_true", help = "enable debugging output")
+    self.parser.add_option_group(group)
+      
+    group = OptionGroup(self.parser, "Options that provide information")
+    group.add_option("--build", dest = "build", default = False,
+      action = "store_true", help = "print build information and exit")
+    group.add_option("--defaults", dest = "defaults", default = False,
+      action = "store_true", help = "print default paths and exit")
+    self.parser.add_option_group(group)
       
     (self.options, self.arguments) = self.parser.parse_args()
+
+    self.verbose = self.options.verbose
+    self.debug = self.options.debug
+
+    self.include("morsel")
+    self.addPath("conf", self.configuration.configurationPath)
+    self.configFiles = ["defaults.conf"]
+    self.windowTitle = self.configuration.fullName
+        
+    if self.options.include:
+      for include in self.options.include:
+        self.include(include)
     
     if self.options.build:
       print "Build system: %s" % self.configuration.buildSystem
@@ -72,17 +101,16 @@ class Framework(object):
       print "Build type: %s" % self.configuration.buildType
       exit(0)
     if self.options.defaults:
-      print "Configuration path: %s" % os.path.join(
-        self.configuration.configurationPath, "morsel")
-      print "File path: %s" % os.path.join(
-        self.configuration.filePath, "morsel")
+      for package in self.packages:
+        print "Package "+package+":"
+        print "  System path: "+self.getSystemDir(package)
+        print "  Configuration path: "+self.getConfigDir(package)
+        print "  User path: "+self.getUserDir(package)
       exit(0)
 
-    self.debug = self.options.debug
-      
     for argument in  self.arguments:
       self.configFiles.append(argument)
-
+      
 #-------------------------------------------------------------------------------
 
   def getSystemDir(self, package = "morsel"):
@@ -92,6 +120,13 @@ class Framework(object):
       return self.packages[package].systemDir
 
   systemDir = property(getSystemDir)
+
+#-------------------------------------------------------------------------------
+
+  def getConfigDir(self, package = "morsel"):
+    return self.packages[package].configDir
+
+  configDir = property(getConfigDir)
 
 #-------------------------------------------------------------------------------
 
@@ -297,8 +332,20 @@ class Framework(object):
 #-------------------------------------------------------------------------------
 
   def include(self, package, **kargs):
-    self.packages[package] = Package(package, **kargs)
+    package = package.replace("-", "_")
+    if package in self.packages.keys():
+      return
+    
+    self.info("Including package: "+package)
+    try:
+      self.packages[package] = Package(package, **kargs)
+    except Exception as includeError:
+      self.error("Failed to include package "+package+": "+str(includeError))
 
+    if self.packages[package].requires:
+      for required in self.packages[package].requires:
+        self.include(required)
+      
     packageModule = __import__(self.packages[package].module)
     packagePath = os.path.dirname(packageModule.__file__)
     modules = [name for _, name, _ in pkgutil.iter_modules([packagePath])]
@@ -340,31 +387,42 @@ class Framework(object):
 
 #-------------------------------------------------------------------------------
 
-  def warn(self, message):
-    if self.debug:
-      print "Warning: "+message
-
-#-------------------------------------------------------------------------------
-
   def error(self, message):
     raise RuntimeError(message)
 
 #-------------------------------------------------------------------------------
 
-  def findFile(self, filename):
+  def info(self, message):
+    if self.verbose or self.debug:
+      print "Info: "+message
+
+#-------------------------------------------------------------------------------
+
+  def spam(self, message):
+    if self.debug:
+      print "Debug: "+message
+
+#-------------------------------------------------------------------------------
+
+  def findConfigFile(self, filename, package = None):
     if os.path.exists(filename):
       return os.path.abspath(filename)
 
-    for package in self.packages:
-      resultPath = self.findPackageFile(filename, package)
-      if resultPath:
-        return resultPath
+    if package:
+      packages = [package]
+    else:
+      packages = self.packages.keys()
+    
+    for package in reversed(packages):
+      resultPath = os.path.join(self.getConfigDir(package), filename)
+      if os.path.exists(resultPath):
+        return os.path.abspath(resultPath)
 
     return None
 
 #-------------------------------------------------------------------------------
 
-  def findPackageFile(self, filename, package = "morsel"):
+  def findFile(self, filename, package = None):
     if os.path.exists(filename):
       return os.path.abspath(filename)
 
@@ -372,14 +430,20 @@ class Framework(object):
     extension = extension[1:]
 
     if self.paths.has_key(extension):
+      if package:
+        packages = [package]
+      else:
+        packages = self.packages.keys()
+      
       for path in self.paths[extension]:
         if not os.path.isabs(path):
-          for dir in [self.getUserDir(package), self.getSystemDir(package)]:
-            resultPath = os.path.join(dir, path, filename)
-            if os.path.exists(resultPath):
-              return os.path.abspath(resultPath)
+          for package in reversed(packages):
+            for dir in [self.getUserDir(package), self.getSystemDir(package)]:
+              resultPath = os.path.join(dir, path, filename)
+              if os.path.exists(resultPath):
+                return os.path.abspath(resultPath)
         else:
-          resultPath = os.path.join(path, package, filename)
+          resultPath = os.path.join(path, filename)
           if os.path.exists(resultPath):
             return os.path.abspath(resultPath)
 
@@ -387,10 +451,11 @@ class Framework(object):
 
 #-------------------------------------------------------------------------------
 
-  def loadConfigFile(self, filename):
-    configFile = self.findFile(filename)
+  def loadConfigFile(self, filename, package = None):
+    configFile = self.findConfigFile(filename, package)
     
     if configFile:
+      self.info("Loading configuration file: "+configFile)
       context = inspect.stack()[1][0].f_globals
       execfile(configFile, context)
     else:
@@ -398,8 +463,8 @@ class Framework(object):
     
 #-------------------------------------------------------------------------------
 
-  def executeFile(self, filename, **kargs):
-    filePath = self.findFile(filename)
+  def executeFile(self, filename, package = None, **kargs):
+    filePath = self.findFile(filename, package)
     
     if filePath:
       context = inspect.stack()[1][0].f_globals
@@ -414,18 +479,22 @@ class Framework(object):
 #-------------------------------------------------------------------------------
 
   def createInstance(self, module, type, **kargs):
-    for package in self.packages:
+    for package in reversed(self.packages.keys()):
       try:
         imported = __import__(self.packages[package].module+"."+module,
           __builtin__.globals(), __builtin__.locals(), [type])
         instance = getattr(imported, type)
       except ImportError as importError:
-        self.warn("Importing "+type+" from "+self.packages[package].module+
-          "."+module+": "+str(importError))
+        self.spam("Importing type "+type+" from "+
+          self.packages[package].module+"."+module+" failed: "+
+          str(importError))
       except AttributeError as attributeError:
-        self.warn("Importing "+type+" from "+self.packages[package].module+
-          "."+module+": "+str(attributeError))
+        self.spam("Importing type "+type+" from "+
+          self.packages[package].module+"."+module+" failed: "+
+          str(attributeError))
       else:
+        self.spam("Importing type "+type+" from "+
+          self.packages[package].module+"."+module+" succeeded")
         return instance(**kargs)
 
     self.error("Failed to import "+type+" from module "+module+
@@ -463,6 +532,9 @@ class Framework(object):
         self.loadConfigFile(configFile)
       self.locals = inspect.stack()[0][0].f_globals
 
+      self.maxFrameRate = self.options.framerate
+      self.fullscreen = self.options.fullscreen
+      
       self.camera.getDisplayRegion(0).setDrawCallback(
         panda.PythonCallbackObject(self.drawCallback))
       self.base.run()

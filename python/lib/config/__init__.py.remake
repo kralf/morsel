@@ -31,7 +31,5 @@ class Configuration(object):
       self.majorVersion, self.minorVersion, self.patch, self.revision,
       self.release)
 
-    self.configurationPath = os.path.abspath(
-      os.path.join("${CONFIGURATION_DESTINATION}", ".."))
-    self.filePath = os.path.abspath(
-      os.path.join("${FILE_DESTINATION}", ".."))
+    self.configurationPath = "${CONFIGURATION_DESTINATION}"
+    self.filePath = "${FILE_DESTINATION}"
