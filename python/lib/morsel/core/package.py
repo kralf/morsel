@@ -9,12 +9,15 @@ import __builtin__
 
 class Package(object):
   def __init__(self, name, homeVar = None, configDir = None, systemDir = None,
-      userDir = None, module = None, requires = None):
+      userDir = None, module = None, requires = None, options = None,
+      arguments = None):
     object.__init__(self)
 
     self.name = name
     self.module = module
     self.requires = requires
+    self.options = options
+    self.arguments = arguments
     
     self.homeVar = homeVar
     self.configDir = configDir
@@ -40,4 +43,10 @@ class Package(object):
     if not self.requires:
       if hasattr(self.configuration, "requires"):
         self.requires = self.configuration.requires
+    if not self.options:
+      if hasattr(self.configuration, "options"):
+        self.options = self.configuration.options
+    if not self.arguments:
+      if hasattr(self.configuration, "arguments"):
+        self.arguments = self.configuration.arguments
     

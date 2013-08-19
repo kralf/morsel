@@ -7,7 +7,7 @@ import __builtin__
 
 if not __builtin__.__dict__.has_key("framework"):
   from framework import Framework
-  __builtin__.__dict__["framework"] = Framework(argv)
+  __builtin__.__dict__["framework"] = Framework(*argv)
 
 #-------------------------------------------------------------------------------
 

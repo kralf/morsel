@@ -1,3 +1,11 @@
+morsel (1.4-107) lucid; urgency=low
+
+  * Extended package configuration support to allow for a list of
+    command-line options and arguments
+  * Changed argv passing to Framework constructor
+
+ -- Ralf Kaestner <ralf.kaestner@gmail.com>  Mon, 19 Aug 2013 16:32:00 +0100
+
 morsel (1.4-106) lucid; urgency=low
 
   * Extended list and grouping of commandline options

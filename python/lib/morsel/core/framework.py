@@ -13,6 +13,7 @@ import sys
 import os
 from os.path import *
 from optparse import OptionParser, OptionGroup
+import re
 
 import __builtin__
 import inspect
@@ -50,7 +51,11 @@ class Framework(object):
         "the authors at <%s> or visit the project homepage under %s.") % \
         (self.configuration.summary, self.configuration.authors,
         self.configuration.contact, self.configuration.home),
-      usage = "usage: %prog [OPT1 [OPT2 [...]]] [FILE1 [FILE2 [...]]")
+      usage = "usage: %prog [OPT1 [OPT2 [...]]] [FILE1 [FILE2 [...]]",
+      add_help_option = False)
+
+    self.parser.add_option("-h", "--help", dest = "help", default = False,
+      action = "store_true", help = "show this help message and exit")
       
     group = OptionGroup(self.parser, "Options that control the simulation")
     group.add_option("--framerate", dest = "framerate", type = "float",
@@ -80,7 +85,7 @@ class Framework(object):
     group.add_option("--defaults", dest = "defaults", default = False,
       action = "store_true", help = "print default paths and exit")
     self.parser.add_option_group(group)
-      
+    
     (self.options, self.arguments) = self.parser.parse_args()
 
     self.verbose = self.options.verbose
@@ -94,7 +99,20 @@ class Framework(object):
     if self.options.include:
       for include in self.options.include:
         self.include(include)
-    
+
+    reparse = False
+    for package in self.packages:
+      if self.packages[package].options:
+        group = OptionGroup(self.parser, "Options defined by "+package)
+        group.add_options(self.packages[package].options)
+        self.parser.add_option_group(group)
+        reparse = True
+    if reparse:
+      (self.options, self.arguments) = self.parser.parse_args()
+
+    if self.options.help:
+      self.parser.print_help()
+      exit(0)
     if self.options.build:
       print "Build system: %s" % self.configuration.buildSystem
       print "Build architecture: %s" % self.configuration.buildArchitecture
@@ -108,8 +126,23 @@ class Framework(object):
         print "  User path: "+self.getUserDir(package)
       exit(0)
 
-    for argument in  self.arguments:
-      self.configFiles.append(argument)
+    for argument in self.arguments:
+      matched = False
+      for package in self.packages:
+        if self.packages[package].arguments:
+          for dest in self.packages[package].arguments:
+            match = re.match(self.packages[package].arguments[dest], argument)
+            if match:
+              if len(match.groups()) > 1:
+                value = list(match.groups())
+              else:
+                value = match.group(1)
+              setattr(self.packages[package].configuration, dest, value)
+                
+              matched = True
+        
+      if not matched:
+        self.configFiles.append(argument)
       
 #-------------------------------------------------------------------------------
 
@@ -341,7 +374,7 @@ class Framework(object):
       self.packages[package] = Package(package, **kargs)
     except Exception as includeError:
       self.error("Failed to include package "+package+": "+str(includeError))
-
+      
     if self.packages[package].requires:
       for required in self.packages[package].requires:
         self.include(required)
