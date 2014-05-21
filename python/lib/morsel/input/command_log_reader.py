@@ -1,25 +1,29 @@
-from morsel.nodes import Input
+from morsel.nodes.input import Input
 from morsel.morselc import CommandLogReader as CCommandLogReader
 
 #-------------------------------------------------------------------------------
 
 class CommandLogReader(Input):
-  def __init__(self, name, filename, actuator = None, platform = None,
+  def __init__(self, filename = None, actuator = None, platform = None,
       binary = True, **kargs):
     if platform:
       actuator = platform.actuator
       
-    Input.__init__(self, name, **kargs)
+    super(CommandLogReader, self).__init__(**kargs)
 
     self.actuator = actuator
     self.filename = filename
     self.binary = binary
 
-    self.reader = CCommandLogReader(name, self.actuator, self.filename,
-      self.binary)
-    self.reader.reparentTo(self)
+    if self.filename and self.actuator:
+      self.reader = CCommandLogReader(self.name, self.actuator, self.filename,
+        self.binary)
+      self.reader.reparentTo(self)
+    else:
+      self.reader = None
 
 #-------------------------------------------------------------------------------
 
-  def inputData(self, time):
-    self.reader.readData(time)
+  def receive(self, time):
+    if self.reader:
+      self.reader.readData(time)

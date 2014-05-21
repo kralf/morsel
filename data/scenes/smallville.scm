@@ -1,7 +1,7 @@
 Static(
-  name  = "Ground",
-  mesh  = "scenes/playground.bam",
-  solid = "Mesh"
+  name        = "Ground",
+  mesh        = "scenes/playground.bam",
+  solid       = "Mesh"
 )
 
 Static(
@@ -57,22 +57,22 @@ Static(
 )
 
 Static(
-  name     = "Town House with Turret",
-  mesh     = "buildings/town_house_with_turret.bam",
-  solid    = "Box",
-  position = [-32, 17.5, 0.1]
+  name        = "Town House with Turret",
+  mesh        = "buildings/town_house_with_turret.bam",
+  solid       = "Box",
+  position    = [-32, 17.5, 0.1]
 )
 Static(
-  name     = "Town House",
-  mesh     = "buildings/town_house.bam",
-  solid    = "Box",
-  position = [-39, 18.9, 0.1]
+  name        = "Town House",
+  mesh        = "buildings/town_house.bam",
+  solid       = "Box",
+  position    = [-39, 18.9, 0.1]
 )
 Static(
-  name     = "Town House with Porch",
-  mesh     = "buildings/town_house_with_porch.bam",
-  solid    = "Box",
-  position = [-46, 18, 0.1]
+  name        = "Town House with Porch",
+  mesh        = "buildings/town_house_with_porch.bam",
+  solid       = "Box",
+  position    = [-46, 18, 0.1]
 )
 Static(
   name        = "Two-story Home 1",

@@ -1,29 +1,16 @@
-from morsel.panda import *
+from facade import Solid, Body
 from morsel.nodes.static import Static as Base
+from object import Object
 
 #-------------------------------------------------------------------------------
 
-class Static(Base):
-  def __init__(self, world, name, mesh, solid = None, **kargs):
-    Base.__init__(self, world, name, mesh, **kargs)
+class Static(Object, Base):
+  COLLISIONS_FROM = 0x0000000F
+  COLLISIONS_INTO = 0xFFFFFFF0
+  
+  def __init__(self, solid = None, collisionMasks = [COLLISIONS_FROM,
+      COLLISIONS_INTO], **kargs):
+    super(Static, self).__init__(collisionMasks = collisionMasks, **kargs)
 
-    if not solid:
-      solid = "Empty"
-
-    if isinstance(solid, dict):
-      self.solid = []
-      for part in solid.keys():
-        partModel = self.mesh.find("**/"+part)
-        if not partModel.isEmpty():
-          partMesh = Mesh(name = name+"Mesh", model = partModel,
-            parent = self.mesh.parent)
-          partSolid = Solid(name = name+"Solid", type = solid[part],
-            mesh = partMesh, parent = self.world.scene.solid)
-            
-          self.solid.append(partSolid)
-        else:
-          framework.error("Part model '"+part+"' not found")
-    else:
-      self.solid = Solid(name = name+"Solid", type = solid, mesh = self.mesh,
-        parent = self.world.scene.solid)
-    
+    self.solid = Solid(type = solid)
+  

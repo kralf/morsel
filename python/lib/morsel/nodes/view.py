@@ -1,12 +1,17 @@
-from object import Object
+from node import Node
 
 #-------------------------------------------------------------------------------
 
-class View(Object):
-  def __init__(self, world, name, **kargs):
-    Object.__init__(self, world, name, **kargs)
+class View(Node):
+  def __init__(self, world = None, **kargs):
+    self.world = world
+    
+    super(View, self).__init__(**kargs)
 
+    if self.world:
+      self.world.addView(self)
+    
 #-------------------------------------------------------------------------------
 
-  def updateGraphics(self):
+  def draw(self):
     pass

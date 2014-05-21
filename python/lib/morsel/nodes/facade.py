@@ -3,8 +3,11 @@ from morsel.nodes import *
 #-------------------------------------------------------------------------------
 
 def Scene(model = None, **kargs):
-  scene = framework.createInstance("nodes."+framework.world.physics,
-    type = "Scene", world = framework.world, **kargs)
+  module = "nodes"
+  if framework.world.physics:
+    module += "."+framework.world.physics
+  
+  scene = framework.createInstance(module, type = "Scene", **kargs)
   if model:
     framework.executeFile(model+".scm")
 
@@ -12,75 +15,109 @@ def Scene(model = None, **kargs):
 
 #-------------------------------------------------------------------------------
 
+def Geometry(**kargs):
+  return framework.createInstance("geometries", **kargs)
+
+#-------------------------------------------------------------------------------
+
 def Mesh(filename = None, **kargs):
   if filename:
     if isinstance(filename, dict):
-      meshFile = {}
+      file = {}
       for layer in filename.iterkeys():
-        meshFile[layer] = framework.findFile(filename[layer])
-        if not meshFile[layer]:
-          framework.error("Mesh file '"+filename[layer]+"' not found")
+        fileroot = filename[layer].rsplit(":", 1)
+        file[layer] = framework.findFile(fileroot[0])
+        
+        if file[layer]:
+          if len(fileroot) > 1:
+            file[layer] += ":"+fileroot[1]
+        else:
+          framework.error("Mesh file '"+filename[layer]+"' not found.")
     else:
-      meshFile = framework.findFile(filename)
-      if not meshFile:
-        framework.error("Mesh file '"+filename+"' not found")
+      fileroot = filename.rsplit(":", 1)
+      file = framework.findFile(fileroot[0])
+      
+      if file:
+        if len(fileroot) > 1:
+          file += ":"+fileroot[1]
+      else:
+        framework.error("Mesh file '"+filename+"' not found.")
   else:
-    meshFile = None
+    file = None
     
-  return framework.createInstance("nodes", type = "Mesh",
-    world = framework.world, filename = meshFile, **kargs)
+  return framework.createInstance("nodes", type = "Mesh", filename = file,
+    **kargs)
 
 #-------------------------------------------------------------------------------
 
-def Light(**kargs):
-  return framework.createInstance("light", world = framework.world, **kargs)
-
-#-------------------------------------------------------------------------------
-
-def Collider(**kargs):
-  return framework.createInstance("nodes."+framework.world.physics,
-    type = "Collider", world = framework.world, **kargs)
-
-#-------------------------------------------------------------------------------
-
-def Solid(**kargs):
-  return framework.createInstance("nodes."+framework.world.physics+".solids",
-    world = framework.world, **kargs)
+def Object(**kargs):
+  module = "nodes"
+  if framework.world.physics:
+    module += "."+framework.world.physics
+    
+  return framework.createInstance(module, type = "Object", **kargs)
 
 #-------------------------------------------------------------------------------
 
 def Static(**kargs):
-  return framework.createInstance("nodes."+framework.world.physics,
-    type = "Static", world = framework.world, **kargs)
+  module = "nodes"
+  if framework.world.physics:
+    module += "."+framework.world.physics
+    
+  return framework.createInstance(module, type = "Static", **kargs)
 
 #-------------------------------------------------------------------------------
 
-def Actuator(model, **kargs):
-  return framework.loadInstance("actuators."+framework.world.physics,
-    model+".acm", world = framework.world, **kargs)
+def Actuator(model = None, **kargs):
+  module = "actuators"
+  if framework.world.physics:
+    module += "."+framework.world.physics
+
+  if model:
+    return framework.loadInstance(module, model+".acm", **kargs)
+  else:
+    return framework.loadInstance(module, **kargs)
 
 #-------------------------------------------------------------------------------
 
-def Sensor(model, **kargs):
-  return framework.loadInstance("sensors."+framework.world.physics,
-    model+".sem", world = framework.world, **kargs)
+def Sensor(model = None, **kargs):
+  module = "sensors"
+  if framework.world.physics:
+    module += "."+framework.world.physics
+    
+  if model:
+    return framework.loadInstance(module, model+".sem", **kargs)
+  else:
+    return framework.loadInstance(module, **kargs)
 
 #-------------------------------------------------------------------------------
 
-def Actor(model, **kargs):
-  return framework.loadInstance("actors."+framework.world.physics,
-    model+".acm", world = framework.world, **kargs)
+def Actor(model = None, **kargs):
+  module = "actors"
+  if framework.world.physics:
+    module += "."+framework.world.physics
+    
+  if model:
+    return framework.loadInstance(module, model+".acm", **kargs)
+  else:
+    return framework.loadInstance(module, **kargs)
 
 #-------------------------------------------------------------------------------
 
-def Platform(model, **kargs):
-  return framework.loadInstance("platforms."+framework.world.physics,
-    model+".pfm", world = framework.world, **kargs)
+def Platform(model = None, **kargs):
+  module = "platforms"
+  if framework.world.physics:
+    module += "."+framework.world.physics
+    
+  if model:
+    return framework.loadInstance(module, model+".pfm", **kargs)
+  else:
+    return framework.loadInstance(module, **kargs)
 
 #-------------------------------------------------------------------------------
 
 def View(**kargs):
-  return framework.createInstance("views", world = framework.world, **kargs)
+  return framework.createInstance("views", **kargs)
 
 #-------------------------------------------------------------------------------
 
@@ -104,7 +141,12 @@ def Output(**kargs):
 
 #-------------------------------------------------------------------------------
 
-def Camera(position, object = None, **kargs):
+def Light(**kargs):
+  return framework.createInstance("light", **kargs)
+
+#-------------------------------------------------------------------------------
+
+def Camera(position = [0, 0, 0], object = None, **kargs):
   if object:
     object.attachCamera(position, **kargs)
   else:
@@ -116,7 +158,7 @@ def Path(filename = None, **kargs):
   if filename:
     pathFile = framework.findFile(filename)
     if not pathFile:
-      framework.error("Path file '"+filename+"' not found")
+      framework.error("Path file '"+filename+"' not found.")
   else:
     pathFile = None
 

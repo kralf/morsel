@@ -1,11 +1,12 @@
-from morsel.nodes import Actor
-from morsel.nodes.facade import Solid
+from morsel.nodes.facade import Mesh
+from morsel.nodes.actor import Actor
 
 #-------------------------------------------------------------------------------
 
 class Inanimate(Actor):
-  def __init__(self, world, name, mesh, **kargs):
-    Actor.__init__(self, world, name, **kargs)
+  def __init__(self, mesh = None, **kargs):
+    super(Inanimate, self).__init__(**kargs)
 
-    self.mesh = mesh
-    self.mesh.parent = self
+    if mesh:
+      self.mesh = Mesh(filename = mesh, flatten = True)
+    

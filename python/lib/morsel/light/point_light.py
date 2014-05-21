@@ -1,13 +1,13 @@
 from morsel.panda import *
-from morsel.nodes import Light
+from morsel.nodes.light import Light
 
 #-------------------------------------------------------------------------------
 
 class PointLight(Light):
-  def __init__(self, world, name, attenuation = None, **kargs):
-    light = panda.PointLight(name+"Light")
-    Light.__init__(self, world, name, light, **kargs)
+  def __init__(self, attenuation = None, **kargs):
+    super(PointLight, self).__init__(**kargs)
 
+    self.light = panda.PointLight("Light")
     if attenuation:
       self.attenuation = attenuation
 

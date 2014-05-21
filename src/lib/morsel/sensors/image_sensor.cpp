@@ -32,12 +32,13 @@ using namespace std;
 
 ImageSensor::ImageSensor(std::string name, const LVecBase2f& resolution,
     const LVecBase2f& rangeLimits, const LVecBase2f& filmSize, double
-    focalLength) :
+    focalLength, const BitMask32& cameraMask) :
   NodePath(name),
   resolution(resolution),
   rangeLimits(rangeLimits),
   filmSize(filmSize),
   focalLength(focalLength),
+  cameraMask(cameraMask),
   timestamp(0.0),
   lastTimestamp(0.0) {
   setupCamera();
@@ -104,7 +105,7 @@ void ImageSensor::setupCamera() {
   lens->set_focal_length(focalLength);
 
   cameraNode = new Camera("Camera");
-  cameraNode->set_camera_mask(BitMask32(1));
+  cameraNode->set_camera_mask(cameraMask);
   cameraNode->set_scene(Morsel::getGSG()->get_scene()->get_scene_root());
   camera = attach_new_node(cameraNode);
   cameraNode->set_lens(lens);

@@ -1,28 +1,28 @@
-type                     = "Wheeled"
-chassisType              = "Differential"
+type              = "Wheeled"
+actuator          = "DifferentialDrive"
 
-mesh                     = "platforms/biba.bam"
-body                     = "body"
-wheels                   = ["wheel_l", "wheel_r", "wheel_c"]
-casterCranks             = ["crank_c"]
-casterWheels             = ["wheel_c"]
+bodyMesh          = "platforms/biba.bam:**/body"
+bodySolid         = "Box"
+bodyBody          = "Box"
+bodyMass          = 50
+bodyMassOffset    = [-0.2, 0, -0.2]
 
-bodySolid                = "Box"
-bodyBody                 = "Box"
-wheelSolid               = "Cylinder"
-wheelBody                = "Cylinder"
-crankSolid               = "Box"
-crankBody                = "Box"
+wheelMeshes       = ["platforms/biba.bam:**/wheel_l",
+                     "platforms/biba.bam:**/wheel_r",
+                     "platforms/biba.bam:**/wheel_c"]
+wheelSolids       = "Cylinder"
+wheelBodies       = "Cylinder"
+wheelMasses       = [0.5, 0.5, 0.2]
+wheelSuspensions  = [0.01, 0.01, 0.1]
 
-bodyMass                 = 50
-bodyMassOffset           = [-0.2, 0, -0.2]
-wheelMass                = [0.5, 0.5, 0.2]
-wheelSuspension          = [0.01, 0.01, 0.1]
-crankMass                = [0.2]
+casterCrankMeshes = ["platforms/biba.bam:**/crank_c"]
+casterCrankSolids = "Box"
+casterCrankBodies = "Box"
+casterCrankMasses = 0.2
 
-maxTranslationalVelocity = 1.6
-maxRotationalVelocity    = 90
-maxAcceleration          = 30/3.6
-maxDeceleration          = 300/3.6
+maxVelocity       = [1.6, 90]
+maxAcceleration   = [30/3.6, 90]
+maxDeceleration   = [300/3.6, 180]
 
-propulsionForce          = 750
+propulsionForce   = 750
+brakingForce      = 1500

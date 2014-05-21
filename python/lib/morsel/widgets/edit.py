@@ -1,15 +1,14 @@
 from morsel.panda import *
-from morsel.nodes import Widget
+from morsel.nodes.widget import Widget
 
 from panda3d.direct.gui.DirectGui import DirectEntry
 
 #-------------------------------------------------------------------------------
 
 class Edit(Widget):
-  def __init__(self, gui, name, width = None, numLines = 1, focus = True,
-      text = None, command = None, **kargs):
-    Widget.__init__(self, gui, name, widget = DirectEntry(scale = 0.05),
-      **kargs)
+  def __init__(self, width = None, numLines = 1, focus = True, text = None,
+      command = None, **kargs):
+    super(Edit, self).__init__(widget = DirectEntry(scale = 0.05), **kargs)
 
     if width:
       self.width = width

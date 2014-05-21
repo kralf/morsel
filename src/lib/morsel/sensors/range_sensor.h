@@ -55,7 +55,8 @@ PUBLISHED:
     const LVecBase2f& rangeLimits, const LVecBase2f& cameraMaxFOV =
     LVecBase2f(60.0*M_PI/180.0, 60.0*M_PI/180.0), const LVecBase2f&
     cameraResolution = LVecBase2f(128, 128), bool spherical = false, bool
-    acquireColor = false, std::string acquireLabel = "");
+    acquireColor = false, std::string acquireLabel = "", const BitMask32&
+    cameraMask = BitMask32::all_on());
 
   /** Destructor
     */
@@ -94,6 +95,7 @@ protected:
   bool spherical;
   bool acquireColor;
   std::string acquireLabel;
+  BitMask32 cameraMask;
   std::vector<RangeCamera*> cameras;
 
   double timestamp;

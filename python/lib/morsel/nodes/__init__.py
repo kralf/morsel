@@ -2,16 +2,14 @@
 # Submodules
 #===============================================================================
 
-from globals import *
 from node import Node
 from object import Object
 from light import Light
 from iterator import Iterator
 from scene import Scene
 from mesh import Mesh
+from geometry import Geometry
 from animation import Animation
-from collider import Collider
-from solid import Solid
 from static import Static
 from actuator import Actuator
 from sensor import Sensor

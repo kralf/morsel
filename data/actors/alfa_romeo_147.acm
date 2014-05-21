@@ -1,27 +1,26 @@
-type              = "Wheeled"
-chassisType       = "Ackermann"
+type             = "Wheeled"
+actuator         = "AckermannDrive"
 
-mesh              = "cars/alfa_romeo_147.bam"
-body              = "body"
-wheels            = ["wheel_fl", "wheel_fr", "wheel_rl", "wheel_rr"]
+bodyMesh         = "cars/alfa_romeo_147.bam:**/body"
+bodySolid        = "Box"
+bodyBody         = "Box"
+bodyMass         = 1300
+bodyMassOffset   = [0, 0, -0.5]
 
-bodySolid         = "Box"
-bodyBody          = "Box"
-wheelSolid        = "Cylinder"
-wheelBody         = "Cylinder"
+wheelMeshes      = ["cars/alfa_romeo_147.bam:**/wheel_fl",
+                    "cars/alfa_romeo_147.bam:**/wheel_fr",
+                    "cars/alfa_romeo_147.bam:**/wheel_rl",
+                    "cars/alfa_romeo_147.bam:**/wheel_rr"]
+wheelSolids      = "Cylinder"
+wheelBodies      = "Cylinder"
+wheelMasses      = [10, 10, 12, 12]
+wheelSuspensions = 0.5
 
-bodyMass          = 1300
-bodyMassOffset    = [0, 0, -0.5]
-wheelMass         = [10, 10, 12, 12]
-wheelSuspension   = [0.5, 0.5, 0.5, 0.5]
+maxVelocity      = [50/3.6, 180]
+maxAcceleration  = [10/3.6, 360]
+maxDeceleration  = [30/3.6, 360]
+maxSteeringAngle = 35
 
-maxSteeringAngle  = 35
-maxSteeringRate   = 60
-
-maxVelocity       = 50/3.6
-maxAcceleration   = 50/3.6
-maxDeceleration   = 300/3.6
-
-steeringForce     = 500
-propulsionForce   = 500
-brakingForce      = 1500
+steeringForce    = 500
+propulsionForce  = 500
+brakingForce     = 1500

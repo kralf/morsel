@@ -63,10 +63,9 @@ void ImageView::setupRendering() {
     winProps, flags, window->get_gsg());
 
   sceneNode = new PandaNode("Scene");
-  scene = attach_new_node(sceneNode);
+  scene = NodePath(sceneNode);
 
   cameraNode = new Camera("Camera");
-  cameraNode->set_camera_mask(BitMask32(1));
   cameraNode->set_scene(scene);
   camera = scene.attach_new_node(cameraNode);
 
@@ -81,7 +80,7 @@ void ImageView::setupRendering() {
   PointerTo<DisplayRegion> drc = window->make_display_region();
   drc->set_camera(camera);
 
-  CardMaker cm("card");
+  CardMaker cm("Canvas");
   cm.set_frame(-1.0, 1.0, -1.0, 1.0);
   card = scene.attach_new_node(cm.generate());
   card.set_texture((Texture*)&sensor.getColorMap());

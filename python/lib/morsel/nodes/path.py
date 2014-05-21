@@ -5,20 +5,20 @@ from morsel.math import Quaternion
 #-------------------------------------------------------------------------------
 
 class Path(Node):
-  def __init__(self, name, filename = None, **kargs):
-    Node.__init__(self, name, **kargs)
+  def __init__(self, filename = None, **kargs):
+    super(Path, self).__init__(**kargs)
 
     self.filename = None
     self.positions = []
     self.orientations = []
     self.cyclic = False
     
-    self.geometryData = panda.GeomVertexData(name+"Data",
+    self.geometryData = panda.GeomVertexData("VertexData",
       panda.GeomVertexFormat.getV3(), panda.Geom.UHDynamic)
     self.linestrips = panda.GeomLinestrips(panda.Geom.UHStatic)
     self.geometry = panda.Geom(self.geometryData)
     self.geometry.addPrimitive(self.linestrips)
-    self.geometryNode = panda.GeomNode(name+"Geometry")
+    self.geometryNode = panda.GeomNode("Geometry")
     self.geometryNode.addGeom(self.geometry)
     self.geometryNode.adjustDrawMask(panda.PandaNode.getAllCameraMask(),
       panda.BitMask32(1), panda.BitMask32(0));
@@ -77,11 +77,10 @@ class Path(Node):
         if len(self.positions) > 1:
           heading = (panda.Point3(*self.positions[-1])-
             panda.Point3(*self.positions[-2]))
-          quaternion = Quaternion(heading)
-          orientation = quaternion.getHpr()
+          quaternion = Quaternion()
+          quaternion.setFromVectors([1, 0, 0], heading)
           
-          self.orientations.append([orientation[0], orientation[1],
-            orientation[2]])
+          self.orientations.append(quaternion.orientation)
         
         writer.addData3f(*position)
         self.linestrips.addVertex(len(self.positions)-1)

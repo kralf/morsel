@@ -14,6 +14,8 @@ import os
 from os.path import *
 from optparse import OptionParser, OptionGroup
 import re
+import string
+import traceback
 
 import __builtin__
 import inspect
@@ -23,8 +25,8 @@ import pkgutil
 
 class Framework(object):
   def __init__(self, *argv):
-    object.__init__(self)
-
+    super(Framework, self).__init__()
+    
     self.packages = {}
     self.paths = {}
     self.callbacks = {}
@@ -35,6 +37,7 @@ class Framework(object):
     self.window = None
     self.displayRegion = None
     self.camera = None
+    self.cameraMask = 0x700000FF
     
     self.scheduler = None
     self.eventManager = None
@@ -42,6 +45,7 @@ class Framework(object):
     self.world = None
     
     self.activeLayer = None
+    self.captureTask = None
     self.frame = 0
 
     self.configuration = Configuration()    
@@ -171,30 +175,34 @@ class Framework(object):
 #-------------------------------------------------------------------------------
 
   def getGUI(self):
-    if self._gui:
+    if hasattr(self, "_gui") and self._gui:
       return self._gui
     else:
-      self.error("GUI not initialized")
+      return None
 
   def setGUI(self, gui):
-    if not self._gui:
+    if not hasattr(self, "_gui") or not self._gui:
       self._gui = gui
     else:
-      self.error("GUI already initialized")
+      self.error("GUI already initialized.")
 
+  gui = property(getGUI, setGUI)
+  
 #-------------------------------------------------------------------------------
 
   def getWorld(self):
-    if self._world:
+    if hasattr(self, "_world") and self._world:
       return self._world
     else:
-      self.error("World not initialized")
+      return None
 
   def setWorld(self, world):
-    if not self._world:
+    if not hasattr(self, "_world") or not self._world:
       self._world = world
     else:
-      self.error("Word already initialized")
+      self.error("World already initialized.")
+      
+  world = property(getWorld, setWorld)
       
 #-------------------------------------------------------------------------------
 
@@ -348,6 +356,19 @@ class Framework(object):
   maxFrameRate = property(getMaxFrameRate, setMaxFrameRate)
 
 #-------------------------------------------------------------------------------
+  
+  def getCameraMask(self):
+    return self._cameraMask
+
+  def setCameraMask(self, cameraMask):
+    self._cameraMask = cameraMask
+    
+    if self.camera:
+      self.camera.setCameraMask(panda.BitMask32(self._cameraMask))
+      
+  cameraMask = property(getCameraMask, setCameraMask)
+      
+#-------------------------------------------------------------------------------
 
   def getActiveLayer(self):
     return self._activeLayer
@@ -416,7 +437,7 @@ class Framework(object):
       handler = EventHandler(function)
       self.eventManager.addHandler(key, handler)
     else:
-      self.error("Duplicate shortcut for '"+key+"' key")
+      self.error("Duplicate shortcut for '"+key+"' key.")
 
 #-------------------------------------------------------------------------------
 
@@ -427,12 +448,18 @@ class Framework(object):
 
   def info(self, message):
     if self.verbose or self.debug:
+      message = message.strip().split("\n")
+      message = string.join(message, "\nInfo: ")
+        
       print "Info: "+message
 
 #-------------------------------------------------------------------------------
 
   def spam(self, message):
     if self.debug:
+      message = message.strip().split("\n")
+      message = string.join(message, "\nDebug: ")
+        
       print "Debug: "+message
 
 #-------------------------------------------------------------------------------
@@ -507,7 +534,7 @@ class Framework(object):
 
       return parameters
     else:
-      self.error("File '"+filename+"' not found")
+      self.error("File '"+filename+"' not found.")
 
 #-------------------------------------------------------------------------------
 
@@ -521,17 +548,23 @@ class Framework(object):
         self.spam("Importing type "+type+" from "+
           self.packages[package].module+"."+module+" failed: "+
           str(importError))
+        self.spam(traceback.format_exc())
       except AttributeError as attributeError:
         self.spam("Importing type "+type+" from "+
           self.packages[package].module+"."+module+" failed: "+
           str(attributeError))
+        self.spam(traceback.format_exc())
       else:
         self.spam("Importing type "+type+" from "+
           self.packages[package].module+"."+module+" succeeded")
         return instance(**kargs)
 
-    self.error("Failed to import "+type+" from module "+module+
-      ". Enable debugging output for details.")
+    error = "Failed to import "+type+" from module "+module+"."
+    if self.debug:
+      error = error+" See debugging output for details."
+    else:
+      error = error+" Enable debugging output for details."
+    self.error(error)
         
 #-------------------------------------------------------------------------------
 
@@ -547,7 +580,32 @@ class Framework(object):
 
       return self.createInstance(module, type, **parameters)
     else:
-      self.error("Missing type parameter")
+      self.error("Missing type parameter.")
+
+#-------------------------------------------------------------------------------
+
+  def importPhysics(self, name, module = None):      
+    if module:
+      if not self.world:
+        self.error("Failed to import physics class "+name+
+          " from module "+module+": World not initialized.")
+      
+      submodules = name.split(".")
+      if len(submodules) > 1:
+        module = module+"."+self.world.physics+"."+string.join(
+          submodules[0:len(submodules)-1], ".")
+        name = submodules[-1]
+      else:
+        module = module+"."+self.world.physics
+      
+      module = __import__(module, fromlist=[name])
+      return getattr(module, name)
+    else:
+      if not self.world:
+        self.error("Failed to import physics module "+module+
+          ": World not initialized.")
+          
+      return __import__(name+"."+self.world.physics)
 
 #-------------------------------------------------------------------------------
 
@@ -568,11 +626,13 @@ class Framework(object):
       self.maxFrameRate = self.options.framerate
       self.fullscreen = self.options.fullscreen
       
+      self.camera.setCameraMask(panda.BitMask32(self.cameraMask))
       self.camera.getDisplayRegion(0).setDrawCallback(
         panda.PythonCallbackObject(self.drawCallback))
+        
       self.base.run()
     else:
-      self.error("Framework already running")
+      self.error("Framework already running.")
 
 #-------------------------------------------------------------------------------
 
@@ -598,11 +658,11 @@ class Framework(object):
 #-------------------------------------------------------------------------------
 
   def toggleCaptureScreen(self, framerate = 24):
-    if not self.scheduler.containsTask("CaptureScreen"):
-      self.scheduler.addTask("CaptureScreen", self.captureScreen,
-        period = 1.0/framerate)
+    if not self.captureTask:
+      self.captureTask = self.scheduler.addTask("CaptureScreen",
+        self.captureScreen, period = 1.0/framerate)
     else:
-      self.scheduler.removeTask("CaptureScreen")
+      self.scheduler.removeTask(self.captureTask)
 
 #-------------------------------------------------------------------------------
 

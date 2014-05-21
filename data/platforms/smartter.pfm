@@ -1,27 +1,26 @@
-type              = "Wheeled"
-chassisType       = "Ackermann"
+type             = "Wheeled"
+actuator         = "AckermannDrive"
 
-mesh              = "platforms/smartter.bam"
-body              = "body"
-wheels            = ["wheel_fl", "wheel_fr", "wheel_rl", "wheel_rr"]
+bodyMesh         = "platforms/smartter.bam:**/body"
+bodySolid        = "Box"
+bodyBody         = "Box"
+bodyMass         = 1000
+bodyMassOffset   = [0, 0, -0.5]
 
-bodySolid         = "Box"
-bodyBody          = "Box"
-wheelSolid        = "Cylinder"
-wheelBody         = "Cylinder"
+wheelMeshes      = ["platforms/smartter.bam:**/wheel_fl",
+                    "platforms/smartter.bam:**/wheel_fr",
+                    "platforms/smartter.bam:**/wheel_rl",
+                    "platforms/smartter.bam:**/wheel_rr"]
+wheelSolids      = "Cylinder"
+wheelBodies      = "Cylinder"
+wheelMasses      = [10, 10, 12, 12]
+wheelSuspensions = 0.5
 
-bodyMass          = 1000
-bodyMassOffset    = [0, 0, -0.5]
-wheelMass         = [10, 10, 12, 12]
-wheelSuspension   = [0.5, 0.5, 0.5, 0.5]
+maxVelocity      = [30/3.6, 180]
+maxAcceleration  = [10/3.6, 360]
+maxDeceleration  = [30/3.6, 360]
+maxSteeringAngle = 25
 
-maxSteeringAngle  = 25
-maxSteeringRate   = 60
-
-maxVelocity       = 30/3.6
-maxAcceleration   = 30/3.6
-maxDeceleration   = 300/3.6
-
-steeringForce     = 500
-propulsionForce   = 500
-brakingForce      = 1500
+steeringForce    = 500
+propulsionForce  = 500
+brakingForce     = 1500

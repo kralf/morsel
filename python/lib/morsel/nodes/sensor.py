@@ -1,23 +1,16 @@
-from globals import *
 from object import Object
-from morsel.nodes.facade import Collider
 
 #-------------------------------------------------------------------------------
 
 class Sensor(Object):
-  def __init__(self, world, name, collisionMasks = [SENSOR_COLLISIONS_FROM,
-      SENSOR_COLLISIONS_INTO], **kargs):
-    Object.__init__(self, world, name, **kargs)
-
-    self.collider = Collider(name = name+"Collider", parent = self,
-      collisionMasks = collisionMasks)
-
+  def __init__(self, **kargs):
+    super(Sensor, self).__init__(**kargs)
+    
+    if self.world:
+      self.world.addSensor(self)
+      
 #-------------------------------------------------------------------------------
 
-  def updatePhysics(self, period):
+  def step(self, period):
     pass
-
-#-------------------------------------------------------------------------------
-
-  def updateGraphics(self):
-    pass
+  

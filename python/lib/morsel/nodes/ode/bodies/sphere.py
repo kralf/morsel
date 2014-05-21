@@ -1,15 +1,19 @@
 from morsel.panda import *
+from morsel.geometries.sphere import Sphere as Base
 from morsel.nodes.ode.body import Body
-from morsel.nodes.facade import Mesh
 
 #-------------------------------------------------------------------------------
 
-class Sphere(Body):
-  def __init__(self, world, name, solid, mass = 0, scale = [1, 1, 1],
-      **kargs):
-    radius = 0.5*max(scale)
-    sphere = panda.OdeMass()
-    sphere.setSphereTotal(mass, radius)
+class Sphere(Body, Base):
+  def __init__(self, **kargs):
+    super(Sphere, self).__init__(**kargs)
 
-    Body.__init__(self, world, name, solid, mass = sphere,
-      scale = [2*radius]*3, **kargs)
+#-------------------------------------------------------------------------------
+
+  def fit(self, node):
+    super(Sphere, self).fit(node)
+    
+    mass = panda.OdeMass()
+    mass.setSphereTotal(self.mass, self.globalRadius)
+    
+    self._body.setMass(mass)

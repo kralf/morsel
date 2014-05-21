@@ -5,6 +5,7 @@ import __builtin__
 if __builtin__.__dict__.has_key("scheduler"):
   raise Exception("Circular reference to scheduling module")
 import cProfile
+import uuid
 
 #-------------------------------------------------------------------------------
 
@@ -15,28 +16,28 @@ class Scheduler(object):
   ones, which should still be used for system related tasks (gui, event
   handling, etc.)
   '''
-  def __init__(self, pause = False):
-    object.__init__(self)
+  def __init__(self, pause = False, **kargs):
+    super(Scheduler, self).__init__()
 
     self.clock = globalClock
     self.realTime = True
     self.skipFrames = True
     self.pause = pause
-    self.time = self.clock.getLongTime()
+    self.time = 0.0
     self.frameTime = None
-    self.lastTime = -1
+    self.lastTime = None
     self.times = []
     self.tasks = {}
     self.schedule = {}
     self.renderTasks = []
     self.profile = False
     
-    taskMgr.add(self.dispatcher, "MorselDispatcher", -20)
+    taskMgr.add(self.dispatcher, "Morsel/Dispatcher", -20)
 
 #-------------------------------------------------------------------------------
 
   def togglePause(self):
-    ''' Pause/unpause the simulation.
+    ''' Pause/resume the simulation.
     This toggles the pause state for the simulation, it should be noted that
     system tasks are still handled by the engine.
     '''
@@ -64,11 +65,9 @@ class Scheduler(object):
 #-------------------------------------------------------------------------------
 
   def dispatcher(self, task):
-    if self.lastTime < 0:
-      self.lastTime = task.time
-      
     if not self.pause:
-      self.time += task.time-self.lastTime
+      if self.lastTime != None:
+        self.time += task.time-self.lastTime
       self.frameTime = self.time-(self.clock.getLongTime()-
         self.clock.getFrameTime())
       
@@ -85,9 +84,7 @@ class Scheduler(object):
       else:
         self.dispatch()
         
-      self.lastTime = task.time
-    else:
-      self.lastTime = -1
+    self.lastTime = task.time
       
     return Task.cont
 
@@ -119,26 +116,26 @@ class Scheduler(object):
 
       for task in taskList:
         period = task["period"]
-        if not self.skipFrames or not processed.has_key(task["name"]) or \
+        if not self.skipFrames or not processed.has_key(task["id"]) or \
             period == 0:
           result = self.runTask(task, time)
         else:
           result = True
-        processed[task["name"]] = True
+        processed[task["id"]] = True
         
-        if self.containsTask(task["name"]):
+        if self.containsTask(task["id"]):
           if result:
             if period > 0:
               self.scheduleTask(time+period, task)
             elif period == 0:
               self.scheduleTask(time+result, task)
           else:
-            self.removeTask(task["name"])
+            self.removeTask(task["id"])
         
     for task in self.renderTasks:
       result = self.runTask(task, self.getFrameTime())
       if not result:
-        self.removeTask(task["name"])
+        self.removeTask(task["id"])
 
 #-------------------------------------------------------------------------------
 
@@ -163,7 +160,7 @@ class Scheduler(object):
       else:
         task["tick"] += 1
 
-      profile.dump_stats("%s-%09d.profile" % (task["name"], task["tick"]))
+      profile.dump_stats("%s-%09d.profile" % (task["id"], task["tick"]))
     else:
       result = task["function"](*args, **kargs)
 
@@ -171,23 +168,27 @@ class Scheduler(object):
 
 #-------------------------------------------------------------------------------
 
-  def containsTask(self, name):
-    return self.tasks.has_key(name)
+  def containsTask(self, id):
+    return self.tasks.has_key(id)
 
 #-------------------------------------------------------------------------------
 
-  def addTask(self, name, function, period = None, priority = 0,
+  def addTask(self, name, function, id = None, period = None, priority = 0,
       profile = False):
     ''' Adds a periodic task to the scheduler.
-    The name for the task should be unique. If 'period == 0' then the value
-    returned by 'function' will be used to reschedule the task.
-    If 'period' is not given then the task will be executed once per rendering
-    cycle.
+    The provided identifier for the task should be unique or, if not provided,
+    will be generated. If 'period == 0' then the value returned by 'function'
+    will be used to reschedule the task. If 'period' is not given then the task
+    will be executed once per rendering cycle.
     '''
-    if self.tasks.has_key(name):
+    if not id:
+      id = uuid.uuid4()
+    
+    if self.tasks.has_key(id):
       return False
     else:
-      self.tasks[name] = {
+      self.tasks[id] = {
+        "id": id,
         "name": name,
         "function": function,
         "period": period,
@@ -195,16 +196,19 @@ class Scheduler(object):
         "profile": profile
       }
       if period != None:
-        self.scheduleTask(self.getTime()+period, self.tasks[name])
+        self.scheduleTask(self.getTime()+period, self.tasks[id])
       else:
-        self.renderTasks.append(self.tasks[name])
+        self.renderTasks.append(self.tasks[id])
         self.renderTasks.sort(lambda x, y:x["priority"]-y["priority"])
+        
+    return id
 
 #-------------------------------------------------------------------------------
 
-  def removeTask(self, name):
-    task = self.tasks[name]
-    del self.tasks[name]
+  def removeTask(self, id):
+    task = self.tasks[id]
+    del self.tasks[id]
+    
     if task in self.renderTasks:
       self.renderTasks.remove(task)
       

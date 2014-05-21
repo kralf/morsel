@@ -9,7 +9,7 @@ class Font(object):
     self.filename = None
     self.model = None
 
-    object.__init__(self)
+    super(Font, self).__init__()
     
     if filename:
       self.filename = filename

@@ -1,71 +1,87 @@
 from morsel.panda import *
 from morsel.math import *
-from morsel.nodes import Sensor
 from morsel.nodes.facade import Mesh
+from morsel.nodes.sensor import Sensor
 
 #-------------------------------------------------------------------------------
 
 class InertialSensor(Sensor):
-  def __init__(self, world, name, mesh, **kargs):
-    Sensor.__init__(self, world, name, **kargs)
+  def __init__(self, mesh = None, **kargs):
+    super(InertialSensor, self).__init__(**kargs)
 
-    self.mesh = Mesh(name = name+"Mesh", filename = mesh, parent = self)
+    if mesh:
+      self.mesh = Mesh(filename = mesh, flatten = True)
 
     self.timestamp = 0.0
-    self.translationalVelocity = [0, 0, 0]
-    self.rotationalVelocity = [0, 0, 0]
-    self.translationalAcceleration = [0, 0, 0]
-    self.rotationalAcceleration = [0, 0, 0]
+    self.linearVelocity = [0, 0, 0]
+    self.angularVelocity = [0, 0, 0]
+    self.linearAcceleration = [0, 0, 0]
+    self.angularAcceleration = [0, 0, 0]
 
-    self.lastTranslationalVelocity = None
-    self.lastRotationalVelocity = None
-
-#-------------------------------------------------------------------------------
-
-  def getTranslationalVelocity(self, node = None):
-    if not node:
-      node = self
-
-    tv = panda.Vec3(*self.translationalVelocity)
-    tv = self.getQuaternion(node).xform(tv)
-
-    return [tv[0], tv[1], tv[2]]
+    self.lastPosition = None
+    self.lastOrientation = None
+    self.lastLinearVelocity = None
+    self.lastAngularVelocity = None
 
 #-------------------------------------------------------------------------------
 
-  def getRotationalVelocity(self, node = None):
+  def getLinearVelocity(self, node = None):
     if not node:
       node = self
 
-    rv = panda.Vec3(self.rotationalVelocity[2], self.rotationalVelocity[1],
-      self.rotationalVelocity[0])
-    rv = self.getQuaternion(node).xform(rv)
+    v = panda.Vec3(*self.linearVelocity)
+    v = self.getQuaternion(node).xform(v)
 
-    return [rv[2], rv[1], rv[0]]
+    return [v[0], v[1], v[2]]
+
+#-------------------------------------------------------------------------------
+
+  def getAngularVelocity(self, node = None):
+    if not node:
+      node = self
+
+    omega = panda.Vec3(self.angularVelocity[2], self.angularVelocity[1],
+      self.angularVelocity[0])
+    omega = self.getQuaternion(node).xform(omega)
+
+    return [omega[2], omega[1], omega[0]]
 
 #-------------------------------------------------------------------------------
 
   def updateVelocity(self, period):
-    pass
+    if self.lastPosition:
+      v = ((panda.Vec3(*self.globalPosition)-
+        panda.Vec3(*self.lastPosition))/period)
+      v = self.world.scene.getQuaternion(self).xform(v)
+      self.linearVelocity = [v[0], v[1], v[2]]
+    if self.lastOrientation:
+      omega = ((panda.Vec3(*self.globalOrientation)-
+        panda.Vec3(*self.lastOrientation))/period)
+      omega = panda.Vec3(omega[2], omega[1], omega[0])
+      omega = self.world.scene.getQuaternion(self).xform(omega)
+      self.angulawelocity = [omega[2], omega[1], omega[0]]
+
+    self.lastPosition = self.globalPosition
+    self.lastOrientation = self.globalOrientation
   
 #-------------------------------------------------------------------------------
 
   def updateAcceleration(self, period):
-    if self.lastTranslationalVelocity:
-      ta = ((panda.Vec3(*self.translationalVelocity)-
-        panda.Vec3(*self.lastTranslationalVelocity))/period)
-      self.translationalAcceleration = [ta[0], ta[1], ta[2]]
-    if self.lastRotationalVelocity:
-      ra = ((panda.Vec3(*self.rotationalVelocity)-
-        panda.Vec3(*self.lastRotationalVelocity))/period)
-      self.rotationalAcceleration = [ra[0], ra[1], ra[2]]
+    if self.lastLinearVelocity:
+      a = ((panda.Vec3(*self.linearVelocity)-
+        panda.Vec3(*self.lastLinearVelocity))/period)
+      self.linearAcceleration = [a[0], a[1], a[2]]
+    if self.lastAngularVelocity:
+      alpha = ((panda.Vec3(*self.angularVelocity)-
+        panda.Vec3(*self.lastAngularVelocity))/period)
+      self.angularAcceleration = [alpha[0], alpha[1], alpha[2]]
 
-    self.lastTranslationalVelocity = self.translationalVelocity
-    self.lastRotationalVelocity = self.rotationalVelocity
+    self.lastLinearVelocity = self.linearVelocity
+    self.lastAngularVelocity = self.angularVelocity
 
 #-------------------------------------------------------------------------------
 
-  def updatePhysics(self, period):
+  def step(self, period):
     self.updateVelocity(period)
     self.updateAcceleration(period)
 

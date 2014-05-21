@@ -34,9 +34,10 @@ using namespace std;
 SphericalRangeCamera::SphericalRangeCamera(const string& name, const
     ShaderProgram& program, const LVecBase2f& angles, const LVecBase2f& fov,
     const LVecBase2f& numRays, const LVecBase2f& rangeLimits, const
-    LVecBase2f& resolution, bool acquireColor, string acquireLabel) :
+    LVecBase2f& resolution, bool acquireColor, string acquireLabel, const
+    BitMask32& cameraMask) :
   RangeCamera(name, program, angles, fov, numRays, rangeLimits, resolution,
-    acquireColor, acquireLabel) {
+    acquireColor, acquireLabel, cameraMask) {
   setupLens();
   setupRays();
 }

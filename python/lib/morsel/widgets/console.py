@@ -1,7 +1,9 @@
 from morsel.panda import *
 from morsel.console import *
-from morsel.widgets import Frame, Label, Edit
-from morsel.console import Console as ConsoleBase
+from morsel.widgets.frame import Frame
+from morsel.widgets.label import Label
+from morsel.widgets.edit import Edit
+from morsel.console.console import Console as ConsoleBase
 from morsel.core.event_handler import EventHandler
 
 from panda3d.direct.gui.DirectGui import DirectFrame, DirectEntry, DirectLabel
@@ -13,10 +15,10 @@ import sys, os, re, string
 #-------------------------------------------------------------------------------
 
 class Console(Frame):
-  def __init__(self, gui, name = "Console", anchor = ["Center", "Bottom"],
-      origin = [0, -1], frame = [2, 1.5],  helpColor = [0.8, 1.0, 0.8, 1.0],
-      completeColor = [1.0, 0.8, 0.8, 1.0], outputLength = 1000,
-      historyLength = 100, hidden = True, font = "monospace.bam", **kargs):
+  def __init__(self, anchor = ["Center", "Bottom"], origin = [0, -1],
+      frame =  [2, 1.5],  helpColor = [0.8, 1.0, 0.8, 1.0], completeColor = 
+      [1.0, 0.8, 0.8, 1.0], outputLength = 1000, historyLength = 100, hidden = 
+      True, font = "monospace.bam", **kargs):
     self.console = None
     self.clipboard = Clipboard()
     
@@ -37,7 +39,7 @@ class Console(Frame):
     }
 
     framework.eventManager.addHandlers(self.handlers, 1)
-    Frame.__init__(self, gui, name, anchor = anchor, origin = origin,
+    super(Console, self).__init__(anchor = anchor, origin = origin,
       frame = frame, hidden = hidden, font = Font(font), **kargs)
 
     self.helpColor = helpColor
@@ -45,24 +47,27 @@ class Console(Frame):
     self.outputLength = outputLength
     self.historyLength = historyLength
 
-    self.label = Label(gui, name+"Label", parent = self, origin = [-1, -1],
-      position = [self.left, self.bottom+0.017], text = "morsel>", font = font)
-    self.input = Edit(gui, name+"Input", parent = self, origin = [-1, -1],
-      position = [self.label.getRight(self)+0.01, self.bottom],
-      width = self.right-self.label.getRight(self)-0.01,
-      color = [0, 0, 0, 0], font = self.font, command = self.pushCommand)
-    self.label.frame = [self.getLeft(self.label), self.getRight(self.label),
-      self.input.getBottom(self.label), self.input.getTop(self.label)]
+    self.prompt = Label(gui = self.gui, name = "Prompt", parent = self,
+      origin = [-1, -1], position = [self.left, self.bottom+0.017], text =
+      "morsel>", font = font)
+    self.input = Edit(gui = self.gui, name = "Input", parent = self, origin = 
+      [-1, -1], position = [self.prompt.getRight(self)+0.01, self.bottom],
+      width = self.right-self.prompt.getRight(self)-0.01, color = [0, 0, 0, 0],
+      font = self.font, command = self.pushCommand)
+    self.prompt.frame = [self.getLeft(self.prompt), self.getRight(self.prompt),
+      self.input.getBottom(self.prompt), self.input.getTop(self.prompt)]
 
     self.outputs = []
     labelTop = self.top
     labelHeight = 0
+    i = 1
     while labelTop-labelHeight > self.input.getTop(self):
-      label = Label(gui, name+"Output", parent = self, origin = [-1, 1],
-        position = [-1, labelTop], align = "Left", color = [0, 0, 0, 0],
-        font = self.font)
+      label = Label(gui = self.gui, name = "Output%d" % i, parent = self,
+        origin = [-1, 1], position = [-1, labelTop], align = "Left", color =
+        [0, 0, 0, 0], font = self.font)
       labelHeight = label.getHeight(self)
       labelTop = labelTop-labelHeight
+      i += 1
 
       self.outputs.append(label)
 
@@ -110,7 +115,7 @@ class Console(Frame):
           if len(self.output) > self.outputLength:
             self.output.pop()
 
-    self.updateOutput()
+    self.drawOutput()
 
 #-------------------------------------------------------------------------------
 
@@ -201,7 +206,7 @@ class Console(Frame):
     self.outputPosition = min(max(0, len(self.output)-len(self.outputs)),
       max(0, self.outputPosition))
       
-    self.updateOutput()
+    self.drawOutput()
 
 #-------------------------------------------------------------------------------
 
@@ -234,7 +239,7 @@ class Console(Frame):
 
 #-------------------------------------------------------------------------------
 
-  def updateOutput(self):
+  def drawOutput(self):
     for i in range(len(self.outputs)):
       outputPosition = len(self.outputs)+self.outputPosition-i-1
 

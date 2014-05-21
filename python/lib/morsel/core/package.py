@@ -10,8 +10,8 @@ import __builtin__
 class Package(object):
   def __init__(self, name, homeVar = None, configDir = None, systemDir = None,
       userDir = None, module = None, requires = None, options = None,
-      arguments = None):
-    object.__init__(self)
+      arguments = None, **kargs):
+    super(Package, self).__init__()
 
     self.name = name
     self.module = module

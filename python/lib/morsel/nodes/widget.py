@@ -4,15 +4,15 @@ from node import Node
 #-------------------------------------------------------------------------------
 
 class Widget(Node):
-  def __init__(self, gui, name, widget = None, anchor = None, origin = [0, 0],
-      frame = None, margin = None, text = None, color = [0, 0, 0, 0.3],
+  def __init__(self, gui = None,  widget = None, anchor = None, origin =
+      [0, 0], frame = None, margin = None, text = None, color = [0, 0, 0, 0.3],
       font = None, foregroundColor = [1, 1, 1, 1], backgroundColor = None,
       parent = None, scale = 1, **kargs):
     self.gui = gui
 
-    if anchor:
-      parent = gui.anchors[anchor[0], anchor[1]]
-    Node.__init__(self, name, parent = parent, scale = scale, **kargs)
+    if anchor and self.gui:
+      parent = self.gui.anchors[anchor[0], anchor[1]]
+    super(Widget, self).__init__(parent = parent, scale = scale, **kargs)
 
     self.widget = widget
     self.origin = origin
@@ -28,17 +28,21 @@ class Widget(Node):
     self.foregroundColor = foregroundColor
     self.backgroundColor = backgroundColor
     
-    self.gui.registerWidget(self)
+    if self.gui:
+      self.gui.registerWidget(self)
     
     self.updateBounds()
 
 #-------------------------------------------------------------------------------
 
-  def setParent(self, parent, transform = False):
+  def setParent(self, parent):
     if not parent:
-      parent = self.gui.anchors["Center", "Center"]
+      if self.gui:
+        parent = self.gui.anchors["Center", "Center"]
+      else:
+        parent = render2d
 
-    Node.setParent(self, parent, transform)
+    Node.setParent(self, parent)
 
   parent = property(Node.getParent, setParent)
 
@@ -288,13 +292,20 @@ class Widget(Node):
 
 #-------------------------------------------------------------------------------
 
+  def getColor(self):
+    if self.hasColor():
+      color = panda.NodePath.getColor(self)
+      return [color[0], color[1], color[2], color[3]]
+    else:
+      return [0]*4
+
   def setColor(self, color):
-    Node.setColor(self, color)
+    panda.NodePath.setColor(self, *color)
     
     if self.widget:
       self.widget["frameColor"] = self.color
 
-  color = property(Node.getColor, setColor)
+  color = property(getColor, setColor)
 
 #-------------------------------------------------------------------------------
 
@@ -334,6 +345,6 @@ class Widget(Node):
 
 #-------------------------------------------------------------------------------
 
-  def update(self):
+  def draw(self):
     pass
   

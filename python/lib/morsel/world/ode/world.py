@@ -1,83 +1,160 @@
 from morsel.panda import *
-from morsel.math import *
+from morsel.nodes.ode.object import Object
 from morsel.world import World as Base
-from morsel.nodes.solid import Solid
+
+from math import *
 
 #-------------------------------------------------------------------------------
 
 class World(Base):
-  def __init__(self, period = 0.01, gravity = -9.81, quickStep = False):
-    Base.__init__(self, "ode")
-
-    self.period = period
-    self.gravity = gravity
-    self.quickStep = quickStep
+  def __init__(self, period = 0.01, gravity = -9.81, friction = 100.0,
+      slip = 0.1, bouncyness = 0.3, bounceVelocity = 0.1, softERP = 0.8,
+      softCFM = 1e-10, dampening = 0.002, contactDepth = 0.001,
+      quickStep = False, **kargs):
+    self._friction = friction
+    self._slip = slip
+    self._bouncyness = bouncyness
+    self._bounceVelocity = bounceVelocity
+    self._softERP = softERP
+    self._softCFM = softCFM
+    self._dampening = dampening
     
-    self.solids = []
-
-    self.world = panda.OdeWorld()
-    self.world.setGravity(0, 0, self.gravity)
-    self.world.initSurfaceTable(1)
-    self.world.setContactSurfaceLayer(0.001)
-    self.world.setSurfaceEntry(0, 0, mu = 100, bounce = 0.3, bounce_vel = 0.1,
-      soft_erp = 0.8, soft_cfm = 1e-10, slip = 0.1, dampen = 0.002)
-
+    super(World, self).__init__(physics = "ode", period = period)
+    
+    self._world = panda.OdeWorld()
+    self._world.initSurfaceTable(1)
+    
     self.space = panda.OdeSimpleSpace()
-    self.space.setAutoCollideWorld(self.world)
+    self.space.setAutoCollideWorld(self._world)
     self.space.enable()
     self.contacts = panda.OdeJointGroup()
     self.space.setAutoCollideJointGroup(self.contacts)
+    
+    self.gravity = gravity
+    self.contactDepth = contactDepth
+    self.updateSurfaceEntry()
+    
+    self.quickStep = quickStep
   
 #-------------------------------------------------------------------------------
 
-  def getERP(self, mass, period, damping):
-    frequency = 2*pi/period
-    delta = self.period
+  def getGravity(self):
+    return self._world.getGravity()
 
-    return delta*frequency/(delta*frequency+2*damping)
-
+  def setGravity(self, gravity):
+    self._world.setGravity(0, 0, gravity)
+    
+  gravity = property(getGravity, setGravity)
+    
 #-------------------------------------------------------------------------------
 
-  def getCFM(self, mass, period, damping):
-    frequency = 2*pi/period
-    delta = self.period
+  def getFriction(self):
+    return self._friction
 
-    return self.getERP(mass, period, damping)/(delta*frequency**2*mass)
-
+  def setFriction(self, friction):
+    self._friction = friction
+    self.updateSurfaceEntry()
+    
+  friction = property(getFriction, setFriction)
+    
 #-------------------------------------------------------------------------------
 
-  def registerObject(self, object):
-    type = object.getPythonTag("type")
+  def getSlip(self):
+    return self._slip
 
-    if issubclass(type, Solid):
-      self.solids.append(object)
+  def setSlip(self, slip):
+    self._slip = slip
+    self.updateSurfaceEntry()
+    
+  slip = property(getSlip, setSlip)
+    
+#-------------------------------------------------------------------------------
 
-    Base.registerObject(self, object)
-      
+  def getBouncyness(self):
+    return self._bouncyness
+
+  def setBouncyness(self, bouncyness):
+    self._bouncyness = max(0.0, min(1.0, bouncyness))
+    self.updateSurfaceEntry()
+    
+  bouncyness = property(getBouncyness, setBouncyness)
+    
+#-------------------------------------------------------------------------------
+
+  def getBounceVelocity(self):
+    return self._bounceVelocity
+
+  def setBounceVelocity(self, bounceVelocity):
+    self._bounceVelocity = bounceVelocity
+    self.updateSurfaceEntry()
+    
+  bounceVelocity = property(getBounceVelocity, setBounceVelocity)
+    
+#-------------------------------------------------------------------------------
+
+  def getSoftERP(self):
+    return self._softERP
+
+  def setSoftERP(self, softERP):
+    self._softERP = softERP
+    self.updateSurfaceEntry()
+    
+  softERP = property(getSoftERP, setSoftERP)
+    
+#-------------------------------------------------------------------------------
+
+  def getSoftCFM(self):
+    return self._softCFM
+
+  def setSoftCFM(self, softCFM):
+    self._softCFM = softCFM
+    self.updateSurfaceEntry()
+    
+  softCFM = property(getSoftCFM, setSoftCFM)
+    
+#-------------------------------------------------------------------------------
+
+  def getDampening(self):
+    return self._dampening
+
+  def setDampening(self, dampening):
+    self._dampening = dampening
+    self.updateSurfaceEntry()
+    
+  dampening = property(getDampening, setDampening)
+    
+#-------------------------------------------------------------------------------
+
+  def getContactDepth(self):
+    return self._world.getContactSurfaceLayer()
+
+  def setContactDepth(self, contactDepth):
+    self._world.setContactSurfaceLayer(contactDepth)
+    
+  contactDepth = property(getContactDepth, setContactDepth)
+    
+#-------------------------------------------------------------------------------
+
+  def updateSurfaceEntry(self, surface1 = 0, surface2 = 0):
+    self._world.setSurfaceEntry(surface1, surface2, mu = self.friction,
+      bounce = self.bouncyness, bounce_vel = self.bounceVelocity,
+      soft_erp = self.softERP, soft_cfm = self.softCFM, slip = self.slip,
+      dampen = self.dampening)
+  
 #-------------------------------------------------------------------------------
   
-  def updatePhysics(self, period):
+  def step(self, period):
     self.space.autoCollide()
-    for actuator in self.actuators:
-      actuator.updatePhysics(self.period)
-    for sensor in self.sensors:
-      sensor.updatePhysics(self.period)
-    if self.quickStep:
-      self.world.quickStep(self.period)
-    else:
-      self.world.step(self.period)
-    self.contacts.empty()
-      
-#-------------------------------------------------------------------------------
 
-  def updateGraphics(self):
-    for mesh in self.meshes:
-      mesh.updateGraphics()
-    for actuator in self.actuators:
-      actuator.updateGraphics()
-    for solid in self.solids:
-      solid.updateGraphics()
-    for sensor in self.sensors:
-      sensor.updateGraphics()
-    for view in self.views:
-      view.updateGraphics()
+    if self.quickStep:
+      self._world.quickStep(period)
+    else:
+      self._world.step(period)
+    self.contacts.empty()
+    
+    if self.scene:
+      for body in self.scene.bodies:
+        body.step(period)      
+    
+    Base.step(self, period)
+    

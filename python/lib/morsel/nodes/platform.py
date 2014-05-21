@@ -1,13 +1,10 @@
-from globals import *
 from actuated import Actuated
 
 #-------------------------------------------------------------------------------
 
 class Platform(Actuated):
-  def __init__(self, world, name, collisionMasks = [PLATFORM_COLLISIONS_FROM,
-      PLATFORM_COLLISIONS_INTO], **kargs):
-    Actuated.__init__(self, world, name, collisionMasks = collisionMasks,
-      **kargs)
+  def __init__(self, **kargs):
+    super(Platform, self).__init__(**kargs)
 
 #-------------------------------------------------------------------------------
 

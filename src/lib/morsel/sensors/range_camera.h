@@ -57,7 +57,7 @@ public:
     LVecBase2f& angles, const LVecBase2f& fov, const LVecBase2f& numRays,
     const LVecBase2f& rangeLimits, const LVecBase2f& resolution =
     LVecBase2f(128, 128), bool acquireColor = false, std::string
-    acquireLabel = "");
+    acquireLabel = "", const BitMask32& cameraMask = BitMask32::all_on());
 
   /** Destructor
     */
@@ -91,6 +91,7 @@ protected:
   LVecBase2f resolution;
   bool acquireColor;
   std::string acquireLabel;
+  BitMask32 cameraMask;
   std::vector<Ray> rays;
 
   PointerTo<GraphicsOutput> buffer;

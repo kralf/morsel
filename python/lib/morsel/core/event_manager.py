@@ -5,8 +5,9 @@ from panda3d.direct.showbase.DirectObject import DirectObject
 #-------------------------------------------------------------------------------
 
 class EventManager(DirectObject):
-  def __init__(self):
+  def __init__(self, **kargs):
     DirectObject.__init__(self)
+    
     self.handlers = {}
 
 #-------------------------------------------------------------------------------
@@ -44,7 +45,7 @@ class EventManager(DirectObject):
 
         return
       
-    framework.error("Bad handler for \""+event+"\" event")
+    framework.error("Bad handler for \""+event+"\" event.")
 
 #-------------------------------------------------------------------------------
 

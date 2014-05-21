@@ -5,9 +5,8 @@ from morsel.core.event_handler import EventHandler
 #-------------------------------------------------------------------------------
 
 class Keyboard(Controller):
-  def __init__(self, name = "Keyboard", keys = [("arrow_down","arrow_up"),
-      ("arrow_right", "arrow_left")], delay = None, **kargs):
-    Controller.__init__(self, name = name, **kargs)
+  def __init__(self, keys = [], delay = None, **kargs):
+    super(Keyboard, self).__init__(**kargs)
 
     self.delay = delay
     if not self.delay:
@@ -45,8 +44,8 @@ class Keyboard(Controller):
         framework.eventManager.addHandler(self._keys[i][1]+"-up",
           EventHandler(self.setKey, self._keys[i][1], False))
 
-      self.increments.append(
-        (self.actuator.limits[i][1]-self.actuator.limits[i][0])/self.delay[i])
+      self.increments.append((self.actuator.limits[i][1]-
+        self.actuator.limits[i][0])/self.delay[i])
 
   def getKeys(self):
     return self._keys
@@ -55,7 +54,7 @@ class Keyboard(Controller):
 
 #-------------------------------------------------------------------------------
 
-  def updateCommand(self, period):
+  def step(self, period):
     command = self.actuator.command
 
     for i in range(min(len(self.keys), len(command))):

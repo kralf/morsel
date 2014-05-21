@@ -1,34 +1,43 @@
-from globals import *
-from object import Object
+from node import Node
 from iterator import Iterator
 from mesh import Mesh
-from solid import Solid
+from object import Object
 from static import Static
-from actuator import Actuator
 from sensor import Sensor
 from platform import Platform
 from actor import Actor
 from view import View
 from controller import Controller
-from facade import Collider, Solid
 
 #-------------------------------------------------------------------------------
 
-class Scene(Object):
-  def __init__(self, world, name, activeLayer = None, collisionMasks =
-      [STATIC_COLLISIONS_FROM, STATIC_COLLISIONS_INTO], **kargs):
-    Object.__init__(self, world, name, parent = render, **kargs)
+class Scene(Node):
+  def __init__(self, world = None, activeLayer = None, **kargs):
+    self.world = world
+    
+    super(Scene, self).__init__(**kargs)
 
     if activeLayer:
       self.activeLayer = activeLayer
     else:
       self.activeLayer = framework.activeLayer
+      
+    framework.addShortcut("control-l", self.ls,
+      "List the hierarchy at and below the scene")
+      
+    if self.world:
+      self.world.scene = self
 
-    self.collider = Collider(name = name+"Collider", parent = self,
-      collisionMasks = collisionMasks)
-    self.solid = Solid(name = name+"Solid", type = "Empty", mesh = self,
-      parent = self)
+#-------------------------------------------------------------------------------
 
+  def setParent(self, parent):
+    if not parent:
+      parent = render
+      
+    Node.setParent(self, parent)
+
+  parent = property(Node.getParent, setParent)
+  
 #-------------------------------------------------------------------------------
 
   def getActiveLayer(self):
@@ -51,17 +60,10 @@ class Scene(Object):
 
 #-------------------------------------------------------------------------------
 
-  def getSolids(self):
-    return Iterator(self, Solid).generator
+  def getObjects(self):
+    return Iterator(self, Object).generator
 
-  solids = property(getSolids)
-
-#-------------------------------------------------------------------------------
-
-  def getActuators(self):
-    return Iterator(self, Actuator).generator
-
-  actors = property(getActuators)
+  objects = property(getObjects)
 
 #-------------------------------------------------------------------------------
 
@@ -102,3 +104,4 @@ class Scene(Object):
 
   def __iter__(self):
     return Iterator(self)
+    

@@ -3,8 +3,8 @@ from morsel.nodes.widget import Widget
 #-------------------------------------------------------------------------------
 
 class GUI(object):
-  def __init__(self):
-    object.__init__(self)
+  def __init__(self, **kargs):
+    super(GUI, self).__init__()
 
     self.horizontalAnchors = {
       "Left": -1,
@@ -29,7 +29,7 @@ class GUI(object):
           parent = aspect2d)
 
     framework.eventManager.addHandler("aspectRatioChanged", self.updateAnchors)
-    framework.scheduler.addTask("GUIUpdate", self.update)
+    framework.scheduler.addTask("GUI/Update", self.update)
 
 #-------------------------------------------------------------------------------
 
@@ -80,7 +80,7 @@ class GUI(object):
   def update(self, time):
     for widget in self.widgets:
       if not widget.hidden:
-        widget.update()
+        widget.draw()
 
     self.time = time
     return True

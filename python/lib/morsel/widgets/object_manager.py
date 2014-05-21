@@ -46,7 +46,7 @@ class ObjectManager(DirectObject.DirectObject):
     self.objects = {}
     self.camera_poses = {}
     
-    framework.scheduler.addTask("ObjectManagerUpdate", self.update)
+    framework.scheduler.addTask("ObjectManager/Update", self.update)
     
 #-------------------------------------------------------------------------------
   def label(self, text, x, y):

@@ -1,12 +1,13 @@
-from morsel.nodes import Widget
+from morsel.panda import *
+from morsel.nodes.widget import Widget
 
 from panda3d.direct.gui.DirectGui import DirectFrame
 
 #-------------------------------------------------------------------------------
 
 class Frame(Widget):
-  def __init__(self, gui, name, **kargs):
-    Widget.__init__(self, gui, name, widget = DirectFrame(), **kargs)
+  def __init__(self, **kargs):
+    super(Frame, self).__init__(widget = DirectFrame(), **kargs)
 
 #-------------------------------------------------------------------------------
 

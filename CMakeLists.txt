@@ -5,7 +5,7 @@ include(Panda3D)
 
 remake_project(
   Morsel
-  VERSION 1.4
+  VERSION 1.5
   RELEASE beta
   SUMMARY "MObile Robot Simulator."
   AUTHOR "Ralf Kaestner"

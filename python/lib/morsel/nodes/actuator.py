@@ -1,64 +1,38 @@
-from globals import *
+from morsel.math import *
 from object import Object
-from facade import Collider, Solid
 
 #-------------------------------------------------------------------------------
 
 class Actuator(Object):
-  def __init__(self, world, name, solid = None, limits = [], collisionMasks =
-      [ACTUATOR_COLLISIONS_FROM, ACTUATOR_COLLISIONS_INTO], **kargs):
-    self.solid = None
+  def __init__(self, actuated = None, limits = [], **kargs):
+    self._actuated = None
     
-    Object.__init__(self, world, name, **kargs)
-
-    self.collider = Collider(name = name+"Collider", parent = self,
-      collisionMasks = collisionMasks)
-    if solid:
-      self.solid = solid
-    else:
-      self.solid = Solid(name = name+"Solid", type = "Empty", mesh = self,
-        parent = self)
-
+    super(Actuator, self).__init__(**kargs)
+      
+    self.actuated = actuated
     self.limits = limits
     self.command = [0]*len(limits)
-    self.state = [0]*len(limits)
+    self.state = [0]*len(limits)    
 
+    if self.world:
+      self.world.addActuator(self)
+    
 #-------------------------------------------------------------------------------
 
-  def getPosition(self, node = None):
-    if self.solid:
-      if not node:
-        node = self.parent
-      return self.solid.getPosition(node)
-    else:
-      return Object.getPosition(self, node)
+  def getActuated(self):
+    return self._actuated
+    
+  def setActuated(self, actuated):
+    if self._actuated:
+      self._actuated._actuator = None
+      
+    self._actuated = actuated
+    
+    if self._actuated:
+      self._actuated._actuator = self
 
-  def setPosition(self, position, node = None):
-    Object.setPosition(self, position, node)
-
-    if self.solid:
-      self.solid.position = self.solid.position
-
-  position = property(getPosition, setPosition)
-
-#-------------------------------------------------------------------------------
-
-  def getOrientation(self, node = None):
-    if self.solid:
-      if not node:
-        node = self.parent
-      return self.solid.getOrientation(node)
-    else:
-      return Object.getOrientation(self, node)
-
-  def setOrientation(self, orientation, node = None):
-    Object.setOrientation(self, orientation, node)
-
-    if self.solid:
-      self.solid.orientation = self.solid.orientation
-
-  orientation = property(getOrientation, setOrientation)
-
+  actuated = property(getActuated, setActuated)
+      
 #-------------------------------------------------------------------------------
 
   def getCommand(self):
@@ -66,6 +40,7 @@ class Actuator(Object):
 
   def setCommand(self, command):
     self._command = [0]*len(self.limits)
+    
     for i in range(min(len(self.limits), len(command))):
       self._command[i] = max(self.limits[i][0],
         min(self.limits[i][1], command[i]))
@@ -74,10 +49,47 @@ class Actuator(Object):
 
 #-------------------------------------------------------------------------------
 
-  def updatePhysics(self, period):
-    pass
+  def getAccelerationFromVelocities(self, currentVelocity, targetVelocity,
+      maxAcceleration, maxDeceleration):
+    if targetVelocity*currentVelocity >= 0:
+      if abs(targetVelocity) > abs(currentVelocity):
+        acceleration = maxAcceleration
+      else:
+        acceleration = maxDeceleration
+    else:
+      acceleration = maxAcceleration
+    
+    return signum(targetVelocity-currentVelocity)*acceleration
 
 #-------------------------------------------------------------------------------
 
-  def updateGraphics(self):
+  def getAccelerationFromPositions(self, currentPosition, targetPosition,
+      currentVelocity, maxVelocity, maxAcceleration, maxDeceleration):
+    d_s = targetPosition-currentPosition
+    s_d = signum(currentVelocity)*0.5*currentVelocity**2/maxDeceleration
+    
+    if d_s*s_d >= 0:
+      if abs(d_s) > abs(s_d):
+        return self.getAccelerationFromVelocities(currentVelocity,
+          signum(d_s)*maxVelocity, maxAcceleration, maxDeceleration)
+      else:
+        return -signum(currentVelocity)*maxDeceleration
+    else:
+      return -signum(currentVelocity)*maxDeceleration
+    
+#-------------------------------------------------------------------------------
+
+  def updateState(self, period):
     pass
+  
+#-------------------------------------------------------------------------------
+
+  def move(self, period):
+    pass
+  
+#-------------------------------------------------------------------------------
+
+  def step(self, period):
+    self.updateState(period)
+    self.move(period)
+  

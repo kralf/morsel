@@ -6,7 +6,7 @@ def Font(filename = None, **kargs):
   if filename:
     fontFile = framework.findFile(filename)
     if not fontFile:
-      framework.error("Font file '"+filename+"' not found")
+      framework.error("Font file '"+filename+"' not found.")
   else:
     fontFile = None
     
@@ -19,7 +19,7 @@ def ShaderProgram(filename = None, **kargs):
   if filename:
     shaderFile = framework.findFile(filename)
     if not shaderFile:
-      framework.error("Shader file '"+filename+"' not found")
+      framework.error("Shader file '"+filename+"' not found.")
   else:
     shaderFile = ""
 

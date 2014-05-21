@@ -35,8 +35,8 @@ public:
   PerspectiveRangeCamera(const std::string& name, const ShaderProgram&
     program, const LVecBase2f& angles, const LVecBase2f& fov, const
     LVecBase2f& numRays, const LVecBase2f& rangeLimits, const LVecBase2f&
-    resolution = LVecBase2f(128, 128), bool acquireColor = false,
-    std::string acquireLabel = "");
+    resolution = LVecBase2f(128, 128), bool acquireColor = false, std::string
+    acquireLabel = "", const BitMask32& cameraMask = BitMask32::all_on());
     
   /** Destructor
     */

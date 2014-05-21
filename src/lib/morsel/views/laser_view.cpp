@@ -40,8 +40,8 @@ using namespace std;
 /*****************************************************************************/
 
 LaserView::LaserView(std::string name, NodePath& sensor, ShaderProgram&
-    program, const Colorf& color, bool showPoints, bool showLines,
-    bool showColors, bool showLabels, bool useAlpha) :
+    program, const Colorf& color, bool showPoints, bool showLines, bool
+    showColors, bool showLabels, bool useAlpha) :
   NodePath(name),
   sensor(static_cast<RangeSensor&>(sensor)),
   color(color),
@@ -84,8 +84,6 @@ void LaserView::setupGeometries() {
     stream << get_name() << "Geometries" << ci;
     
     nodes.push_back(new PandaNode(stream.str()));
-    nodes[ci]->adjust_draw_mask(PandaNode::get_all_camera_mask(),
-      BitMask32(1), BitMask32(0));
     NodePath path = attach_new_node(nodes[ci]);
     path.set_hpr(sensor.getCamera(ci).get_hpr());
     

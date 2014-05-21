@@ -1,3 +1,3 @@
-type  = "Keyboard"
+type = "Keyboard"
 
-keys  = [("arrow_down", "arrow_up"), ("arrow_right", "arrow_left")]
+keys = [("arrow_down", "arrow_up"), ("arrow_right", "arrow_left")]

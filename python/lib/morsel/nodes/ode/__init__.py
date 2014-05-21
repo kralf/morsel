@@ -2,9 +2,13 @@
 # Submodules
 #===============================================================================
 
-from collider import Collider
+from object import Object
 from solid import Solid
-from geometry import Geometry
 from body import Body
-from static import Static
+from joint import Joint
 from scene import Scene
+from static import Static
+from actuator import Actuator
+from sensor import Sensor
+from actor import Actor
+from platform import Platform

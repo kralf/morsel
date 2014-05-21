@@ -1,17 +1,13 @@
 type              = "Character"
-actuatorType      = "PlanarMotor"
+actuator          = "PlanarDrive"
 
-mesh              = "misc/robot.bam"
-body              = "body"
-base              = "base"
-hideBase          = True
-
+bodyMesh          = "characters/robot.bam:**/body"
 bodySolid         = "Box"
 bodyBody          = "Box"
-baseSolid         = "Ray"
-baseBody          = "Empty"
-
 bodyMass          = 50
+
+bearingMesh       = "characters/robot.bam:**/bearing"
+bearingSolid      = "Ray"
 
 maxVelocity       = [1, 0, 90]
 maxAcceleration   = [1, 0, 90]

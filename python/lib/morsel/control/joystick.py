@@ -6,9 +6,8 @@ import pygame.joystick
 #-------------------------------------------------------------------------------
 
 class Joystick(Controller):
-  def __init__(self, name = "Joystick", device = None, axes = [0, 1],
-      scales = [1, 1], **kargs):
-    Controller.__init__(self, name = name, **kargs)
+  def __init__(self, device = None, axes = [], scales = [], **kargs):
+    super(Joystick, self).__init__(**kargs)
 
     self.device = device
     self.axes = axes
@@ -52,7 +51,7 @@ class Joystick(Controller):
 
 #-------------------------------------------------------------------------------
   
-  def updateCommand(self, period):
+  def step(self, period):
     command = [0]*len(self.actuator.command)
     state = self.actuator.state
 
@@ -62,8 +61,12 @@ class Joystick(Controller):
         self.setAxis(self.axes[i], self.joystick.get_axis(self.axes[i]))
 
     for i in range(min(len(self.axes), len(command))):
-      command[i] = self.scales[i]*self.axisMap[self.axes[i]]* \
-        self.actuator.limits[i][1]
+      if self.scales and (i < len(self.scales)):
+        scale = self.scales[i]
+      else:
+        scale = 1
+      
+      command[i] = scale*self.axisMap[self.axes[i]]*self.actuator.limits[i][1]
       acceleration = (command[i]-state[i])/period
       maxAcceleration = (self.actuator.limits[i][1]-
         self.actuator.limits[i][0])/period

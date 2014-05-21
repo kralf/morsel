@@ -35,7 +35,7 @@ using namespace std;
 RangeCamera::RangeCamera(const string& name, const ShaderProgram& program,
     const LVecBase2f& angles, const LVecBase2f& fov, const LVecBase2f&
     numRays, const LVecBase2f& rangeLimits, const LVecBase2f& resolution,
-    bool acquireColor, string acquireLabel) :
+    bool acquireColor, string acquireLabel, const BitMask32& cameraMask) :
   NodePath(name),
   program(program),
   angles(angles),
@@ -45,6 +45,7 @@ RangeCamera::RangeCamera(const string& name, const ShaderProgram& program,
   resolution(resolution),
   acquireColor(acquireColor),
   acquireLabel(acquireLabel),
+  cameraMask(cameraMask),
   rays(numRays[0]*numRays[1]),
   timestamp(0.0),
   lastDepthTimestamp(0.0),
@@ -194,7 +195,7 @@ void RangeCamera::setupCamera(PointerTo<Lens> lens) {
     resolution[0], resolution[1], &depthMap, true);
 
   cameraNode = new Camera("Camera");
-  cameraNode->set_camera_mask(BitMask32(1));
+  cameraNode->set_camera_mask(cameraMask);
   cameraNode->set_scene(Morsel::getGSG()->get_scene()->get_scene_root());
   cameraNode->set_lens(lens);
 

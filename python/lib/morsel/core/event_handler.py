@@ -4,7 +4,7 @@ from morsel.panda import *
 
 class EventHandler(object):
   def __init__(self, function, *args, **kargs):
-    object.__init__(self)
+    super(EventHandler, self).__init__()
 
     self.function = function
     self.args = args

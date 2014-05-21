@@ -1,23 +1,15 @@
-from morsel.nodes import Actor
-from morsel.actors.facade import Actuator
-from morsel.nodes.facade import Mesh
+from morsel.nodes.facade import Actuator, Object, Mesh
+from morsel.nodes.actor import Actor
 
 #-------------------------------------------------------------------------------
 
 class Character(Actor):
-  def __init__(self, world, name, mesh, actuatorType = None, body = None,
+  def __init__(self, name = None, actuator = None, bodyMesh = None,
       bodyAnimation = None, **kargs):
-    self.motor = Actuator(name = name+"Motor", type = actuatorType,
-      mesh = mesh, **kargs)
-    self.body = None
+    super(Character, self).__init__(name = name, **kargs)
 
-    Actor.__init__(self, world, name, actuator = self.motor)
-
-    if body:
-      bodyModel = mesh.find("**/"+body)
-      if not bodyModel.isEmpty():
-        self.body = Mesh(name = name+"Body", model = bodyModel,
-          animation = bodyAnimation, parent = self)
-      else:
-        framework.error("Body model '"+body+"' not found")
-      
+    if bodyMesh:
+      self.mesh = Mesh(filename = bodyMesh, animation = bodyAnimation,
+        flatten = True)
+    self.actuator = Actuator(type = actuator, **kargs)
+    

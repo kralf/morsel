@@ -1,23 +1,24 @@
-type                     = "Wheeled"
-chassisType              = "Differential"
+type             = "Wheeled"
+actuator         = "DifferentialDrive"
 
-mesh                     = "platforms/pioneer_3at.bam"
-body                     = "body"
-wheels                   = ["wheel_fl", "wheel_fr", "wheel_rl", "wheel_rr"]
+bodyMesh         = "platforms/pioneer_3at.bam:**/body"
+bodySolid        = "Box"
+bodyBody         = "Box"
+bodyMass         = 20
+bodyMassOffset   = [0, 0, -0.1]
 
-bodySolid                = "Box"
-bodyBody                 = "Box"
-wheelSolid               = "Cylinder"
-wheelBody                = "Cylinder"
+wheelMeshes      = ["platforms/pioneer_3at.bam:**/wheel_fl",
+                    "platforms/pioneer_3at.bam:**/wheel_fr",
+                    "platforms/pioneer_3at.bam:**/wheel_rl",
+                    "platforms/pioneer_3at.bam:**/wheel_rr"]
+wheelSolids      = "Cylinder"
+wheelBodies      = "Cylinder"
+wheelMasses      = 1
+wheelSuspensions = 0.01
 
-bodyMass                 = 20
-bodyMassOffset           = [0, 0, -0.1]
-wheelMass                = [1, 1, 1, 1]
-wheelSuspension          = [0.01, 0.01, 0.01, 0.01]
+maxVelocity      = [1.6, 90]
+maxAcceleration  = [30/3.6, 90]
+maxDeceleration  = [300/3.6, 180]
 
-maxTranslationalVelocity = 1.6
-maxRotationalVelocity    = 90
-maxAcceleration          = 30/3.6
-maxDeceleration          = 300/3.6
-
-propulsionForce          = 1000
+propulsionForce  = 1000
+brakingForce     = 2000

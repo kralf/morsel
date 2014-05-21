@@ -1,28 +1,30 @@
-type                     = "Wheeled"
-chassisType              = "Differential"
+type              = "Wheeled"
+actuator          = "DifferentialDrive"
 
-mesh                     = "platforms/robox.bam"
-body                     = "body"
-wheels                   = ["wheel_l", "wheel_r", "wheel_cf", "wheel_cr"]
-casterCranks             = ["crank_cf", "crank_cr"]
-casterWheels             = ["wheel_cf", "wheel_cr"]
+bodyMesh          = "platforms/robox.bam:**/body"
+bodySolid         = "Cylinder"
+bodyBody          = "Cylinder"
+bodyMass          = 70
+bodyMassOffset    = [0, 0, -0.6]
 
-bodySolid                = "Cylinder"
-bodyBody                 = "Cylinder"
-wheelSolid               = "Cylinder"
-wheelBody                = "Cylinder"
-crankSolid               = "Box"
-crankBody                = "Box"
+wheelMeshes       = ["platforms/robox.bam:**/wheel_l",
+                     "platforms/robox.bam:**/wheel_r",
+                     "platforms/robox.bam:**/wheel_cf",
+                     "platforms/robox.bam:**/wheel_cr"]
+wheelSolids       = "Cylinder"
+wheelBodies       = "Cylinder"
+wheelMasses       = [0.5, 0.5, 0.2, 0.2]
+wheelSuspensions  = [0.01, 0.01, 0.1, 0.1]
 
-bodyMass                 = 70
-bodyMassOffset           = [0, 0, -0.6]
-wheelMass                = [0.5, 0.5, 0.2, 0.2]
-wheelSuspension          = [0.01, 0.01, 0.1, 0.1]
-crankMass                = [0.2, 0.2]
+casterCrankMeshes = ["platforms/robox.bam:**/crank_cf",
+                     "platforms/robox.bam:**/crank_cr"]
+casterCrankSolids = "Box"
+casterCrankBodies = "Box"
+casterCrankMasses = 0.2
 
-maxTranslationalVelocity = 1.6
-maxRotationalVelocity    = 90
-maxAcceleration          = 30/3.6
-maxDeceleration          = 300/3.6
+maxVelocity       = [1.6, 90]
+maxAcceleration   = [30/3.6, 90]
+maxDeceleration   = [300/3.6, 180]
 
-propulsionForce          = 750
+propulsionForce   = 750
+brakingForce      = 1500

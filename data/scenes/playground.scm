@@ -1,20 +1,18 @@
 Static(
-  name  = "Ground",
-  mesh  = "scenes/playground.bam",
-  solid = "Mesh"
+  name     = "Ground",
+  mesh     = "scenes/playground.bam",
+  solid    = "Mesh"
 )
 
 Static(
   name     = "Apartment Building",
-  mesh     = "buildings/apartments.bam",
-  exclude  = ["walkway"],
+  mesh     = "buildings/apartments.bam:**/building",
   solid    = "Box",
   position = [30, 21, 0.2]
 )
 Static(
   name     = "Apartment Walkway",
-  mesh     = "buildings/apartments.bam",
-  exclude  = ["building"],
+  mesh     = "buildings/apartments.bam:**/walkway",
   solid    = "Mesh",
   position = [30, 21, 0.2]
 )
@@ -40,15 +38,13 @@ Static(
 
 Static(
   name     = "Family Home Building",
-  mesh     = "buildings/family_home.bam",
-  exclude  = ["driveway"],
+  mesh     = "buildings/family_home.bam:**/building",
   solid    = "Box",
   position = [16.7, 40, 0.1]
 )
 Static(
   name     = "Family Home Driveway",
-  mesh     = "buildings/family_home.bam",
-  exclude  = ["building"],
+  mesh     = "buildings/family_home.bam:**/driveway",
   solid    = "Mesh",
   position = [16.7, 40, 0.1]
 )

@@ -1,14 +1,20 @@
 from morsel.panda import *
+from morsel.geometries.box import Box as Base
 from morsel.nodes.ode.body import Body
 
 #-------------------------------------------------------------------------------
 
-class Box(Body):
-  def __init__(self, world, name, solid, mass = 0, scale = [1, 1, 1],
-      **kargs):
-    box = panda.OdeMass()
-    box.setBoxTotal(mass, *scale)
+class Box(Body, Base):
+  def __init__(self, **kargs):
+    super(Box, self).__init__(**kargs)
+
+#-------------------------------------------------------------------------------
+
+  def fit(self, node):
+    super(Box, self).fit(node)
     
-    Body.__init__(self, world, name, solid, mass = box, scale = scale,
-      **kargs)
+    mass = panda.OdeMass()
+    mass.setBoxTotal(self.mass, *self.globalSize)
+    
+    self._body.setMass(mass)
     

@@ -1,48 +1,71 @@
-from object import Object
+from morsel.panda import *
+from node import Node
 from animation import Animation
 
 #-------------------------------------------------------------------------------
 
-class Mesh(Object):
-  def __init__(self, world, name, filename = None, model = None,
-      exclude = [], twoSided = False, parent = None, **kargs):
-    Object.__init__(self, world, name, **kargs)
+class Mesh(Node):
+  def __init__(self, filename = None, model = None, exclude = None, twoSided =
+      False, flatten = False, **kargs):
+    self._activeLayer = None
+        
+    super(Mesh, self).__init__(**kargs)
 
     self.filename = None
     self.animation = None
     self.twoSided = twoSided
 
-    self._activeLayer = world.scene.activeLayer
-
     if filename:
       if isinstance(filename, dict):
         for layer in filename.iterkeys():
-          self.setModel(loader.loadModel(filename[layer]), layer)
+          fileroot = filename[layer].rsplit(":", 1)
+          
+          if len(fileroot) > 1:
+            model = panda.NodePath(loader.loadModel(fileroot[0])).find(
+              fileroot[1])
+          else:
+            model = loader.loadModel(fileroot[0])
+
+          self.setModel(model, layer)
       else:
-        self.model = loader.loadModel(filename)
-    else:
+        fileroot = filename.rsplit(":", 1)
+
+        if len(fileroot) > 1:
+          model = panda.NodePath(loader.loadModel(fileroot[0])).find(
+            fileroot[1])
+        else:
+          model = loader.loadModel(fileroot[0])
+          
+        self.model = model
+    elif model:
       if isinstance(model, dict):
-        self.clearTransform(model.itervalues().next())
         for layer in model.iterkeys():
           self.setModel(model, layer)
       else:
-        self.clearTransform(model)
         self.model = model
-      for model in self.models:
-        model.clearTransform()
+    else:
+      self.model = None
     
     if exclude:
       for model in self.models:
-        for part in exclude:
-          model.find("**/"+part).removeNode()
-
-    self.parent = parent
+        if isinstance(exclude, list):
+          for part in exclude:
+            model.find("**/"+part).removeNode()
+        else:
+          model.find("**/"+exclude).removeNode()
 
     for model in self.models:
       character = model.find("*/+Character")
       if not character.isEmpty():
-        self.animation = Animation(name+"Animation", self)
+        self.animation = Animation(world = self.world, mesh = self)
         character.hide()
+    
+    if flatten:
+      for model in self.models:
+        model.flattenStrong()
+    
+    if self.world:
+      self.activeLayer = self.world.scene.activeLayer
 
 #-------------------------------------------------------------------------------
 
@@ -53,9 +76,12 @@ class Mesh(Object):
       return self._model
 
   def setModel(self, model, layer = None):
-    model.reparentTo(self)
-    model.setTwoSided(self.twoSided)    
+    if model:
+      model.reparentTo(self)
+      model.setTwoSided(self.twoSided)
 
+      self.applyTransform(model)
+      
     if layer:
       if not hasattr(self, "_model"):
         self._model = {}
@@ -72,6 +98,16 @@ class Mesh(Object):
 
 #-------------------------------------------------------------------------------
 
+  def getModelName(self, layer = None):
+    if layer:
+      return self._model[layer].getName()
+    else:
+      return self._model.getName()
+
+  modelName = property(getModelName)
+  
+#-------------------------------------------------------------------------------
+
   def getLayers(self):
     if isinstance(self._model, dict):
       return self._model.iterkeys()
@@ -85,10 +121,28 @@ class Mesh(Object):
   def getModels(self):
     if isinstance(self._model, dict):
       return self._model.itervalues()
-    else:
+    elif self._model:
       return [self._model]
+    else:
+      return []
 
   models = property(getModels)
+
+#-------------------------------------------------------------------------------
+
+  def getModelNames(self):
+    if isinstance(self._model, dict):
+      names = []
+      for model in self.models:
+        names.append(model.getName())
+        
+      return names
+    elif self._model:
+      return [self._model.getName()]
+    else:
+      return None
+
+  modelNames = property(getModelNames)
 
 #-------------------------------------------------------------------------------
 
@@ -98,17 +152,25 @@ class Mesh(Object):
   def setActiveLayer(self, layer):
     self._activeLayer = layer
 
-    if self.layers:
-      for layer in self.layers:
+    for layer in self.layers:
+      model = self.getModel(layer)
+      
+      if model:
         if not layer or layer == self._activeLayer:
-          self.getModel(layer).unstash()
+          model.unstash()
         else:
-          self.getModel(layer).stash()
+          model.stash()
 
   activeLayer = property(getActiveLayer, setActiveLayer)
 
 #-------------------------------------------------------------------------------
 
-  def updateGraphics(self):
-    if self.animation:
-      self.animation.step(self.world.time)
+  def copyFrom(self, node, layer = None, flatten = False):
+    model = node.copyTo(self)
+    
+    self.setModel(model, layer)
+
+    model.clearTransform(node)
+    if flatten:
+      model.flattenStrong()
+    

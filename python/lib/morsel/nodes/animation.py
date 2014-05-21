@@ -6,9 +6,13 @@ import math
 #-------------------------------------------------------------------------------
 
 class Animation(Node):
-  def __init__(self, name, mesh, animation = None, startFrame = 0,
-      endFrame = None, loop = True, parent = None, **kargs):
-    Node.__init__(self, name, parent = mesh.model, **kargs)
+  def __init__(self, world = None, mesh = None, animation = None,
+      startFrame = 0, endFrame = None, loop = True, parent = None, **kargs):
+    self.world = world
+    if not parent and mesh:
+      parent = mesh.model
+        
+    super(Animation, self).__init__(parent = parent, **kargs)
 
     self.mesh = mesh
     self.animation = animation
@@ -16,16 +20,20 @@ class Animation(Node):
     self.endFrame = endFrame
     self.loop = loop
 
-    for layer in self.mesh.layers:
-      actor = Actor(self.mesh.getModel(layer))
-      self.setActor(actor, layer)
-      if not self.animation:
-        self.setAnimation(actor.getAnimNames()[0])
+    if self.mesh:
+      for layer in self.mesh.layers:
+        actor = Actor(self.mesh.getModel(layer))
+        self.setActor(actor, layer)
+        if not self.animation:
+          self.setAnimation(actor.getAnimNames()[0])
       
     if not self.endFrame:
       self.endFrame = self.actor.getNumFrames(self.animation)-1
     self.numFrames = (self.endFrame-self.startFrame)+1
     self.duration = self.actor.getDuration(self.animation)
+    
+    if self.world:
+      self.world.addAnimation(self)
 
 #-------------------------------------------------------------------------------
 
@@ -40,10 +48,14 @@ class Animation(Node):
       if not hasattr(self, "_actor"):
         self._actor = {}
       self._actor[layer] = actor
-      actor.reparentTo(self.mesh.getModel(layer))
+      
+      if self.mesh:
+        actor.reparentTo(self.mesh.getModel(layer))
     else:
       self._actor = actor
-      actor.reparentTo(self.mesh.model)
+      
+      if self.mesh:
+        actor.reparentTo(self.mesh.model)
 
   actor = property(getActor, setActor)
 
@@ -87,14 +99,16 @@ class Animation(Node):
 
 #-------------------------------------------------------------------------------
 
-  def step(self, time):
-    if self.loop:
-      time = time-math.floor(time/self.duration)*self.duration
-    else:
-      time = min(time, self.duration)
-      
-    frame = self.startFrame+round(self.numFrames*time/self.duration)
+  def draw(self):
+    if self.world:
+      if self.loop:
+        time = (self.world.time-math.floor(self.world.time/self.duration)*
+          self.duration)
+      else:
+        time = min(self.world.time, self.duration)
+        
+      frame = self.startFrame+round(self.numFrames*time/self.duration)
 
-    for layer in self.mesh.layers:
-      self.getActor(layer).pose(self.getAnimation(layer), frame)
-    
+      if self.mesh:
+        for layer in self.mesh.layers:
+          self.getActor(layer).pose(self.getAnimation(layer), frame)

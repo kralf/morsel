@@ -1,3 +1,21 @@
+morsel (1.5-108) lucid; urgency=low
+
+  * Major revision of node implementations:
+    * Abstracted solid/body into geometry base classes
+    * Abstracted joint classes for ode world
+    * Revised solid/body node conception, path layout, etc.
+    * New object implementation with anchor property for physically
+      connecting objects
+  * Splitted simple world type into base world type without physics
+    and panda world type
+  * Revised actuators:
+    * Former PlanarMotor has been moved to PlanarDrive
+    * Added LinearMotor, AngularMotor, and new PlanarMotor
+  * Improved Velodyne HDL-64E S2 sensor model
+  * Increased minor version
+
+ -- Ralf Kaestner <ralf.kaestner@gmail.com>  Wed, 21 May 2014 15:34:00 +0100
+
 morsel (1.4-107) lucid; urgency=low
 
   * Extended package configuration support to allow for a list of

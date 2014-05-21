@@ -39,8 +39,9 @@ class ImageSensor :
 PUBLISHED:
   /** Constructors
     */
-  ImageSensor(std::string name, const LVecBase2f& resolution, const LVecBase2f&
-    rangeLimits, const LVecBase2f& filmSize, double focalLength);
+  ImageSensor(std::string name, const LVecBase2f& resolution, const
+    LVecBase2f& rangeLimits, const LVecBase2f& filmSize, double focalLength,
+    const BitMask32& cameraMask = BitMask32::all_on());
 
   /** Destructor
     */
@@ -60,6 +61,7 @@ protected:
   LVecBase2f rangeLimits;
   LVecBase2f filmSize;
   double focalLength;
+  BitMask32 cameraMask;
 
   PointerTo<GraphicsOutput> colorBuffer;
   Texture colorMap;

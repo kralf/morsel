@@ -39,7 +39,7 @@ RangeSensor::RangeSensor(std::string name, ShaderProgram& program, const
     LVecBase2f& minAngles, const LVecBase2f& maxAngles, const LVecBase2f&
     resolution, const LVecBase2f& rangeLimits, const LVecBase2f& cameraMaxFOV,
     const LVecBase2f& cameraResolution, bool spherical, bool acquireColor,
-    std::string acquireLabel) :
+    std::string acquireLabel, const BitMask32& cameraMask) :
   NodePath(name),
   program(program),
   minAngles(minAngles),
@@ -53,6 +53,7 @@ RangeSensor::RangeSensor(std::string name, ShaderProgram& program, const
   spherical(spherical),
   acquireColor(acquireColor),
   acquireLabel(acquireLabel),
+  cameraMask(cameraMask),
   timestamp(0.0),
   lastTimestamp(0.0),
   rays(numRays[0]*numRays[1]) {
@@ -204,12 +205,12 @@ void RangeSensor::setupCameras() {
         camera = new SphericalRangeCamera(stream.str(), program,
           LVecBase2f(hAngles[j], vAngles[i]), LVecBase2f(hFOVs[j], vFOVs[i]),
           LVecBase2f(hNumRays[j], vNumRays[i]), rangeLimits, cameraResolution,
-          acquireColor, acquireLabel);
+          acquireColor, acquireLabel, cameraMask);
       else
         camera = new PerspectiveRangeCamera(stream.str(), program,
           LVecBase2f(hAngles[j], vAngles[i]), LVecBase2f(hFOVs[j], vFOVs[i]),
           LVecBase2f(hNumRays[j], vNumRays[i]), rangeLimits, cameraResolution,
-          acquireColor, acquireLabel);
+          acquireColor, acquireLabel, cameraMask);
           
       camera->reparent_to(*this);
       cameras.push_back(camera);
