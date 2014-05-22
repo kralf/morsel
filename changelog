@@ -1,3 +1,10 @@
+morsel (1.5-110) lucid; urgency=low
+
+  * Fixed bug in wheeled platform and wheeled/character actor which
+    would include the actuator in the fitted Panda solid
+
+ -- Ralf Kaestner <ralf.kaestner@gmail.com>  Thu, 22 May 2014 11:18:00 +0100
+
 morsel (1.5-109) lucid; urgency=low
 
   * Added ODE ball joint implementation

@@ -8,5 +8,7 @@ class Wheeled(Platform, Base):
   def __init__(self, bodySolid = None, **kargs):
     super(Wheeled, self).__init__(**kargs)
     
+    self.actuator.stash()
     self.solid = Solid(type = bodySolid)
+    self.actuator.unstash()
     
