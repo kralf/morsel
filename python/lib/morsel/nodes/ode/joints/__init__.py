@@ -3,6 +3,7 @@
 #===============================================================================
 
 from angular_motor import AngularMotor
+from ball import Ball
 from fixed import Fixed
 from hinge import Hinge
 from hinge2 import Hinge2

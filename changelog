@@ -1,3 +1,9 @@
+morsel (1.5-109) lucid; urgency=low
+
+  * Added ODE ball joint implementation
+
+ -- Ralf Kaestner <ralf.kaestner@gmail.com>  Thu, 22 May 2014 09:42:00 +0100
+
 morsel (1.5-108) lucid; urgency=low
 
   * Major revision of node implementations:

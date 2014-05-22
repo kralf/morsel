@@ -100,6 +100,9 @@ class Joint(Node):
     
     if self._joint:
       self._joint.detach()
+    if self._mesh:
+      self._mesh.detachNode()
+      self._mesh = None
 
 #-------------------------------------------------------------------------------
 

@@ -67,8 +67,8 @@ class AngularMotor(Joint):
     limits = [(0, 0)]*self._joint.getNumAxes()
     
     for i in range(self._joint.getNumAxes()):
-      limits[i] = (self._joint.getParamLoStop(i),
-                   self._joint.getParamHiStop(i))
+      limits[i] = (self._joint.getParamLoStop(i)*180/pi,
+                   self._joint.getParamHiStop(i)*180/pi)
       
     return limits
   

@@ -70,109 +70,135 @@ class Hinge2(Joint):
 #-------------------------------------------------------------------------------
 
   def getLimits(self):
-    return [(self._joint.getParamLoStop(0)*180/pi,
-              self._joint.getParamHiStop(0)*180/pi),
-            (self._joint.getParamLoStop(1)*180/pi,
-              self._joint.getParamHiStop(1)*180/pi)]
+    limits = [(0, 0)]*2
+    
+    for i in range(len(limits)):
+      limits[i] = (self._joint.getParamLoStop(i)*180/pi,
+                   self._joint.getParamHiStop(i)*180/pi)
+    
+    return limits
   
   def setLimits(self, limits):
     if not isinstance(limits, list):
       limits = [limits]*2
     
-    self._joint.setParamLoStop(0, limits[0][0]*pi/180)
-    self._joint.setParamHiStop(0, limits[0][1]*pi/180)
-    self._joint.setParamLoStop(1, limits[1][0]*pi/180)
-    self._joint.setParamHiStop(1, limits[1][1]*pi/180)
+    for i in range(len(limits)):
+      self._joint.setParamLoStop(i, limits[i][0]*pi/180)
+      self._joint.setParamHiStop(i, limits[i][1]*pi/180)
   
   limits = property(getLimits, setLimits)
 
 #-------------------------------------------------------------------------------
 
   def getMaxForce(self):
-    return [self._joint.getParamFMax(0),
-            self._joint.getParamFMax(1)]
+    maxForce = [0]*2
+    
+    for i in range(len(maxForce)):
+      maxForce[i] = self._joint.getParamFMax(i)
+    
+    return maxForce
 
   def setMaxForce(self, maxForce):
     if not isinstance(maxForce, list):
       maxForce = [maxForce]*2
     
-    self._joint.setParamFMax(0, maxForce[0])
-    self._joint.setParamFMax(1, maxForce[1])
+    for i in range(len(maxForce)):
+      self._joint.setParamFMax(i, maxForce[i])
     
   maxForce = property(getMaxForce, setMaxForce)
     
 #-------------------------------------------------------------------------------
 
   def getFudgeFactor(self):
-    return [self._joint.getParamFudgeFactor(0),
-            self._joint.getParamFudgeFactor(1)]
+    fudgeFactor = [0]*2
+    
+    for i in range(len(fudgeFactor)):
+      fudgeFactor[i] = self._joint.getParamFudgeFactor(i)
+      
+    return fudgeFactor
 
   def setFudgeFactor(self, fudgeFactor):
     if not isinstance(fudgeFactor, list):
       fudgeFactor = [fudgeFactor]*2
     
-    self._joint.setParamFudgeFactor(0, fudgeFactor[0])
-    self._joint.setParamFudgeFactor(1, fudgeFactor[1])
+    for i in range(len(fudgeFactor)):
+      self._joint.setParamFudgeFactor(i, fudgeFactor[i])
     
   fudgeFactor = property(getFudgeFactor, setFudgeFactor)
     
 #-------------------------------------------------------------------------------
 
   def getBouncyness(self):
-    return [self._joint.getParamBounce(0),
-            self._joint.getParamBounce(1)]
+    bouncyness = [0]*2
+    
+    for i in range(len(bouncyness)):
+      bouncyness[i] = self._joint.getParamBounce(i)
+      
+    return bouncyness
 
   def setBouncyness(self, bouncyness):
     if not isinstance(bouncyness, list):
       bouncyness = [bouncyness]*2
     
-    self._joint.setParamBounce(0, bouncyness[0])
-    self._joint.setParamBounce(1, bouncyness[1])
+    for i in range(len(bouncyness)):
+      self._joint.setParamBounce(i, bouncyness[i])
     
   bouncyness = property(getBouncyness, setBouncyness)
     
 #-------------------------------------------------------------------------------
 
   def getCFM(self):
-    return [self._joint.getParamCFM(0),
-            self._joint.getParamCFM(1)]
+    cfm = [0]*2
+    
+    for i in range(len(cfm)):
+      cfm[i] = self._joint.getParamCFM(i)
 
+    return cfm
+      
   def setCFM(self, cfm):
     if not isinstance(cfm, list):
       cfm = [cfm]*2
     
-    self._joint.setParamCFM(0, cfm[0])
-    self._joint.setParamCFM(1, cfm[1])
+    for i in range(len(cfm)):
+      self._joint.setParamCFM(i, cfm[i])
     
   cfm = property(getCFM, setCFM)
     
 #-------------------------------------------------------------------------------
 
   def getStopERP(self):
-    return [self._joint.getParamStopERP(0),
-            self._joint.getParamStopERP(1)]
+    stopERP = [0]*2
+    
+    for i in range(len(stopERP)):
+      stopERP[i] = self._joint.getParamStopERP(i)
+      
+    return stopERP
 
   def setStopERP(self, stopERP):
     if not isinstance(stopERP, list):
       stopERP = [stopERP]*2
     
-    self._joint.setParamStopERP(0, stopERP[0])
-    self._joint.setParamStopERP(1, stopERP[1])
+    for i in range(len(stopERP)):
+      self._joint.setParamStopERP(i, stopERP[i])
     
   stopERP = property(getStopERP, setStopERP)
     
 #-------------------------------------------------------------------------------
 
   def getStopCFM(self):
-    return [self._joint.getParamStopCFM(0),
-            self._joint.getParamStopCFM(1)]
+    stopCFM = [0]*2
+    
+    for i in range(len(stopCFM)):
+      stopCFM[i] = self._joint.getParamStopCFM(i)
+      
+    return stopCFM
 
   def setStopCFM(self, stopCFM):
     if not isinstance(stopCFM, list):
       stopCFM = [stopCFM]*2
     
-    self._joint.setParamStopCFM(0, stopCFM[0])
-    self._joint.setParamStopCFM(1, stopCFM[1])
+    for i in range(len(stopCFM)):
+      self._joint.setParamStopCFM(i, stopCFM[i])
     
   stopCFM = property(getStopCFM, setStopCFM)
     
