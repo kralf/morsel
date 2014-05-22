@@ -1,3 +1,10 @@
+morsel (1.5-111) lucid; urgency=low
+
+  * Fixed bug in ODE wheel drive which would cause an exception when
+    accessing the wheel masses
+
+ -- Ralf Kaestner <ralf.kaestner@gmail.com>  Thu, 22 May 2014 13:16:00 +0100
+
 morsel (1.5-110) lucid; urgency=low
 
   * Fixed bug in wheeled platform and wheeled/character actor which

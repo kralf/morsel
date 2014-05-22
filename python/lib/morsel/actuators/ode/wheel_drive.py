@@ -51,7 +51,7 @@ class WheelDrive(Drive, Base):
     wheelMasses = [0]*len(self.wheels)
     
     for i in range(len(self.wheels)):
-      wheelMasses[i] = self.wheels[i].mass
+      wheelMasses[i] = self.wheels[i].body.mass
     
     return wheelMasses
     
