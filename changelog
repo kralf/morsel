@@ -1,3 +1,9 @@
+morsel (1.5-113) lucid; urgency=low
+
+  * Added ODE universal joint
+
+ -- Ralf Kaestner <ralf.kaestner@gmail.com>  Mon, 26 May 2014 12:35:00 +0100
+
 morsel (1.5-112) lucid; urgency=low
 
   * Added torque and force read accessors to ODE body

@@ -37,7 +37,7 @@ class Body(Geometry):
       self.solid._geometry.setBody(self._body)
         
     self.fit(object)
-      
+    
     self._body.setPosition(*self.globalPosition)
     self._body.setQuaternion(self.globalQuaternion)
       

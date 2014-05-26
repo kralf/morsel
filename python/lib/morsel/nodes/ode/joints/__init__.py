@@ -9,3 +9,4 @@ from hinge import Hinge
 from hinge2 import Hinge2
 from linear_motor import LinearMotor
 from slider import Slider
+from universal import Universal
