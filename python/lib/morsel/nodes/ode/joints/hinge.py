@@ -43,6 +43,16 @@ class Hinge(Joint):
 
 #-------------------------------------------------------------------------------
 
+  def getGlobalAnchor(self):
+    return self.getAnchor(render)
+  
+  def setGlobalAnchor(self, anchor):
+    self.setAnchor(anchor, render)
+  
+  globalAnchor = property(getGlobalAnchor, setGlobalAnchor)
+  
+#-------------------------------------------------------------------------------
+
   def getAxis(self, node = None):
     if not node:
       node = self
@@ -57,6 +67,16 @@ class Hinge(Joint):
   
   axis = property(getAxis, setAxis)
 
+#-------------------------------------------------------------------------------
+
+  def getGlobalAxis(self):
+    return self.getAxis(render)
+  
+  def setGlobalAxis(self, axis):
+    self.setAxis(axis, render)
+  
+  globalAxis = property(getGlobalAxis, setGlobalAxis)
+  
 #-------------------------------------------------------------------------------
 
   def getLimits(self):

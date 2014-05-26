@@ -30,4 +30,14 @@ class Ball(Joint):
       panda.Point3(*anchor)))
   
   anchor = property(getAnchor, setAnchor)
+
+#-------------------------------------------------------------------------------
+
+  def getGlobalAnchor(self):
+    return self.getAnchor(render)
+  
+  def setGlobalAnchor(self, anchor):
+    self.setAnchor(anchor, render)
+  
+  globalAnchor = property(getGlobalAnchor, setGlobalAnchor)
   

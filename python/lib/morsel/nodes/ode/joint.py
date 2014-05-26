@@ -5,17 +5,18 @@ from morsel.nodes.node import Node
 #-------------------------------------------------------------------------------
 
 class Joint(Node):
-  def __init__(self, name = "Joint", type = None, objects = None, **kargs):
+  def __init__(self, name = "Joint", type = None, objects = None,
+      feedback = False, **kargs):
     self._object = None
     self._mesh = None
     self._task = None
     
     super(Joint, self).__init__(name = name, **kargs)
 
-    if type:
-      self._joint = type(self.world._world)
+    self._joint = type(self.world._world)
     if objects:
       self.objects = objects
+    self.feedback = feedback
     
     self.hide(panda.BitMask32.allOn())
 
@@ -40,6 +41,19 @@ class Joint(Node):
 
 #-------------------------------------------------------------------------------
 
+  def getFeedback(self):
+    if self._joint.getFeedback():
+      return True
+    else:
+      return False
+
+  def setFeedback(self, feedback):
+    self._joint.setFeedback(feedback)
+    
+  feedback = property(getFeedback, setFeedback)
+    
+#-------------------------------------------------------------------------------
+
   def getBodies(self):
     objects = self.objects
     
@@ -59,6 +73,52 @@ class Joint(Node):
     return self._mesh
   
   mesh = property(getMesh)
+  
+#-------------------------------------------------------------------------------
+
+  def getForces(self, node = None):
+    if not isinstance(node, list):
+      node = [node]*2
+    
+    feedback = self._joint.getFeedback()
+    
+    if feedback:
+      if not node[0]:
+        node[0] = self
+      force1 = node[0].getRelativeVector(render, feedback.getForce1())
+      if not node[1]:
+        node[1] = self
+      force2 = node[1].getRelativeVector(render, feedback.getForce2())
+      
+      return [[force1[0], force1[1], force1[2]],
+              [force2[0], force2[1], force2[2]]]
+    else:
+      return None
+  
+  forces = property(getForces)
+  
+#-------------------------------------------------------------------------------
+
+  def getTorques(self, node = None):
+    if not isinstance(node, list):
+      node = [node]*2
+    
+    feedback = self._joint.getFeedback()
+    
+    if feedback:
+      if not node[0]:
+        node[0] = self
+      torque1 = node[0].getRelativeVector(render, feedback.getTorque1())
+      if not node[1]:
+        node[1] = self
+      torque2 = node[1].getRelativeVector(render, feedback.getTorque2())
+      
+      return [[torque1[0], torque1[1], torque1[2]],
+              [torque2[0], torque2[1], torque2[2]]]
+    else:
+      return None
+  
+  torques = property(getTorques)
   
 #-------------------------------------------------------------------------------
 

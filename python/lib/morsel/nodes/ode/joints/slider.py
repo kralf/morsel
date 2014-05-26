@@ -40,6 +40,16 @@ class Slider(Joint):
 
 #-------------------------------------------------------------------------------
 
+  def getGlobalAxis(self):
+    return self.getAxis(render)
+  
+  def setGlobalAxis(self, axis):
+    self.setAxis(axis, render)
+  
+  globalAxis = property(getGlobalAxis, setGlobalAxis)
+  
+#-------------------------------------------------------------------------------
+
   def getLimits(self):
     return (self._joint.getParamLoStop(),
             self._joint.getParamHiStop())

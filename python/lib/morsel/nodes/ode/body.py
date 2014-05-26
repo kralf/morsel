@@ -121,37 +121,59 @@ class Body(Geometry):
   
 #-------------------------------------------------------------------------------
 
+  def getForce(self, node = None):
+    if not node:
+      node = self
+
+    force = node.getRelativeVector(render, self._body.getForce())
+      
+    return [force[0], force[1], force[2]]
+    
   def setForce(self, force, node = None):
     if not node:
       node = self
       
     self._body.setForce(render.getRelativeVector(node, panda.Vec3(*force)))
     
-  force = property(None, setForce)
+  force = property(getForce, setForce)
 
 #-------------------------------------------------------------------------------
 
+  def getGlobalForce(self):
+    return self.getForce(render)
+    
   def setGlobalForce(self, force):
     self.setForce(force, render)
     
-  globalForce = property(None, setGlobalForce)
+  globalForce = property(getGlobalForce, setGlobalForce)
   
 #-------------------------------------------------------------------------------
 
+  def getTorque(self, node = None):
+    if not node:
+      node = self
+
+    torque = node.getRelativeVector(render, self._body.getTorque())
+      
+    return [torque[0], torque[1], torque[2]]
+    
   def setTorque(self, torque, node = None):
     if not node:
       node = self
     
     self._body.setTorque(render.getRelativeVector(node, panda.Vec3(*torque)))
     
-  torque = property(None, setTorque)
+  torque = property(getTorque, setTorque)
 
 #-------------------------------------------------------------------------------
 
+  def getGlobalTorque(self):
+    return self.getTorque(render)
+    
   def setGlobalTorque(self, torque):
     self.setTorque(torque, render)
     
-  globalTorque = property(None, setGlobalTorque)
+  globalTorque = property(getGlobalTorque, setGlobalTorque)
   
 #-------------------------------------------------------------------------------
 
