@@ -1,3 +1,10 @@
+morsel (1.5-114) lucid; urgency=low
+
+  * Added (swing/twist) decompose() method to Quaternion
+  * Node's getQuaternion() accessor now delivers a morsel Quaternion
+
+ -- Ralf Kaestner <ralf.kaestner@gmail.com>  Wed, 28 May 2014 07:44:00 +0100
+
 morsel (1.5-113) lucid; urgency=low
 
   * Added ODE universal joint

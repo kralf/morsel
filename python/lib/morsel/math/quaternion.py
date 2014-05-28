@@ -5,10 +5,11 @@ from math import *
 #-------------------------------------------------------------------------------
 
 class Quaternion(panda.Quat):
-  def __init__(self, orientation = [0, 0, 0]):
-    panda.Quat.__init__(self)
+  def __init__(self, *args, **kargs):
+    panda.Quat.__init__(self, *args)
     
-    self.orientation = orientation
+    if kargs.has_key("orientation"):
+      self.orientation = kargs["orientation"]
 
 #-------------------------------------------------------------------------------
 
@@ -53,4 +54,25 @@ class Quaternion(panda.Quat):
     
     self.setFromVectors(u, w)
     self *= quaternion
+
+#-------------------------------------------------------------------------------
+
+  def decompose(self, axis, epsilon = 1e-6):
+    u = self.getAxis()
+    v = panda.Vec3(axis[0], axis[1], axis[2])
+    
+    u.normalize()
+    v.normalize()
+    
+    cosa = v.dot(u)
+
+    twist = Quaternion()
+    swing = Quaternion()
+    
+    if abs(cosa) > epsilon:
+      twist.setFromAxisAngle(self.getAngle(), v*cosa)
+      twist.normalize()
+      swing = self*twist.conjugate()
+    
+    return (twist, swing)
     

@@ -1,4 +1,5 @@
 from morsel.panda import *
+from morsel.math.quaternion import Quaternion
 from morsel.morselc import Color
 
 #-------------------------------------------------------------------------------
@@ -224,9 +225,9 @@ class Node(panda.NodePath):
 
   def getQuaternion(self, node = None):
     if node:
-      return self.getQuat(node)
+      return Quaternion(self.getQuat(node))
     else:
-      return self.getQuat()
+      return Quaternion(self.getQuat())
 
   def setQuaternion(self, quaternion, node = None):
     d_quat = self.getQuaternion(node).conjugate()*quaternion
