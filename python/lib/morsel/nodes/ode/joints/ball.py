@@ -40,4 +40,4 @@ class Ball(Joint):
     self.setAnchor(anchor, render)
   
   globalAnchor = property(getGlobalAnchor, setGlobalAnchor)
-  
+    

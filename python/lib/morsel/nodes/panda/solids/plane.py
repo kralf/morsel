@@ -15,9 +15,21 @@ class Plane(Solid, Base):
     
     plane = panda.Plane(panda.Vec3(*self.normal), panda.Point3(
       *self.position))
+    self.geometry = panda.CollisionPlane(plane)
     
-    if not self.geometry:
-      self.geometry = panda.CollisionPlane(plane)
-    else:
+#-------------------------------------------------------------------------------
+
+  def onTranslate(self, translation):
+    if self.geometry:
+      plane = panda.Plane(panda.Vec3(*self.normal), panda.Point3(
+        *self.position))
+      self.geometry.setPlane(plane)
+    
+#-------------------------------------------------------------------------------
+
+  def onRotate(self, rotation):
+    if self.geometry:
+      plane = panda.Plane(panda.Vec3(*self.normal), panda.Point3(
+        *self.position))
       self.geometry.setPlane(plane)
   

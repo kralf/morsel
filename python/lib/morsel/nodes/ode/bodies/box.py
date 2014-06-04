@@ -17,4 +17,13 @@ class Box(Body, Base):
     mass.setBoxTotal(self.mass, *self.globalSize)
     
     self._body.setMass(mass)
+
+#-------------------------------------------------------------------------------
+
+  def onScale(self, scaling):
+    if self._body:
+      mass = panda.OdeMass()
+      mass.setBoxTotal(self.mass, *self.globalSize)
+      
+      self._body.setMass(mass)
     

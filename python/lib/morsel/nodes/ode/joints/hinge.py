@@ -165,4 +165,16 @@ class Hinge(Joint):
     self._joint.setParamVel(axisRate*pi/180)
             
   axisRate = property(getAxisRate, setAxisRate)
+
+#-------------------------------------------------------------------------------
+
+  def getAxisTorque(self):
+    feedback = self._joint.getFeedback()
+    
+    if feedback:
+      return feedback.getTorque1().dot(self._joint.getAxis())
+    else:
+      return None
+    
+  axisTorque = property(getAxisTorque)
   

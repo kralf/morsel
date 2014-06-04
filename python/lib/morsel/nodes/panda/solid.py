@@ -5,11 +5,9 @@ from morsel.nodes.geometry import Geometry
 
 class Solid(Geometry):
   def __init__(self, name = "Solid", geometry = None, **kargs):
-    self._geometry = None
+    self._geometry = geometry
     
     super(Solid, self).__init__(name = name, **kargs)
-      
-    self.geometry = geometry
 
 #-------------------------------------------------------------------------------
 
@@ -24,6 +22,10 @@ class Solid(Geometry):
       self.parent = object
     
     self.fit(object)
+    
+    if self.geometry:
+      self.object.collider.node().clearSolids()
+      self.object.collider.node().addSolid(self.geometry)
     
   object = property(getObject, setObject)
   

@@ -9,6 +9,7 @@ class Body(Geometry):
   def __init__(self, name = "Body", mass = 1, centerOfMass = [0, 0, 0],
       massOffset = [0, 0, 0], **kargs):
     self._solid = None
+    self._body = None
     self._mesh = None
     
     super(Body, self).__init__(name = name, **kargs)
@@ -299,14 +300,26 @@ class Body(Geometry):
 #-------------------------------------------------------------------------------
 
   def onTranslate(self, translation):
-    if self.solid and self.solid._geometry and self.solid.placeable:
-      self.solid._geometry.setOffsetPosition(
-        self.solid.getPos(render)-self.getPos(render))
+    if self._body:
+      self._body.setPosition(self.getPos(render))
+      
+      if self.solid and self.solid._geometry and self.solid.placeable:
+        self.solid._geometry.setOffsetPosition(
+          self.solid.getPos(render)-self.getPos(render))
+          
+      for joint in self.object.joints:
+        joint.reattach()
       
 #-------------------------------------------------------------------------------
 
   def onRotate(self, rotation):
-    if self.solid and self.solid._geometry and self.solid.placeable:
-      self.solid._geometry.setOffsetQuaternion(
-        self.solid.getQuat(render)*self.getQuat(render).conjugate())
+    if self._body:
+      self._body.setQuaternion(self.getQuat(render))
+      
+      if self.solid and self.solid._geometry and self.solid.placeable:
+        self.solid._geometry.setOffsetQuaternion(
+          self.solid.getQuat(render)*self.getQuat(render).conjugate())
+          
+      for joint in self.object.joints:
+        joint.reattach()
   

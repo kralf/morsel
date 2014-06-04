@@ -136,4 +136,16 @@ class Slider(Joint):
     self._joint.setParamVel(axisVelocity)
             
   axisVelocity = property(getAxisVelocity, setAxisVelocity)
+
+#-------------------------------------------------------------------------------
+
+  def getAxisForce(self):
+    feedback = self._joint.getFeedback()
+    
+    if feedback:
+      return feedback.getForce1().dot(self._joint.getAxis())
+    else:
+      return None
+  
+  axisForce = property(getAxisForce)
   

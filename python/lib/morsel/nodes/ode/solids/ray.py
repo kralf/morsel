@@ -28,4 +28,10 @@ class Ray(Solid, Base):
     self.position = [position[0], position[1], position[2]]
     
     self.geometry = panda.OdeRayGeom(node.world.space, self.globalLength)
+
+#-------------------------------------------------------------------------------
+
+  def onScale(self, scaling):
+    if self.geometry:
+      self.geometry.setLength(self.globalLength)
     

@@ -84,12 +84,20 @@ class Solid(Geometry):
 #-------------------------------------------------------------------------------
 
   def onTranslate(self, translation):
-    if self._geometry and self.body and self.placeable:
-      self._geometry.setOffsetPosition(*self.getPosition(self.body))
+    if self._geometry:
+      self._geometry.setPosition(self.getPos(render))
+      
+      if self.body and self.placeable:
+        self._geometry.setOffsetPosition(self.getPos(render)-
+          self.body.getPos(render))
       
 #-------------------------------------------------------------------------------
 
   def onRotate(self, rotation):
-    if self._geometry and self.body and self.placeable:
-      self._geometry.setOffsetQuaternion(self.getQuaternion(self.body))
+    if self._geometry:
+      self._geometry.setQuaternion(self.getQuat(render))
+      
+      if self.body and self.placeable:
+        self._geometry.setOffsetQuaternion(self.getQuat(render)*
+          self.body.getQuat(render).conjugate())
     

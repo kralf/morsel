@@ -243,4 +243,21 @@ class AngularMotor(Joint):
       self._joint.setParamVel(i, axisRates[i]*pi/180)
             
   axisRates = property(getAxisRates, setAxisRates)
+
+#-------------------------------------------------------------------------------
+
+  def getAxisTorques(self):
+    feedback = self._joint.getFeedback()
+    
+    if feedback:
+      axisTorques = [0]*self._joint.getNumAxes()
+      
+      for i in range(self._joint.getNumAxes()):
+        axisTorques[i] = feedback.getTorque1().dot(self._joint.getAxis(i))
+        
+      return axisTorques
+    else:
+      return None
+    
+  axisTorques = property(getAxisTorques)
   

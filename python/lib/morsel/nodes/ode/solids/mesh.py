@@ -33,4 +33,4 @@ class Mesh(Solid):
     mesh.detachNode()
     
     self.geometry = panda.OdeTriMeshGeom(node.world.space, data)
-  
+    

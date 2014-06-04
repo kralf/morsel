@@ -14,4 +14,10 @@ class Box(Solid, Base):
     Base.fit(self, node)
     
     self.geometry = panda.OdeBoxGeom(node.world.space, *self.globalSize)
-  
+
+#-------------------------------------------------------------------------------
+
+  def onScale(self, scaling):
+    if self.geometry:
+      self.geometry.setLengths(*self.globalSize)
+    

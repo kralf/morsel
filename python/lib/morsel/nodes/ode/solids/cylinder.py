@@ -15,3 +15,10 @@ class Cylinder(Solid, Base):
     
     self.geometry = panda.OdeCylinderGeom(node.world.space,
       self.globalRadius, self.globalHeight)
+
+#-------------------------------------------------------------------------------
+
+  def onScale(self, scaling):
+    if self.geometry:
+      self.geometry.setParams(self.globalRadius, self.globalHeight)
+      

@@ -17,3 +17,12 @@ class Sphere(Body, Base):
     mass.setSphereTotal(self.mass, self.globalRadius)
     
     self._body.setMass(mass)
+    
+#-------------------------------------------------------------------------------
+
+  def onScale(self, scaling):
+    if self._body:
+      mass = panda.OdeMass()
+      mass.setSphereTotal(self.mass, self.globalRadius)
+      
+      self._body.setMass(mass)

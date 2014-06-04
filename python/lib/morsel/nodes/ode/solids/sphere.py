@@ -14,4 +14,10 @@ class Sphere(Solid, Base):
     Base.fit(self, node)
     
     self.geometry = panda.OdeSphereGeom(node.world.space, self.globalRadius)
+
+#-------------------------------------------------------------------------------
+
+  def onScale(self, scaling):
+    if self.geometry:
+      self.geometry.setRadius(self.globalRadius)
     

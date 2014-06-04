@@ -272,4 +272,17 @@ class Hinge2(Joint):
     self._joint.setParamVel(1, axisRates[1]*pi/180)    
             
   axisRates = property(getAxisRates, setAxisRates)
+
+#-------------------------------------------------------------------------------
+
+  def getAxisTorques(self):
+    feedback = self._joint.getFeedback()
+    
+    if feedback:
+      return [feedback.getTorque1().dot(self._joint.getAxis1()),
+              feedback.getTorque1().dot(self._joint.getAxis2())]
+    else:
+      return None
+    
+  axisTorques = property(getAxisTorques)
   

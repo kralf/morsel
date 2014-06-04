@@ -14,7 +14,18 @@ class Cylinder(Body, Base):
     super(Cylinder, self).fit(node)
     
     mass = panda.OdeMass()
-    mass.setCylinderTotal(self.mass, 3, self.globalRadius, self.globalHeight)
+    mass.setCylinderTotal(self.mass, 3, self.globalRadius,
+      self.globalHeight)
     
     self._body.setMass(mass)
+    
+#-------------------------------------------------------------------------------
+
+  def onScale(self, scaling):
+    if self._body:
+      mass = panda.OdeMass()
+      mass.setCylinderTotal(self.mass, 3, self.globalRadius,
+        self.globalHeight)
+      
+      self._body.setMass(mass)
   

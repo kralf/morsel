@@ -201,4 +201,21 @@ class LinearMotor(Joint):
       self._joint.setParamVel(i, axisVelocities[i])
             
   axisVelocities = property(None, setAxisVelocities)
+
+#-------------------------------------------------------------------------------
+
+  def getAxisForces(self):
+    feedback = self._joint.getFeedback()
+    
+    if feedback:
+      axisForces = [0]*self._joint.getNumAxes()
+      
+      for i in range(self._joint.getNumAxes()):
+        axisForces[i] = feedback.getForce1().dot(self._joint.getAxis(i))
+        
+      return axisForces
+    else:
+      return None
+    
+  axisForces = property(getAxisForces)
   

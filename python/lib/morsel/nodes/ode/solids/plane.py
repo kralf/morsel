@@ -16,4 +16,11 @@ class Plane(Solid, Base):
     normal = self.globalNormal
     self.geometry = panda.OdePlaneGeom(node.world.space,
       panda.Vec4(normal[0], normal[1], normal[2], 0))
-    
+
+#-------------------------------------------------------------------------------
+
+  def onRotate(self, rotation):
+    if self.geometry:
+      normal = self.globalNormal
+      self.geometry.setParams(normal[0], normal[1], normal[2], 0)
+      

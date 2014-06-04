@@ -46,3 +46,8 @@ class Fixed(Joint):
     
   mesh = property(getMesh)
   
+#-------------------------------------------------------------------------------
+
+  def reattach(self):
+    self._joint.set()
+  

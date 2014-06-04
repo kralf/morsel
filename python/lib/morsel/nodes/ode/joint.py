@@ -99,6 +99,13 @@ class Joint(Node):
   
 #-------------------------------------------------------------------------------
 
+  def getGlobalForces(self):
+    return self.getForces(render)
+
+  globalForces = property(getGlobalForces)
+
+#-------------------------------------------------------------------------------
+
   def getTorques(self, node = None):
     if not isinstance(node, list):
       node = [node]*2
@@ -120,6 +127,13 @@ class Joint(Node):
   
   torques = property(getTorques)
   
+#-------------------------------------------------------------------------------
+
+  def getGlobalTorques(self):
+    return self.getTorques(render)
+
+  globalTorques = property(getGlobalTorques)
+
 #-------------------------------------------------------------------------------
 
   def attach(self, *objects):
@@ -163,6 +177,18 @@ class Joint(Node):
     if self._mesh:
       self._mesh.detachNode()
       self._mesh = None
+
+#-------------------------------------------------------------------------------
+
+  def reattach(self):
+    objects = self.objects
+    
+    self._joint.detach()
+    
+    if objects[1]:
+      self._joint.attach(objects[0].body._body, objects[1].body._body)
+    else:
+      self._joint.attach(objects[0].body._body, None)
 
 #-------------------------------------------------------------------------------
 

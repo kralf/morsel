@@ -1,3 +1,10 @@
+morsel (1.5-115) lucid; urgency=low
+
+  * Solids and bodies can now be located, oriented, and scaled at runtime
+  * Added axis force/torque feedback accessors to ODE joints
+
+ -- Ralf Kaestner <ralf.kaestner@gmail.com>  Wed, 04 Jun 2014 14:46:00 +0100
+
 morsel (1.5-114) lucid; urgency=low
 
   * Added (swing/twist) decompose() method to Quaternion

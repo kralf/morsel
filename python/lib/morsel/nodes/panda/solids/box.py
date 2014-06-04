@@ -15,4 +15,18 @@ class Box(Solid, Base):
     
     self.geometry = panda.CollisionBox(panda.Point3(*self.minimum),
       panda.Point3(*self.maximum))
+
+#-------------------------------------------------------------------------------
+
+  def onTranslate(self, translation):
+    if self.geometry:
+      self.geometry = panda.CollisionBox(panda.Point3(*self.minimum),
+        panda.Point3(*self.maximum))
+
+#-------------------------------------------------------------------------------
+
+  def onScale(self, scaling):
+    if self.geometry:
+      self.geometry = panda.CollisionBox(panda.Point3(*self.minimum),
+        panda.Point3(*self.maximum))
     

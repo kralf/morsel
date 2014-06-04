@@ -13,9 +13,18 @@ class Ray(Solid, Base):
   def fit(self, node):
     Base.fit(self, node)
     
-    if not self.geometry:
-      self.geometry = panda.CollisionRay()
-      
-    self.geometry.setOrigin(*self.origin)
-    self.geometry.setDirection(*self.direction)
+    self.geometry = panda.CollisionRay(panda.Point3(*self.origin),
+      panda.Vec3(*self.direction))
+    
+#-------------------------------------------------------------------------------
+
+  def onTranslate(self, translation):
+    if self.geometry:
+      self.geometry.setOrigin(*self.origin)
+    
+#-------------------------------------------------------------------------------
+
+  def onRotate(self, rotation):
+    if self.geometry:
+      self.geometry.setDirection(*self.direction)
     
