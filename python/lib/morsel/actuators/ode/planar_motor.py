@@ -58,6 +58,7 @@ class PlanarMotor(Motor, Base):
     self.linearJoint.maxForce = [self.axisForces[0],
       self.axisForces[1], float("inf")]
       
+    self.angularJoint.axisAngles = [0, 0, self.axisAngle]
     self.angularJoint.axisRates = [0, 0, self.angularVelocity]
     self.angularJoint.maxForce = [float("inf"), float("inf"),
       self.axisForces[2]]
