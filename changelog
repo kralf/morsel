@@ -1,3 +1,11 @@
+morsel (1.5-119) lucid; urgency=low
+
+  * Removed forward declaration of gzFile again as it seems to have
+    changed from precise to trusty, added explicit casts to prevent
+    trusty build from failing
+
+ -- Ralf Kaestner <ralf.kaestner@gmail.com>  Tue, 30 Sep 2014 14:09:00 +0100
+
 morsel (1.5-118) lucid; urgency=low
 
   * Added gzFile forward declaration to gzfstream (void pointer without

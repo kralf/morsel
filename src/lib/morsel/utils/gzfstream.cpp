@@ -94,7 +94,7 @@ int gzstreambuf::is_open() const {
 
 streampos gzstreambuf::tell() {
   if (is_open())
-    return gztell(file);
+    return gztell((gzFile)file);
   return -1;
 }
 
@@ -160,7 +160,7 @@ gzstreambuf * gzstreambuf::close() {
     opened = 0;
     size = 0;
     setg(0, 0, 0);
-    if (gzclose(file) == Z_OK)
+    if (gzclose((gzFile)file) == Z_OK)
       return this;
   }
   return (gzstreambuf*)0;
@@ -169,7 +169,7 @@ gzstreambuf * gzstreambuf::close() {
 void gzstreambuf::rewind() {
   if (is_open()) {
     setg(0, 0, 0);
-    gzrewind(file);
+    gzrewind((gzFile)file);
   }
 }
 
@@ -197,7 +197,7 @@ int gzstreambuf::underflow() { // used for input buffer only
     n_putback = 4;
   memcpy(buffer+(4-n_putback), gptr()-n_putback, n_putback);
 
-  int num = gzread(file, buffer+4, bufferSize-4);
+  int num = gzread((gzFile)file, buffer+4, bufferSize-4);
   if (num <= 0) // ERROR or EOF
     return EOF;
 
@@ -225,7 +225,7 @@ int gzstreambuf::flush_buffer() {
   // Separate the writing of the buffer from overflow() and
   // sync() operation.
   int w = pptr()-pbase();
-  if (gzwrite(file, pbase(), w)) {
+  if (gzwrite((gzFile)file, pbase(), w)) {
     setp(pbase(), epptr()-1);
     return w;
   }

@@ -29,8 +29,6 @@
 #include <fstream>
 #include <zlib.h>
 
-typedef struct gzFile_s *gzFile;
-
 class gzstreambuf : public std::streambuf {
 public:
   /** Constructors
@@ -55,7 +53,7 @@ public:
 protected:
   static size_t bufferSize;  // size of data buff
 
-  gzFile file;               // file handle for compressed file
+  void* file;                // file handle for compressed file
   char* buffer;              // data buffer
   char opened;               // open/close state of stream
   int mode;                  // I/O mode
