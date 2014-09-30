@@ -1,3 +1,10 @@
+morsel (1.5-118) lucid; urgency=low
+
+  * Added gzFile forward declaration to gzfstream (void pointer without
+    casting would lead to build failure for trusty)
+
+ -- Ralf Kaestner <ralf.kaestner@gmail.com>  Tue, 30 Sep 2014 13:56:00 +0100
+
 morsel (1.5-117) lucid; urgency=low
 
   * Release distribution for Ubuntu Trusty Tahr
