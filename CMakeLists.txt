@@ -71,3 +71,12 @@ remake_distribute_deb(
   PASS CMAKE_BUILD_TYPE MORSEL_GIT_REVISION
   EXCLUDE "[.]blend$"
 )
+remake_distribute_deb(
+  DISTRIBUTION trusty
+  SECTION python
+  UPLOAD ppa:kralf/asl
+  DEPENDS panda3d-dev panda3d-python panda3d-models panda3d-blender
+    python-numpy python-pygame python-gtk2 remake pkg-config doxygen
+  PASS CMAKE_BUILD_TYPE MORSEL_GIT_REVISION
+  EXCLUDE "[.]blend$"
+)

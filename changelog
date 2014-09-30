@@ -1,3 +1,9 @@
+morsel (1.5-117) lucid; urgency=low
+
+  * Release distribution for Ubuntu Trusty Tahr
+
+ -- Ralf Kaestner <ralf.kaestner@gmail.com>  Tue, 30 Sep 2014 12:53:00 +0100
+
 morsel (1.5-116) lucid; urgency=low
 
   * Now setting axis angles in ODE PlanarMotor updates (should make
